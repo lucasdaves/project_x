@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project_x/controller/user_controller.dart';
-import 'package:project_x/model/user_model.dart';
 import 'package:project_x/services/database/database_service.dart';
 
 class HomeView extends StatefulWidget {
@@ -23,11 +22,11 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> functions = {
-      "Cadastrar usuário": test1,
-      "Cadastrar pessoal": test2,
-      "Cadastrar profissao": test3,
-      "Cadastrar endereço": test4,
-      "Ler usário": test5,
+      "Cadastrar sistema": test1,
+      "Cadastrar usuario": test2,
+      "A": test3,
+      "Apagar banco": test4,
+      "Ler sistema do banco": test5,
       "Ler usário do banco": test6,
     };
 
@@ -60,28 +59,24 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> test1() async {
-    await userController.createUser();
+    print(await userController.createSystem());
   }
 
   Future<void> test2() async {
-    await userController.createPersonal();
+    print(await userController.createUser());
   }
 
-  Future<void> test3() async {
-    await userController.createProfession();
-  }
+  Future<void> test3() async {}
 
   Future<void> test4() async {
-    await userController.createAddress();
+    await databaseService.clearDatabase();
   }
 
   Future<void> test5() async {
-    UserModel? model = userController.getUserModel();
-    print(model?.toMap());
+    print(await userController.readSystem());
   }
 
   Future<void> test6() async {
-    UserModel? model = await userController.getUserModelBd();
-    print(model?.toMap());
+    print(await userController.readUser(login: 'lucasdaves', password: '1234'));
   }
 }

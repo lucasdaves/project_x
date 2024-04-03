@@ -1,33 +1,26 @@
-class AddressModel {
+class Address {
   int? id;
-  String? country;
-  String? state;
-  String? city;
-  String? postalCode;
-  String? street;
-  String? number;
+  String country;
+  String state;
+  String city;
+  String postalCode;
+  String street;
+  String number;
   String? complement;
 
-  //* DATABASE RELATED *//
-
-  DateTime? createdAt;
-  DateTime? updatedAt;
-
-  AddressModel({
+  Address({
     this.id,
-    this.country,
-    this.state,
-    this.city,
-    this.postalCode,
-    this.street,
-    this.number,
+    required this.country,
+    required this.state,
+    required this.city,
+    required this.postalCode,
+    required this.street,
+    required this.number,
     this.complement,
-    this.createdAt,
-    this.updatedAt,
   });
 
-  factory AddressModel.fromMap(Map<String, dynamic> map) {
-    return AddressModel(
+  factory Address.fromMap(Map<String, dynamic> map) {
+    return Address(
       id: map['atr_id'],
       country: map['atr_country'],
       state: map['atr_state'],
@@ -36,14 +29,11 @@ class AddressModel {
       street: map['atr_street'],
       number: map['atr_number'],
       complement: map['atr_complement'],
-      createdAt: DateTime.tryParse(map['atr_created_at'] ?? ''),
-      updatedAt: DateTime.tryParse(map['atr_updated_at'] ?? ''),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'atr_id': id,
       'atr_country': country,
       'atr_state': state,
       'atr_city': city,
@@ -51,8 +41,6 @@ class AddressModel {
       'atr_street': street,
       'atr_number': number,
       'atr_complement': complement,
-      'atr_created_at': createdAt?.toIso8601String(),
-      'atr_updated_at': updatedAt?.toIso8601String(),
     };
   }
 }

@@ -22,31 +22,31 @@ class DatabaseScripts {
       CREATE TABLE tb_client (
           atr_id integer NOT NULL CONSTRAINT tb_client_pk PRIMARY KEY,
           tb_personal_atr_id integer,
-          tb_user_atr_id integer,
           atr_created_at datetime,
-          atr_updated_at datetime
-      );
-
-      CREATE TABLE tb_file (
-          atr_id integer NOT NULL CONSTRAINT tb_file_pk PRIMARY KEY,
-          atr_path text NOT NULL,
-          atr_extension text NOT NULL,
-          tb_user_atr_id integer,
-          tb_project_atr_id integer,
-          tb_finance_atr_id integer,
-          tb_client_atr_id integer,
-          atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
+          CONSTRAINT tb_client_tb_personal FOREIGN KEY (tb_personal_atr_id)
+          REFERENCES tb_personal (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_client_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_finance (
           atr_id integer NOT NULL CONSTRAINT tb_finance_pk PRIMARY KEY,
           atr_name text NOT NULL,
-          atr_description text,
-          tb_user_atr_id integer,
-          tb_client_atr_id integer,
+          atr_description text NOT NULL,
+          atr_status boolean NOT NULL,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
+          CONSTRAINT tb_finance_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_finance_operation (
@@ -56,9 +56,13 @@ class DatabaseScripts {
           atr_amount text NOT NULL,
           atr_paid_at datetime,
           atr_expires_at datetime,
-          tb_finance_atr_id integer,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_finance_atr_id integer NOT NULL,
+          CONSTRAINT tb_finance_operation_tb_finance FOREIGN KEY (tb_finance_atr_id)
+          REFERENCES tb_finance (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_personal (
@@ -70,69 +74,125 @@ class DatabaseScripts {
           atr_gender smallint,
           atr_birth date,
           atr_annotation text,
+          atr_profession text,
+          atr_created_at datetime,
+          atr_updated_at datetime,
           tb_address_atr_id integer,
-          atr_created_at datetime,
-          atr_updated_at datetime
-      );
-
-      CREATE TABLE tb_profession (
-          atr_id integer NOT NULL CONSTRAINT tb_profession_pk PRIMARY KEY,
-          atr_name text NOT NULL,
-          atr_document text NOT NULL,
-          tb_personal_atr_id integer,
-          atr_created_at datetime,
-          atr_updated_at datetime
+          CONSTRAINT tb_personal_tb_address FOREIGN KEY (tb_address_atr_id)
+          REFERENCES tb_address (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_project (
           atr_id integer NOT NULL CONSTRAINT tb_project_pk PRIMARY KEY,
           atr_name text NOT NULL,
           atr_description text,
-          tb_user_atr_id integer,
+          atr_status boolean NOT NULL,
+          atr_created_at datetime,
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
           tb_address_atr_id integer,
+          tb_workflow_atr_id integer,
+          CONSTRAINT tb_project_tb_address FOREIGN KEY (tb_address_atr_id)
+          REFERENCES tb_address (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_tb_workflow FOREIGN KEY (tb_workflow_atr_id)
+          REFERENCES tb_workflow (atr_id)
+          ON DELETE RESTRICT 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
+      );
+
+      CREATE TABLE tb_project_finance_client (
+          atr_id integer NOT NULL CONSTRAINT tb_project_finance_client_pk PRIMARY KEY,
+          atr_created_at datetime,
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
           tb_client_atr_id integer,
           tb_finance_atr_id integer,
-          tb_workflow_atr_id integer,
-          atr_created_at datetime,
-          atr_updated_at datetime
+          tb_project_atr_id integer,
+          CONSTRAINT tb_project_finance_client_tb_client FOREIGN KEY (tb_client_atr_id)
+          REFERENCES tb_client (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_finance FOREIGN KEY (tb_finance_atr_id)
+          REFERENCES tb_finance (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_project FOREIGN KEY (tb_project_atr_id)
+          REFERENCES tb_project (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_recover (
           atr_id integer NOT NULL CONSTRAINT tb_recover_pk PRIMARY KEY,
           atr_question text,
           atr_response text,
-          atr_code text,
-          tb_user_atr_id integer,
+          atr_code text NOT NULL,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
+          CONSTRAINT tb_recover_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE RESTRICT 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_step (
           atr_id integer NOT NULL CONSTRAINT tb_step_pk PRIMARY KEY,
           atr_name text NOT NULL,
           atr_description text,
-          tb_workflow_atr_id integer,
+          atr_status boolean NOT NULL,
+          atr_mandatory boolean NOT NULL,
+          atr_expires_at datetime,
+          atr_concluded_at datetime,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_workflow_atr_id integer NOT NULL,
+          CONSTRAINT tb_step_tb_workflow FOREIGN KEY (tb_workflow_atr_id)
+          REFERENCES tb_workflow (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_substep (
           atr_id integer NOT NULL CONSTRAINT tb_substep_pk PRIMARY KEY,
           atr_name text NOT NULL,
           atr_description text,
+          atr_status boolean NOT NULL,
           atr_mandatory boolean NOT NULL,
-          tb_step_atr_id integer,
+          atr_expires_at datetime,
+          atr_concluded_at datetime,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_step_atr_id integer NOT NULL,
+          CONSTRAINT tb_substep_tb_step FOREIGN KEY (tb_step_atr_id)
+          REFERENCES tb_step (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_system (
           atr_id integer NOT NULL CONSTRAINT tb_system_pk PRIMARY KEY,
-          atr_language smallint NOT NULL,
-          atr_reminder_date datetime NOT NULL,
-          tb_user_atr_id integer,
+          atr_language smallint,
+          atr_reminder_date datetime,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_user_atr_id integer,
+          CONSTRAINT tb_system_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_user (
@@ -140,21 +200,28 @@ class DatabaseScripts {
           atr_type smallint NOT NULL,
           atr_login text NOT NULL,
           atr_password text NOT NULL,
-          tb_personal_atr_id integer,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_personal_atr_id integer,
+          CONSTRAINT tb_user_tb_personal FOREIGN KEY (tb_personal_atr_id)
+          REFERENCES tb_personal (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
 
       CREATE TABLE tb_workflow (
           atr_id integer NOT NULL CONSTRAINT tb_workflow_pk PRIMARY KEY,
           atr_name text NOT NULL,
-          atr_description text,
-          tb_user_atr_id integer,
-          tb_workflow_atr_id integer,
+          atr_description text NOT NULL,
           atr_created_at datetime,
-          atr_updated_at datetime
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
+          CONSTRAINT tb_workflow_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
       );
-      """;
+    """;
 
     return script;
   }

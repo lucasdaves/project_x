@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:project_x/services/database/utils/database_consts.dart';
-import 'package:project_x/services/database/utils/database_scripts.dart';
+import 'package:project_x/services/database/datavase_files.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseService {
@@ -83,7 +82,7 @@ class DatabaseService {
     final appDocumentsDir = await getApplicationDocumentsDirectory();
     final path = join(
       appDocumentsDir.path,
-      "databases",
+      consts.databaseSubpath,
       databaseModel.databaseName,
     );
     databaseModel.databasePath = path;

@@ -1,23 +1,22 @@
 class Substep {
   int? id;
-  String? name;
+  String name;
   String? description;
-  bool? mandatory;
-
-  //* DATABASE RELATED *//
-
-  int? stepId;
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  bool status;
+  bool mandatory;
+  DateTime? expiresAt;
+  DateTime? concluedAt;
+  int stepId;
 
   Substep({
     this.id,
-    this.name,
+    required this.name,
     this.description,
-    this.mandatory,
-    this.stepId,
-    this.createdAt,
-    this.updatedAt,
+    required this.status,
+    required this.mandatory,
+    this.expiresAt,
+    this.concluedAt,
+    required this.stepId,
   });
 
   factory Substep.fromMap(Map<String, dynamic> map) {
@@ -25,10 +24,15 @@ class Substep {
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
-      mandatory: map['atr_mandatory'] == 1,
+      status: map['atr_status'] == 1 ? true : false,
+      mandatory: map['atr_mandatory'] == 1 ? true : false,
+      expiresAt: map['atr_expires_at'] != null
+          ? DateTime.parse(map['atr_expires_at'])
+          : null,
+      concluedAt: map['atr_conclued_at'] != null
+          ? DateTime.parse(map['atr_expires_at'])
+          : null,
       stepId: map['tb_step_atr_id'],
-      createdAt: DateTime.tryParse(map['atr_created_at'] ?? ''),
-      updatedAt: DateTime.tryParse(map['atr_updated_at'] ?? ''),
     );
   }
 
@@ -37,10 +41,11 @@ class Substep {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
-      'atr_mandatory': mandatory == true ? 1 : 0,
+      'atr_status': status ? 1 : 0,
+      'atr_mandatory': mandatory ? 1 : 0,
+      'atr_expires_at': expiresAt?.toIso8601String(),
+      'atr_conclued_at': expiresAt?.toIso8601String(),
       'tb_step_atr_id': stepId,
-      'atr_created_at': createdAt?.toIso8601String(),
-      'atr_updated_at': updatedAt?.toIso8601String(),
     };
   }
 }

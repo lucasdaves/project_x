@@ -1,151 +1,209 @@
 import 'package:project_x/model/address_model.dart';
 import 'package:project_x/model/personal_model.dart';
-import 'package:project_x/model/profession_model.dart';
+import 'package:project_x/model/recover_model.dart';
+import 'package:project_x/model/system_model.dart';
 import 'package:project_x/model/user_model.dart';
-import 'package:project_x/services/database/database_service.dart';
-import 'package:project_x/services/database/utils/database_consts.dart';
-import 'package:project_x/services/database/utils/database_methods.dart';
+import 'package:project_x/services/database/datavase_files.dart';
 
 class UserController {
   static final UserController instance = UserController._();
   UserController._();
 
-  UserModel? userModel;
-
-  final databaseService = DatabaseService.instance;
+  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
 
-  Future<void> createUser() async {
-    if (userModel == null) {
-      UserModel model = UserModel(
+  User? userModel;
+  Address? addressModel;
+  Personal? personalModel;
+  Recover? recoverModel;
+  System? systemModel;
+
+  Future<bool> createSystem() async {
+    try {
+      System system = System(
+        language: 1,
+      );
+
+      int? createSystem =
+          await methods.create(consts.system, map: system.toMap());
+
+      if (createSystem == null) throw "";
+
+      return true;
+    } catch (_) {
+      print(_);
+    }
+    return false;
+  }
+
+  Future<bool> readSystem() async {
+    try {
+      List<Map<String, Object?>>? map = await methods.read(consts.system);
+
+      if (map == null) throw "";
+
+      systemModel = System.fromMap(map.first);
+
+      return true;
+    } catch (_) {
+      print(_);
+    }
+    return false;
+  }
+
+  Future<bool> createUser() async {
+    try {
+      Address address = Address(
+        country: 'Brasil',
+        state: 'Sao Paulo',
+        city: 'Sao Paulo',
+        postalCode: '12345000',
+        street: 'Rua',
+        number: '0',
+      );
+
+      int? createAddress =
+          await methods.create(consts.address, map: address.toMap());
+
+      if (createAddress == null) throw "";
+
+      Personal personal = Personal(
+        name: 'Lucas D. M. Goncalves',
+        document: '12345678900',
+        addressId: createAddress,
+      );
+
+      int? createPersonal =
+          await methods.create(consts.personal, map: personal.toMap());
+
+      if (createPersonal == null) throw "";
+
+      User user = User(
         type: 1,
-        login: "lucasdaves",
-        password: "1234",
+        login: 'lucasdaves',
+        password: '1234',
+        personalId: createPersonal,
       );
-      int id = await methods.create(
-        databaseService.getDatabase(),
-        consts.user,
-        map: model.toMap(),
+
+      int? createUser = await methods.create(consts.user, map: user.toMap());
+
+      if (createUser == null) throw "";
+
+      Recover recover = Recover(
+        code: '4321',
+        userId: createUser,
       );
-      model.id = id;
-      userModel = model;
-    }
-  }
 
-  Future<void> createPersonal() async {
-    PersonalModel model = PersonalModel(
-      name: "Lucas Daves de Melo",
-      document: "12345678901",
-      email: "teste@teste.com",
-      phone: "11912341234",
-    );
-    int id = await methods.create(
-      databaseService.getDatabase(),
-      consts.personal,
-      map: model.toMap(),
-    );
-    model.id = id;
+      int? createRecover =
+          await methods.create(consts.recover, map: recover.toMap());
 
-    userModel!.personalId = model.id;
-    userModel!.personalModel = model;
+      if (createRecover == null) throw "";
 
-    await methods.update(
-      databaseService.getDatabase(),
-      consts.user,
-      map: userModel!.toMap(),
-      id: userModel!.id!,
-    );
-  }
+      if (systemModel != null && systemModel!.userId == null) {
+        System system = systemModel!;
+        system.userId = createUser;
 
-  Future<void> createProfession() async {
-    ProfessionModel model = ProfessionModel(
-      name: "Arquiteto",
-      document: "ABC123",
-      personalId: userModel!.personalId!,
-    );
-    int id = await methods.create(
-      databaseService.getDatabase(),
-      consts.profession,
-      map: model.toMap(),
-    );
-    model.id = id;
+        int? updateSystem = await methods.update(consts.system,
+            map: system.toMap(), id: systemModel!.id);
 
-    if (userModel!.personalModel!.professionModel == null) {
-      userModel!.personalModel!.professionModel = [];
-    }
-    userModel!.personalModel!.professionModel!.add(model);
-  }
-
-  Future<void> createAddress() async {
-    AddressModel model = AddressModel(
-      country: "Brasil",
-      state: "SP",
-      city: "São Paulo",
-      postalCode: "12345000",
-      street: "rua fulano",
-      number: "70",
-      complement: "complemento",
-    );
-    int id = await methods.create(
-      databaseService.getDatabase(),
-      consts.address,
-      map: model.toMap(),
-    );
-    model.id = id;
-
-    userModel!.personalModel!.addressId = model.id;
-    userModel!.personalModel!.addressModel = model;
-
-    await methods.update(
-      databaseService.getDatabase(),
-      consts.personal,
-      map: userModel!.personalModel!.toMap(),
-      id: userModel!.personalModel!.id,
-    );
-  }
-
-  UserModel? getUserModel() {
-    return userModel;
-  }
-
-  Future<UserModel?> getUserModelBd() async {
-    UserModel model;
-    var map1 = await methods.read(databaseService.getDatabase(), consts.user);
-    model = UserModel.fromMap(map1.first);
-
-    var map2 =
-        await methods.read(databaseService.getDatabase(), consts.personal);
-
-    for (var element in map2) {
-      PersonalModel aux = PersonalModel.fromMap(element);
-      if (aux.id == model.personalId) {
-        model.personalModel = aux;
+        if (updateSystem == null) throw "";
       }
+
+      return true;
+    } catch (_) {
+      print(_);
     }
+    return false;
+  }
 
-    model.personalModel!.professionModel = [];
+  Future<bool> readUser({
+    required String login,
+    required String password,
+  }) async {
+    try {
+      var query = '''
+        SELECT * FROM tb_user AS user 
+        WHERE 
+          user.atr_login = "$login"
+        AND 
+          user.atr_password = "$password"
+      ''';
 
-    var map3 =
-        await methods.read(databaseService.getDatabase(), consts.profession);
+      List<Map<String, Object?>>? map = await methods.rawRead(query: query);
 
-    for (var element in map3) {
-      ProfessionModel aux = ProfessionModel.fromMap(element);
-      if (aux.personalId == model.personalId) {
-        model.personalModel!.professionModel!.add(aux);
+      if (map == null) throw "";
+
+      for (var element in map) {
+        userModel = User.fromMap(element);
       }
-    }
 
-    var map4 =
-        await methods.read(databaseService.getDatabase(), consts.address);
+      if (userModel!.personalId != null) {
+        List<Map<String, Object?>>? map = await methods.read(
+          consts.personal,
+          id: userModel!.personalId,
+        );
 
-    for (var element in map4) {
-      AddressModel aux = AddressModel.fromMap(element);
-      if (aux.id == model.personalModel!.addressId) {
-        model.personalModel!.addressModel = aux;
+        if (map == null) throw "";
+
+        for (var element in map) {
+          personalModel = Personal.fromMap(element);
+        }
       }
-    }
 
-    return model;
+      if (personalModel!.addressId != null) {
+        List<Map<String, Object?>>? map = await methods.read(
+          consts.address,
+          id: personalModel!.addressId,
+        );
+
+        if (map == null) throw "";
+
+        for (var element in map) {
+          addressModel = Address.fromMap(element);
+        }
+      }
+
+      // RECOVER
+
+      var queryRec = '''
+        SELECT * FROM tb_recover AS recover 
+        WHERE 
+          recover.tb_user_atr_id = "${userModel!.id}"
+      ''';
+
+      List<Map<String, Object?>>? mapRec = await methods.rawRead(
+        query: queryRec,
+      );
+
+      if (mapRec != null) {
+        for (var element in mapRec) {
+          recoverModel = Recover.fromMap(element);
+        }
+      }
+
+      // SYSTEM
+
+      var querySys = '''
+        SELECT * FROM tb_system AS system 
+        WHERE 
+          system.tb_user_atr_id = "${userModel!.id}"
+      ''';
+
+      List<Map<String, Object?>>? mapSys = await methods.rawRead(
+        query: querySys,
+      );
+
+      if (mapSys != null) {
+        for (var element in mapSys) {
+          systemModel = System.fromMap(element);
+        }
+      }
+
+      return true;
+    } catch (_) {
+      print(_);
+    }
+    return false;
   }
 }

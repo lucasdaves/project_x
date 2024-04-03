@@ -1,25 +1,22 @@
-import 'package:project_x/model/substep_model.dart';
-
 class Step {
   int? id;
-  String? name;
+  String name;
   String? description;
-
-  List<Substep?>? substeps;
-
-  //* DATABASE RELATED *//
-
-  int? workflowId;
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  bool status;
+  bool mandatory;
+  DateTime? expiresAt;
+  DateTime? concluedAt;
+  int workflowId;
 
   Step({
     this.id,
-    this.name,
+    required this.name,
     this.description,
-    this.workflowId,
-    this.createdAt,
-    this.updatedAt,
+    required this.status,
+    required this.mandatory,
+    this.expiresAt,
+    this.concluedAt,
+    required this.workflowId,
   });
 
   factory Step.fromMap(Map<String, dynamic> map) {
@@ -27,9 +24,15 @@ class Step {
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
+      status: map['atr_status'] == 1 ? true : false,
+      mandatory: map['atr_mandatory'] == 1 ? true : false,
+      expiresAt: map['atr_expires_at'] != null
+          ? DateTime.parse(map['atr_expires_at'])
+          : null,
+      concluedAt: map['atr_conclued_at'] != null
+          ? DateTime.parse(map['atr_expires_at'])
+          : null,
       workflowId: map['tb_workflow_atr_id'],
-      createdAt: DateTime.tryParse(map['atr_created_at'] ?? ''),
-      updatedAt: DateTime.tryParse(map['atr_updated_at'] ?? ''),
     );
   }
 
@@ -38,9 +41,11 @@ class Step {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
+      'atr_status': status ? 1 : 0,
+      'atr_mandatory': mandatory ? 1 : 0,
+      'atr_expires_at': expiresAt?.toIso8601String(),
+      'atr_conclued_at': expiresAt?.toIso8601String(),
       'tb_workflow_atr_id': workflowId,
-      'atr_created_at': createdAt?.toIso8601String(),
-      'atr_updated_at': updatedAt?.toIso8601String(),
     };
   }
 }

@@ -5,6 +5,7 @@ class DatabaseConsts {
   //* DATABASE *//
 
   final String databaseName = "project_x.db";
+  final String databaseSubpath = "databases";
   final int databaseVersion = 1;
 
   //* TABLE TAG *//
@@ -18,7 +19,7 @@ class DatabaseConsts {
   final String substep = "tb_substep";
   final String project = "tb_project";
   final String finance = "tb_finance";
-  final String finance_operation = "tb_finance_operation";
+  final String financeOperation = "tb_finance_operation";
   final String personal = "tb_personal";
   final String address = "tb_address";
   final String profession = "tb_profession";
