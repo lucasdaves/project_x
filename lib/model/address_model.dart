@@ -7,6 +7,9 @@ class AddressModel {
   String? street;
   String? number;
   String? complement;
+
+  //* DATABASE RELATED *//
+
   DateTime? createdAt;
   DateTime? updatedAt;
 

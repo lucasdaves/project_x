@@ -1,8 +1,15 @@
+import 'package:project_x/model/personal_model.dart';
+
 class UserModel {
   int? id;
   int? type;
   String? login;
   String? password;
+
+  PersonalModel? personalModel;
+
+  //* DATABASE RELATED *//
+
   int? personalId;
   DateTime? createdAt;
   DateTime? updatedAt;

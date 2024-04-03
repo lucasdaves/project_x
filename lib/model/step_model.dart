@@ -1,29 +1,33 @@
-class ProfessionModel {
+import 'package:project_x/model/substep_model.dart';
+
+class Step {
   int? id;
   String? name;
-  String? document;
+  String? description;
+
+  List<Substep?>? substeps;
 
   //* DATABASE RELATED *//
 
-  int? personalId;
+  int? workflowId;
   DateTime? createdAt;
   DateTime? updatedAt;
 
-  ProfessionModel({
+  Step({
     this.id,
     this.name,
-    this.document,
-    this.personalId,
+    this.description,
+    this.workflowId,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory ProfessionModel.fromMap(Map<String, dynamic> map) {
-    return ProfessionModel(
+  factory Step.fromMap(Map<String, dynamic> map) {
+    return Step(
       id: map['atr_id'],
       name: map['atr_name'],
-      document: map['atr_document'],
-      personalId: map['tb_personal_atr_id'],
+      description: map['atr_description'],
+      workflowId: map['tb_workflow_atr_id'],
       createdAt: DateTime.tryParse(map['atr_created_at'] ?? ''),
       updatedAt: DateTime.tryParse(map['atr_updated_at'] ?? ''),
     );
@@ -33,8 +37,8 @@ class ProfessionModel {
     return {
       'atr_id': id,
       'atr_name': name,
-      'atr_document': document,
-      'tb_personal_atr_id': personalId,
+      'atr_description': description,
+      'tb_workflow_atr_id': workflowId,
       'atr_created_at': createdAt?.toIso8601String(),
       'atr_updated_at': updatedAt?.toIso8601String(),
     };

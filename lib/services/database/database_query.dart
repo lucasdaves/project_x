@@ -14,66 +14,66 @@ class DatabaseQuery {
 
   //* CORE QUERYS *//
 
-  Future<int> createUser(
-    Database db, {
-    required UserModel model,
-  }) async {
-    Map<String, dynamic> map = model.toMap();
-    int id = await methods.create(db, consts.user, map: map);
-    return id;
-  }
+  // Future<int> createUser(
+  //   Database db, {
+  //   required UserModel model,
+  // }) async {
+  //   Map<String, dynamic> map = model.toMap();
+  //   int id = await methods.create(db, consts.user, map: map);
+  //   return id;
+  // }
 
-  Future<int> updateUser(
-    Database db, {
-    required UserModel model,
-    required int id,
-  }) async {
-    Map<String, dynamic> map = model.toMap();
-    int count = await methods.update(db, consts.user, map: map, id: id);
-    return count;
-  }
+  // Future<int> updateUser(
+  //   Database db, {
+  //   required UserModel model,
+  //   required int id,
+  // }) async {
+  //   Map<String, dynamic> map = model.toMap();
+  //   int count = await methods.update(db, consts.user, map: map, id: id);
+  //   return count;
+  // }
 
-  Future<UserModel?> readUser(
-    Database db, {
-    int? id,
-  }) async {
-    var resp = await methods.read(db, consts.user, id: id);
-    if (resp.isNotEmpty) {
-      final Map<String, dynamic> data = resp.first;
-      return UserModel.fromMap(data);
-    } else {
-      return null;
-    }
-  }
+  // Future<UserModel?> readUser(
+  //   Database db, {
+  //   int? id,
+  // }) async {
+  //   var resp = await methods.read(db, consts.user, id: id);
+  //   if (resp.isNotEmpty) {
+  //     final Map<String, dynamic> data = resp.first;
+  //     return UserModel.fromMap(data);
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
-  Future<int> createPersonal(
-    Database db, {
-    required PersonalModel model,
-  }) async {
-    Map<String, dynamic> map = model.toMap();
-    int id = await methods.create(db, consts.personal, map: map);
-    return id;
-  }
+  // Future<int> createPersonal(
+  //   Database db, {
+  //   required PersonalModel model,
+  // }) async {
+  //   Map<String, dynamic> map = model.toMap();
+  //   int id = await methods.create(db, consts.personal, map: map);
+  //   return id;
+  // }
 
-  Future<PersonalModel?> readPersonal(
-    Database db, {
-    int? id,
-  }) async {
-    var resp = await methods.read(db, consts.personal, id: id);
-    if (resp.isNotEmpty) {
-      final Map<String, dynamic> data = resp.first;
-      return PersonalModel.fromMap(data);
-    } else {
-      return null;
-    }
-  }
+  // Future<PersonalModel?> readPersonal(
+  //   Database db, {
+  //   int? id,
+  // }) async {
+  //   var resp = await methods.read(db, consts.personal, id: id);
+  //   if (resp.isNotEmpty) {
+  //     final Map<String, dynamic> data = resp.first;
+  //     return PersonalModel.fromMap(data);
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
-  Future<int> createProfession(
-    Database db, {
-    required ProfessionModel model,
-  }) async {
-    Map<String, dynamic> map = model.toMap();
-    int id = await methods.create(db, consts.profession, map: map);
-    return id;
-  }
+  // Future<int> createProfession(
+  //   Database db, {
+  //   required ProfessionModel model,
+  // }) async {
+  //   Map<String, dynamic> map = model.toMap();
+  //   int id = await methods.create(db, consts.profession, map: map);
+  //   return id;
+  // }
 }

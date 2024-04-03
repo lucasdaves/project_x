@@ -1,3 +1,6 @@
+import 'package:project_x/model/address_model.dart';
+import 'package:project_x/model/profession_model.dart';
+
 class PersonalModel {
   int? id;
   String? name;
@@ -7,6 +10,12 @@ class PersonalModel {
   int? gender;
   DateTime? birth;
   String? annotation;
+
+  AddressModel? addressModel;
+  List<ProfessionModel?>? professionModel;
+
+  //* DATABASE RELATED *//
+
   int? addressId;
   DateTime? createdAt;
   DateTime? updatedAt;

@@ -81,7 +81,11 @@ class DatabaseService {
     databaseModel.databaseName = consts.databaseName;
     databaseModel.databaseVersion = consts.databaseVersion;
     final appDocumentsDir = await getApplicationDocumentsDirectory();
-    final path = join(appDocumentsDir.path, databaseModel.databaseName);
+    final path = join(
+      appDocumentsDir.path,
+      "databases",
+      databaseModel.databaseName,
+    );
     databaseModel.databasePath = path;
   }
 

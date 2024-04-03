@@ -149,6 +149,7 @@ class DatabaseScripts {
           atr_id integer NOT NULL CONSTRAINT tb_workflow_pk PRIMARY KEY,
           atr_name text NOT NULL,
           atr_description text,
+          tb_user_atr_id integer,
           tb_workflow_atr_id integer,
           atr_created_at datetime,
           atr_updated_at datetime

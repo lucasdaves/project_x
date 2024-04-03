@@ -28,6 +28,7 @@ class _HomeViewState extends State<HomeView> {
       "Cadastrar profissao": test3,
       "Cadastrar endereço": test4,
       "Ler usário": test5,
+      "Ler usário do banco": test6,
     };
 
     return Scaffold(
@@ -66,12 +67,21 @@ class _HomeViewState extends State<HomeView> {
     await userController.createPersonal();
   }
 
-  Future<void> test3() async {}
+  Future<void> test3() async {
+    await userController.createProfession();
+  }
 
-  Future<void> test4() async {}
+  Future<void> test4() async {
+    await userController.createAddress();
+  }
 
   Future<void> test5() async {
-    UserModel? model = userController.getUser();
+    UserModel? model = userController.getUserModel();
+    print(model?.toMap());
+  }
+
+  Future<void> test6() async {
+    UserModel? model = await userController.getUserModelBd();
     print(model?.toMap());
   }
 }
