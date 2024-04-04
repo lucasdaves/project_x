@@ -1,4 +1,4 @@
-class Personal {
+class PersonalDatabaseModel {
   int? id;
   String name;
   String document;
@@ -10,7 +10,7 @@ class Personal {
   String? profession;
   int? addressId;
 
-  Personal({
+  PersonalDatabaseModel({
     this.id,
     required this.name,
     required this.document,
@@ -23,8 +23,8 @@ class Personal {
     this.addressId,
   });
 
-  factory Personal.fromMap(Map<String, dynamic> map) {
-    return Personal(
+  factory PersonalDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return PersonalDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       document: map['atr_document'],

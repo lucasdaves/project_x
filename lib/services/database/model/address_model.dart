@@ -1,4 +1,4 @@
-class Address {
+class AddressDatabaseModel {
   int? id;
   String country;
   String state;
@@ -8,7 +8,7 @@ class Address {
   String number;
   String? complement;
 
-  Address({
+  AddressDatabaseModel({
     this.id,
     required this.country,
     required this.state,
@@ -19,8 +19,8 @@ class Address {
     this.complement,
   });
 
-  factory Address.fromMap(Map<String, dynamic> map) {
-    return Address(
+  factory AddressDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return AddressDatabaseModel(
       id: map['atr_id'],
       country: map['atr_country'],
       state: map['atr_state'],

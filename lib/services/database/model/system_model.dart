@@ -1,19 +1,19 @@
-class System {
+class SystemDatabaseModel {
   int? id;
   int? language;
   DateTime? reminderDate;
 
   int? userId;
 
-  System({
+  SystemDatabaseModel({
     this.id,
     this.language,
     this.reminderDate,
     this.userId,
   });
 
-  factory System.fromMap(Map<String, dynamic> map) {
-    return System(
+  factory SystemDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return SystemDatabaseModel(
       id: map['atr_id'],
       language: map['atr_language'],
       reminderDate: map['atr_reminder_date'] != null

@@ -1,19 +1,18 @@
-class Workflow {
+class WorkflowDatabaseModel {
   int? id;
   String name;
   String description;
+  int? userId;
 
-  int userId;
-
-  Workflow({
+  WorkflowDatabaseModel({
     this.id,
     required this.name,
     required this.description,
-    required this.userId,
+    this.userId,
   });
 
-  factory Workflow.fromMap(Map<String, dynamic> map) {
-    return Workflow(
+  factory WorkflowDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return WorkflowDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],

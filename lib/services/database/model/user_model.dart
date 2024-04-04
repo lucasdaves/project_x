@@ -1,11 +1,11 @@
-class User {
+class UserDatabaseModel {
   int? id;
   int type;
   String login;
   String password;
   int? personalId;
 
-  User({
+  UserDatabaseModel({
     this.id,
     required this.type,
     required this.login,
@@ -13,8 +13,8 @@ class User {
     this.personalId,
   });
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return UserDatabaseModel(
       id: map['atr_id'],
       type: map['atr_type'],
       login: map['atr_login'],

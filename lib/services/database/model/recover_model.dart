@@ -1,20 +1,20 @@
-class Recover {
+class RecoverDatabaseModel {
   int? id;
   String? question;
   String? response;
   String code;
-  int userId;
+  int? userId;
 
-  Recover({
+  RecoverDatabaseModel({
     this.id,
     this.question,
     this.response,
     required this.code,
-    required this.userId,
+    this.userId,
   });
 
-  factory Recover.fromMap(Map<String, dynamic> map) {
-    return Recover(
+  factory RecoverDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return RecoverDatabaseModel(
       id: map['atr_id'],
       question: map['atr_question'],
       response: map['atr_response'],

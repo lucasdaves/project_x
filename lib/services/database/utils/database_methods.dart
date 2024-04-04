@@ -1,4 +1,4 @@
-import 'package:project_x/services/database/datavase_files.dart';
+import 'package:project_x/services/database/database_files.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseMethods {

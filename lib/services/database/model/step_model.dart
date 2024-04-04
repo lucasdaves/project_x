@@ -1,26 +1,26 @@
-class Step {
+class StepDatabaseModel {
   int? id;
   String name;
   String? description;
   bool status;
   bool mandatory;
   DateTime? expiresAt;
-  DateTime? concluedAt;
-  int workflowId;
+  DateTime? concludedAt;
+  int? workflowId;
 
-  Step({
+  StepDatabaseModel({
     this.id,
     required this.name,
     this.description,
     required this.status,
     required this.mandatory,
     this.expiresAt,
-    this.concluedAt,
-    required this.workflowId,
+    this.concludedAt,
+    this.workflowId,
   });
 
-  factory Step.fromMap(Map<String, dynamic> map) {
-    return Step(
+  factory StepDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return StepDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
@@ -29,8 +29,8 @@ class Step {
       expiresAt: map['atr_expires_at'] != null
           ? DateTime.parse(map['atr_expires_at'])
           : null,
-      concluedAt: map['atr_conclued_at'] != null
-          ? DateTime.parse(map['atr_expires_at'])
+      concludedAt: map['atr_concluded_at'] != null
+          ? DateTime.parse(map['atr_concluded_at'])
           : null,
       workflowId: map['tb_workflow_atr_id'],
     );
@@ -44,7 +44,7 @@ class Step {
       'atr_status': status ? 1 : 0,
       'atr_mandatory': mandatory ? 1 : 0,
       'atr_expires_at': expiresAt?.toIso8601String(),
-      'atr_conclued_at': expiresAt?.toIso8601String(),
+      'atr_concluded_at': concludedAt?.toIso8601String(),
       'tb_workflow_atr_id': workflowId,
     };
   }
