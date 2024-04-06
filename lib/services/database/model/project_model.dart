@@ -1,4 +1,4 @@
-class Project {
+class ProjectDatabaseModel {
   int? id;
   String name;
   String? description;
@@ -7,7 +7,7 @@ class Project {
   int? addressId;
   int? workflowId;
 
-  Project({
+  ProjectDatabaseModel({
     this.id,
     required this.name,
     this.description,
@@ -17,8 +17,8 @@ class Project {
     this.workflowId,
   });
 
-  factory Project.fromMap(Map<String, dynamic> map) {
-    return Project(
+  factory ProjectDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return ProjectDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
@@ -40,4 +40,10 @@ class Project {
       'tb_workflow_atr_id': workflowId,
     };
   }
+}
+
+class ProjectLogicalModel {
+  ProjectDatabaseModel? model;
+
+  ProjectLogicalModel({this.model});
 }

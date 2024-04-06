@@ -1,4 +1,4 @@
-class FinanceOperation {
+class FinanceOperationDatabaseModel {
   int? id;
   int type;
   String description;
@@ -7,7 +7,7 @@ class FinanceOperation {
   DateTime? expiresAt;
   int financeId;
 
-  FinanceOperation({
+  FinanceOperationDatabaseModel({
     this.id,
     required this.type,
     required this.description,
@@ -17,8 +17,8 @@ class FinanceOperation {
     required this.financeId,
   });
 
-  factory FinanceOperation.fromMap(Map<String, dynamic> map) {
-    return FinanceOperation(
+  factory FinanceOperationDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return FinanceOperationDatabaseModel(
       id: map['atr_id'],
       type: map['atr_type'],
       description: map['atr_description'],
@@ -44,4 +44,10 @@ class FinanceOperation {
       'tb_finance_atr_id': financeId,
     };
   }
+}
+
+class FinanceOperationLogicalModel {
+  FinanceOperationDatabaseModel? model;
+
+  FinanceOperationLogicalModel({this.model});
 }

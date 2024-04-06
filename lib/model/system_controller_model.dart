@@ -15,9 +15,3 @@ class SystemStreamModel {
     );
   }
 }
-
-class SystemLogicalModel {
-  SystemDatabaseModel? model;
-
-  SystemLogicalModel({this.model});
-}

@@ -1,11 +1,10 @@
 import 'dart:developer';
-
 import 'package:project_x/controller/system_controller.dart';
-import 'package:project_x/model/system_controller_model.dart';
 import 'package:project_x/model/user_controller_model.dart';
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
 import 'package:project_x/services/database/model/recover_model.dart';
+import 'package:project_x/services/database/model/system_model.dart';
 import 'package:project_x/services/database/model/user_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/memory/memory_service.dart';
@@ -38,6 +37,11 @@ class UserController {
 
   //* METHODS *//
 
+  Future<int?> getUserId() async {
+    int? id = userStream.valueOrNull?.user?.model?.id;
+    return id;
+  }
+
   Future<bool> hasLogin() async {
     try {
       String? hasLogin = await storage.getLogin();
@@ -65,6 +69,15 @@ class UserController {
 
   Future<bool> createUser({required UserLogicalModel model}) async {
     try {
+      if (model.model == null) throw "O modelo do usuário é nulo";
+
+      List<Map<String, Object?>>? mapA = await methods.rawRead(
+        query:
+            'SELECT * FROM tb_user AS user WHERE user.atr_login = "${model.model!.login}"',
+      );
+
+      if (mapA != null && mapA.isNotEmpty) throw "Login com cadastro existente";
+
       int? addressId;
       if (model.personal?.address != null) {
         addressId = await methods.create(
@@ -135,9 +148,7 @@ class UserController {
           query:
               'SELECT * FROM tb_user AS user WHERE user.atr_login = "$login" AND user.atr_password = "$password"');
 
-      if (map == null || map.isEmpty) {
-        throw "Usuário não encontrado";
-      }
+      if (map == null || map.isEmpty) throw "Erro ao logar, dados errados";
 
       model.user = UserLogicalModel(
         model: UserDatabaseModel.fromMap(map.first),

@@ -1,3 +1,5 @@
+import 'package:project_x/services/database/model/address_model.dart';
+
 class PersonalDatabaseModel {
   int? id;
   String name;
@@ -52,4 +54,11 @@ class PersonalDatabaseModel {
       'tb_address_atr_id': addressId,
     };
   }
+}
+
+class PersonalLogicalModel {
+  PersonalDatabaseModel? model;
+  AddressLogicalModel? address;
+
+  PersonalLogicalModel({this.model, this.address});
 }

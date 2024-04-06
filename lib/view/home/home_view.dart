@@ -62,6 +62,12 @@ class _HomeViewState extends State<HomeView> {
       "Ler workflow": testReadWorkflow,
     };
 
+    Map<String, dynamic> clientFunctions = {
+      "Cadastrar cliente": testCreateWorkflow,
+      "Atualizar Cliente": testUpdateWorkflow,
+      "Ler cliente": testReadWorkflow,
+    };
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -71,6 +77,36 @@ class _HomeViewState extends State<HomeView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            StreamBuilder(
+                stream: workflowController.workflowStream,
+                builder: (context, snapshopt) {
+                  if (snapshopt.hasData) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: workflowController
+                          .workflowStream.value.workflows!.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              workflowController.workflowStream.value
+                                  .workflows![index]!.model!.name,
+                            ),
+                            Text(
+                              "Quantidade de Steps: " +
+                                  workflowController.workflowStream.value
+                                      .workflows![index]!.steps!.length
+                                      .toString(),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                }),
             ...testFunctions.entries.map(
               (e) {
                 return GestureDetector(
@@ -230,7 +266,7 @@ class _HomeViewState extends State<HomeView> {
       model: WorkflowDatabaseModel(
         name: 'Fluxo 1 - Arquiteto',
         description: 'Fluxo criado para seguir em frente no trabalho',
-        userId: userController.userStream.value.user?.model?.id,
+        userId: userController.userStream.valueOrNull?.user?.model?.id,
       ),
       steps: [
         StepLogicalModel(
@@ -292,6 +328,29 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> testReadWorkflow() async {
+    print(await workflowController.readWorkflow());
+  }
+
+  Future<void> testDeleteWorkflow() async {
+    WorkflowStreamModel? stream = workflowController.workflowStream.valueOrNull;
+    if (stream != null) {
+      Future.wait(stream.workflows!.map((e) async {
+        print(await workflowController.deleteWorkflow(model: e!));
+      }));
+    }
+  }
+
+  Future<void> testCreateClient() async {
+    print(await workflowController.readWorkflow());
+  }
+
+  Future<void> testUpdateClient() async {}
+
+  Future<void> testReadClient() async {
+    print(await workflowController.readWorkflow());
+  }
+
+  Future<void> testDeleteClient() async {
     print(await workflowController.readWorkflow());
   }
 }

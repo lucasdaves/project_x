@@ -33,3 +33,9 @@ class RecoverDatabaseModel {
     };
   }
 }
+
+class RecoverLogicalModel {
+  RecoverDatabaseModel? model;
+
+  RecoverLogicalModel({this.model});
+}

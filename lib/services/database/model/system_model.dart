@@ -32,3 +32,9 @@ class SystemDatabaseModel {
     };
   }
 }
+
+class SystemLogicalModel {
+  SystemDatabaseModel? model;
+
+  SystemLogicalModel({this.model});
+}

@@ -33,30 +33,3 @@ class UserStreamModel {
     );
   }
 }
-
-class UserLogicalModel {
-  UserDatabaseModel? model;
-  RecoverLogicalModel? recover;
-  PersonalLogicalModel? personal;
-
-  UserLogicalModel({this.model, this.recover, this.personal});
-}
-
-class RecoverLogicalModel {
-  RecoverDatabaseModel? model;
-
-  RecoverLogicalModel({this.model});
-}
-
-class PersonalLogicalModel {
-  PersonalDatabaseModel? model;
-  AddressLogicalModel? address;
-
-  PersonalLogicalModel({this.model, this.address});
-}
-
-class AddressLogicalModel {
-  AddressDatabaseModel? model;
-
-  AddressLogicalModel({this.model});
-}

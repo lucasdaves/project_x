@@ -1,11 +1,11 @@
-class ProjectFinanceClient {
+class AssociationDatabaseModel {
   int? id;
   int userId;
   int? clientId;
   int? financeId;
   int? projectId;
 
-  ProjectFinanceClient({
+  AssociationDatabaseModel({
     this.id,
     required this.userId,
     this.clientId,
@@ -13,8 +13,8 @@ class ProjectFinanceClient {
     this.projectId,
   });
 
-  factory ProjectFinanceClient.fromMap(Map<String, dynamic> map) {
-    return ProjectFinanceClient(
+  factory AssociationDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return AssociationDatabaseModel(
       id: map['atr_id'],
       userId: map['tb_user_atr_id'],
       clientId: map['tb_client_atr_id'],
@@ -32,4 +32,10 @@ class ProjectFinanceClient {
       'tb_project_atr_id': projectId,
     };
   }
+}
+
+class AssociationLogicalModel {
+  AssociationDatabaseModel? model;
+
+  AssociationLogicalModel({this.model});
 }

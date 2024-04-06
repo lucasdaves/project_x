@@ -25,13 +25,29 @@ class DatabaseMethods {
   Future<List<Map<String, Object?>>?> read(
     String table, {
     int? id,
+    int? userId,
   }) async {
     Database? database = DatabaseService.instance.databaseModel.database;
     if (database != null) {
+      String whereClause = "";
+      List<dynamic> whereArgs = [];
+
+      if (id != null) {
+        whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
+        whereClause += 'atr_id = ?';
+        whereArgs.add(id);
+      }
+
+      if (userId != null) {
+        whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
+        whereClause += 'tb_user_atr_id = ?';
+        whereArgs.add(userId);
+      }
+
       List<Map<String, Object?>> res = await database.query(
         table,
-        where: (id != null) ? 'atr_id = ?' : null,
-        whereArgs: (id != null) ? [id] : null,
+        where: whereClause.isNotEmpty ? whereClause : null,
+        whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
       );
       return res;
     }

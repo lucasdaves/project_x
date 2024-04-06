@@ -44,3 +44,9 @@ class AddressDatabaseModel {
     };
   }
 }
+
+class AddressLogicalModel {
+  AddressDatabaseModel? model;
+
+  AddressLogicalModel({this.model});
+}

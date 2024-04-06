@@ -1,3 +1,5 @@
+import 'package:project_x/services/database/model/substep_model.dart';
+
 class StepDatabaseModel {
   int? id;
   String name;
@@ -48,4 +50,11 @@ class StepDatabaseModel {
       'tb_workflow_atr_id': workflowId,
     };
   }
+}
+
+class StepLogicalModel {
+  StepDatabaseModel? model;
+  List<SubstepLogicalModel?>? substeps;
+
+  StepLogicalModel({this.model, this.substeps});
 }

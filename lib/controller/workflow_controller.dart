@@ -35,6 +35,9 @@ class WorkflowController {
 
   Future<bool> createWorkflow({required WorkflowLogicalModel model}) async {
     try {
+      int? userId = await userController.getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+
       int? workflowId = await methods.create(
         consts.workflow,
         map: model.model!.toMap(),
@@ -65,8 +68,11 @@ class WorkflowController {
     return false;
   }
 
-  Future<bool> readWorkflow() async {
+  Future<bool> readWorkflow({int? id, int? userId}) async {
     try {
+      int? userId = await userController.getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+
       WorkflowStreamModel model = WorkflowStreamModel();
       List<Map<String, Object?>>? mapA = await methods.read(consts.workflow);
 
@@ -106,6 +112,9 @@ class WorkflowController {
 
   Future<bool> updateWorkflow({required WorkflowLogicalModel model}) async {
     try {
+      int? userId = await userController.getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+
       await methods.update(consts.workflow,
           map: model.model!.toMap(), id: model.model!.id!);
 
@@ -130,6 +139,9 @@ class WorkflowController {
 
   Future<bool> deleteWorkflow({required WorkflowLogicalModel model}) async {
     try {
+      int? userId = await userController.getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+
       await Future.wait(model.steps!.map((step) async {
         await Future.wait(step!.substeps!.map((substep) async {
           await methods.delete(consts.substep, id: substep!.model?.id);

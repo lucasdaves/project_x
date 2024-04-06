@@ -1,11 +1,13 @@
-class Finance {
+import 'package:project_x/services/database/model/finance_operation_model.dart';
+
+class FinanceDatabaseModel {
   int? id;
   String name;
   String description;
   bool status;
   int userId;
 
-  Finance({
+  FinanceDatabaseModel({
     this.id,
     required this.name,
     required this.description,
@@ -13,8 +15,8 @@ class Finance {
     required this.userId,
   });
 
-  factory Finance.fromMap(Map<String, dynamic> map) {
-    return Finance(
+  factory FinanceDatabaseModel.fromMap(Map<String, dynamic> map) {
+    return FinanceDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
@@ -32,4 +34,11 @@ class Finance {
       'tb_user_atr_id': userId,
     };
   }
+}
+
+class FinanceLogicalModel {
+  FinanceDatabaseModel? model;
+  List<FinanceOperationLogicalModel?>? operations;
+
+  FinanceLogicalModel({this.model, this.operations});
 }

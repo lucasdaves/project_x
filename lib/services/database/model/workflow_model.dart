@@ -1,3 +1,5 @@
+import 'package:project_x/services/database/model/step_model.dart';
+
 class WorkflowDatabaseModel {
   int? id;
   String name;
@@ -28,4 +30,11 @@ class WorkflowDatabaseModel {
       'tb_user_atr_id': userId,
     };
   }
+}
+
+class WorkflowLogicalModel {
+  WorkflowDatabaseModel? model;
+  List<StepLogicalModel?>? steps;
+
+  WorkflowLogicalModel({this.model, this.steps});
 }

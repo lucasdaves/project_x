@@ -49,3 +49,9 @@ class SubstepDatabaseModel {
     };
   }
 }
+
+class SubstepLogicalModel {
+  SubstepDatabaseModel? model;
+
+  SubstepLogicalModel({this.model});
+}

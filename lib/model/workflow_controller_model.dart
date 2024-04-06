@@ -25,23 +25,3 @@ class WorkflowStreamModel {
     );
   }
 }
-
-class WorkflowLogicalModel {
-  WorkflowDatabaseModel? model;
-  List<StepLogicalModel?>? steps;
-
-  WorkflowLogicalModel({this.model, this.steps});
-}
-
-class StepLogicalModel {
-  StepDatabaseModel? model;
-  List<SubstepLogicalModel?>? substeps;
-
-  StepLogicalModel({this.model, this.substeps});
-}
-
-class SubstepLogicalModel {
-  SubstepDatabaseModel? model;
-
-  SubstepLogicalModel({this.model});
-}

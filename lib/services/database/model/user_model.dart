@@ -1,3 +1,6 @@
+import 'package:project_x/services/database/model/personal_model.dart';
+import 'package:project_x/services/database/model/recover_model.dart';
+
 class UserDatabaseModel {
   int? id;
   int type;
@@ -32,4 +35,12 @@ class UserDatabaseModel {
       'tb_personal_atr_id': personalId,
     };
   }
+}
+
+class UserLogicalModel {
+  UserDatabaseModel? model;
+  RecoverLogicalModel? recover;
+  PersonalLogicalModel? personal;
+
+  UserLogicalModel({this.model, this.recover, this.personal});
 }

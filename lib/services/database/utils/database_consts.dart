@@ -24,4 +24,5 @@ class DatabaseConsts {
   final String address = "tb_address";
   final String profession = "tb_profession";
   final String file = "tb_file";
+  final String association = "tb_project_finance_client";
 }

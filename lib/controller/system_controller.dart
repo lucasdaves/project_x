@@ -28,6 +28,8 @@ class SystemController {
 
   Future<bool> createSystem({required SystemLogicalModel model}) async {
     try {
+      if (model.model == null) throw "O modelo do sistema é nulo";
+
       int? createSystem =
           await methods.create(consts.system, map: model.model!.toMap());
 
@@ -44,31 +46,15 @@ class SystemController {
     return false;
   }
 
-  Future<bool> readSystem({int? userId}) async {
+  Future<bool> readSystem({int? id, int? userId}) async {
     try {
-      List<Map<String, Object?>>? map = await methods.read(consts.system);
+      List<Map<String, Object?>>? map =
+          await methods.read(consts.system, userId: userId);
 
-      if (map == null || map.isEmpty) {
-        throw "Sistema não encontrado";
-      }
+      if (map == null || map.isEmpty) throw "Sistema não encontrado";
 
-      if (userId != null) {
-        bool systemFound = map.any(
-          (element) => SystemDatabaseModel.fromMap(element).userId == userId,
-        );
-        if (!systemFound) {
-          throw "Não há um sistema associado ao usuário";
-        }
-      }
+      Map<String, Object?> systemMap = map.first;
 
-      Map<String, Object?> systemMap;
-      if (userId != null) {
-        systemMap = map.firstWhere(
-          (element) => SystemDatabaseModel.fromMap(element).userId == userId,
-        );
-      } else {
-        systemMap = map.first;
-      }
       SystemLogicalModel systemModel = SystemLogicalModel(
         model: SystemDatabaseModel.fromMap(systemMap),
       );
@@ -89,6 +75,8 @@ class SystemController {
 
   Future<bool> updateSystem({required SystemLogicalModel model}) async {
     try {
+      if (model.model == null) throw "O modelo do sistema é nulo";
+
       await methods.update(consts.system,
           map: model.model!.toMap(), id: model.model!.id!);
 
