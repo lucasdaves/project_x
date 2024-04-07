@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/client_controller_model.dart';
-import 'package:project_x/model/user_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';

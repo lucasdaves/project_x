@@ -2,11 +2,16 @@ import 'dart:developer';
 import 'package:project_x/model/system_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/system_model.dart';
+import 'package:project_x/utils/app_responsive.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SystemController {
   static final SystemController instance = SystemController._();
   SystemController._();
+
+  //* APP INSTANCES *//
+
+  final responsive = AppResponsive.instance;
 
   //* DATABASE INSTANCES *//
 

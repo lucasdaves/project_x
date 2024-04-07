@@ -6,10 +6,16 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseService {
   static final DatabaseService instance = DatabaseService._();
-  DatabaseService._();
+
+  DatabaseService._() {
+    sqfliteFfiInit();
+    _databaseFactory = databaseFactoryFfi;
+  }
 
   final DatabaseConsts consts = DatabaseConsts.instance;
   final DatabaseScripts scripts = DatabaseScripts.instance;
+
+  late final DatabaseFactory _databaseFactory;
 
   late DatabaseModel databaseModel;
 
@@ -20,59 +26,25 @@ class DatabaseService {
   }
 
   Future<void> clearDatabase() async {
-    if (!(Platform.isWindows ||
-        Platform.isLinux ||
-        Platform.isAndroid ||
-        Platform.isIOS)) {
-      throw Exception("Unsupported platform");
-    }
+    _checkPlatformSupport();
 
     await databaseModel.database!.close();
-
-    if (Platform.isWindows || Platform.isLinux) {
-      sqfliteFfiInit();
-      final databaseFactory = databaseFactoryFfi;
-      await databaseFactory.deleteDatabase(databaseModel.databasePath!);
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      await deleteDatabase(databaseModel.databasePath!);
-    }
+    await _databaseFactory.deleteDatabase(databaseModel.databasePath!);
   }
 
   Future<void> initDatabase() async {
-    late Database database;
-
-    if (!(Platform.isWindows ||
-        Platform.isLinux ||
-        Platform.isAndroid ||
-        Platform.isIOS)) {
-      throw Exception("Unsupported platform");
-    }
+    _checkPlatformSupport();
 
     await _initInformation();
 
-    if (Platform.isWindows || Platform.isLinux) {
-      sqfliteFfiInit();
-      final databaseFactory = databaseFactoryFfi;
-      final winLinuxDB = await databaseFactory.openDatabase(
-        databaseModel.databasePath!,
-        options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: _onCreate,
-        ),
-      );
-      database = winLinuxDB;
-    } else if (Platform.isAndroid || Platform.isIOS) {
-      final iOSAndroidDB = await openDatabase(
-        databaseModel.databasePath!,
+    final database = await _databaseFactory.openDatabase(
+      databaseModel.databasePath!,
+      options: OpenDatabaseOptions(
         version: 1,
         onCreate: _onCreate,
-      );
-      database = iOSAndroidDB;
-    }
-
+      ),
+    );
     databaseModel.database = database;
-
-    //await DatabaseService.instance.clearDatabase();
   }
 
   Future<void> _initInformation() async {
@@ -83,7 +55,7 @@ class DatabaseService {
     final path = join(
       appDocumentsDir.path,
       consts.databaseSubpath,
-      databaseModel.databaseName,
+      databaseModel.databaseName!,
     );
     databaseModel.databasePath = path;
   }
@@ -91,6 +63,12 @@ class DatabaseService {
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
     await db.execute(scripts.createTablesScript());
+  }
+
+  void _checkPlatformSupport() {
+    if (!(Platform.isWindows || Platform.isAndroid || Platform.isIOS)) {
+      throw Exception("Unsupported platform");
+    }
   }
 }
 
