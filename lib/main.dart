@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project_x/controller/app_controller.dart';
 import 'package:project_x/view/splash/splash_view.dart';
-import 'package:window_manager/window_manager.dart';
 
 void main() async {
   await AppController.instance.initAppConfigs();
@@ -15,26 +15,34 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WindowListener {
-  @override
-  void initState() {
-    super.initState();
-    windowManager.addListener(this);
-  }
-
-  @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
-  }
-
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Project X',
       theme: ThemeData(
+        fontFamily: 'Mulish',
         useMaterial3: true,
       ),
+      builder: (context, child) {
+        AppController.instance.changeDeviceSize();
+        final mediaQueryData = MediaQuery.of(context);
+        final scale = mediaQueryData.textScaler.clamp(
+          minScaleFactor: 1.0,
+          maxScaleFactor: 1.0,
+        );
+        return MediaQuery(
+          data: mediaQueryData.copyWith(textScaler: scale),
+          child: child!,
+        );
+      },
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      locale: const Locale('pt', 'BR'),
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('pt', 'BR'),
+      ],
+      debugShowCheckedModeBanner: false,
       home: OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
           AppController.instance.changeDeviceSize();
@@ -42,14 +50,5 @@ class _MyAppState extends State<MyApp> with WindowListener {
         },
       ),
     );
-  }
-
-  @override
-  void onWindowResize() {
-    if (mounted) {
-      setState(() {
-        AppController.instance.changeDeviceSize();
-      });
-    }
   }
 }

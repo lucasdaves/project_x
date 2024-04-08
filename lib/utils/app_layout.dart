@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/utils/app_const.dart';
 import 'package:project_x/utils/app_responsive.dart';
 
 class AppLayout extends StatelessWidget {
@@ -15,11 +16,16 @@ class AppLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (AppResponsive.instance.isLandscape()) {
-          return landscape;
-        } else {
-          return portrait;
-        }
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.transparent,
+            image: DecorationImage(
+              image: AssetImage(AppConst.imageBackground),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: AppResponsive.instance.isLandscape() ? landscape : portrait,
+        );
       },
     );
   }

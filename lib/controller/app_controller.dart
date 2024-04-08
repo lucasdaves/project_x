@@ -23,6 +23,7 @@ class AppController {
       WindowOptions windowOptions = const WindowOptions(
         size: Size(960, 540),
         minimumSize: Size(960, 540),
+        title: 'Project X',
         center: true,
       );
       windowManager.waitUntilReadyToShow(windowOptions, () async {
