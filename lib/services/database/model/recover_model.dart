@@ -3,14 +3,12 @@ class RecoverDatabaseModel {
   String? question;
   String? response;
   String code;
-  int? userId;
 
   RecoverDatabaseModel({
     this.id,
     this.question,
     this.response,
     required this.code,
-    this.userId,
   });
 
   factory RecoverDatabaseModel.fromMap(Map<String, dynamic> map) {
@@ -19,7 +17,6 @@ class RecoverDatabaseModel {
       question: map['atr_question'],
       response: map['atr_response'],
       code: map['atr_code'],
-      userId: map['tb_user_atr_id'],
     );
   }
 
@@ -29,7 +26,6 @@ class RecoverDatabaseModel {
       'atr_question': question,
       'atr_response': response,
       'atr_code': code,
-      'tb_user_atr_id': userId,
     };
   }
 }

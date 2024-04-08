@@ -36,130 +36,185 @@ class WorkflowController {
   Future<bool> createWorkflow({required WorkflowLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
-      if (userId == null) throw "Usuário ainda não logado";
+      if (userId == null) throw "O id do usuário é nulo";
+      if (model.model == null) throw "O modelo do projeto é nulo";
 
-      int? workflowId = await methods.create(
-        consts.workflow,
-        map: model.model!.toMap(),
-      );
+      model.model!.userId = userId;
 
-      await Future.wait(model.steps!.map((step) async {
-        step!.model!.workflowId = workflowId;
-        int? stepId = await methods.create(
-          consts.step,
-          map: step.model!.toMap(),
+      //* WORKFLOW *//
+      int? workflowId;
+      if (model.model != null) {
+        workflowId = await methods.create(
+          consts.workflow,
+          map: model.model!.toMap(),
         );
+      }
 
-        await Future.wait(step.substeps!.map((substep) async {
-          substep!.model!.stepId = stepId;
-          await methods.create(
-            consts.substep,
-            map: substep.model!.toMap(),
+      if (workflowId == null) throw "Erro ao criar workflow";
+
+      //* STEPS *//
+      for (StepLogicalModel? step in model.steps ?? []) {
+        if (step?.model != null) {
+          step!.model!.workflowId = workflowId;
+          int? stepId = await methods.create(
+            consts.step,
+            map: step.model!.toMap(),
           );
-        }));
-      }));
+
+          //* SUBSTEPS *//
+          for (SubstepLogicalModel? substep in step.substeps ?? []) {
+            if (substep?.model != null) {
+              substep!.model!.stepId = stepId;
+              await methods.create(
+                consts.substep,
+                map: substep.model!.toMap(),
+              );
+            }
+          }
+        }
+      }
 
       await readWorkflow();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readWorkflow({int? id, int? userId}) async {
+  Future<bool> readWorkflow() async {
     try {
       int? userId = await userController.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
       WorkflowStreamModel model = WorkflowStreamModel();
-      List<Map<String, Object?>>? mapA = await methods.read(consts.workflow);
 
-      model.workflows = await Future.wait(mapA!.map((a) async {
-        WorkflowDatabaseModel auxA = WorkflowDatabaseModel.fromMap(a);
-        List<Map<String, Object?>>? mapB = await methods.rawRead(
-            query:
-                "SELECT * FROM tb_step WHERE tb_workflow_atr_id = ${auxA.id}");
+      //* WORKFLOW *//
+      Map<String, dynamic> argsA = {};
+      argsA['tb_user_atr_id'] = userId;
 
-        List<StepLogicalModel?>? steps = await Future.wait(mapB!.map((b) async {
-          StepDatabaseModel auxB = StepDatabaseModel.fromMap(b);
-          List<Map<String, Object?>>? mapC = await methods.rawRead(
-              query:
-                  "SELECT * FROM tb_substep WHERE tb_step_atr_id = ${auxB.id}");
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.workflow, args: argsA);
 
-          List<SubstepLogicalModel?>? substeps = mapC!.map((c) {
-            SubstepDatabaseModel auxC = SubstepDatabaseModel.fromMap(c);
-            return SubstepLogicalModel(model: auxC);
-          }).toList();
+      if (mapA == null || mapA.isEmpty) {
+        throw "Workflow não encontrada";
+      }
 
-          return StepLogicalModel(model: auxB, substeps: substeps);
-        }));
+      model.workflows = mapA.map((a) {
+        return WorkflowLogicalModel(model: WorkflowDatabaseModel.fromMap(a));
+      }).toList();
 
-        return WorkflowLogicalModel(model: auxA, steps: steps);
-      }));
+      for (WorkflowLogicalModel? workflow in model.workflows ?? []) {
+        if (workflow?.model != null) {
+          //* STEPS *//
+          Map<String, dynamic> argsB = {};
+          argsB['tb_workflow_atr_id'] = workflow!.model!.id;
+
+          List<Map<String, Object?>>? mapB =
+              await methods.read(consts.step, args: argsB);
+
+          if (mapB != null && mapB.isNotEmpty) {
+            workflow.steps = mapB.map((b) {
+              return StepLogicalModel(model: StepDatabaseModel.fromMap(b));
+            }).toList();
+
+            //* SUBSTEPS *//
+            for (StepLogicalModel? step in workflow.steps ?? []) {
+              if (step?.model != null) {
+                Map<String, dynamic> argsC = {};
+                argsC['tb_step_atr_id'] = step!.model!.id;
+
+                List<Map<String, Object?>>? mapC =
+                    await methods.read(consts.substep, args: argsC);
+
+                if (mapC != null && mapC.isNotEmpty) {
+                  step.substeps = mapC.map((c) {
+                    return SubstepLogicalModel(
+                        model: SubstepDatabaseModel.fromMap(c));
+                  }).toList();
+                }
+              }
+            }
+          }
+        }
+      }
 
       workflowStream.sink.add(model);
-
-      log(workflowStream.value.toString());
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateWorkflow({required WorkflowLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
+      if (model.model == null) throw "O modelo do workflow é nulo";
+
+      model.model!.userId = userId;
+
+      //* PROJECT *//
+      Map<String, dynamic> argsA = {};
+      argsA['atr_id'] = model.model!.id;
 
       await methods.update(consts.workflow,
-          map: model.model!.toMap(), id: model.model!.id!);
+          map: model.model!.toMap(), args: argsA);
 
-      await Future.wait(model.steps!.map((step) async {
-        await methods.update(consts.step,
-            map: step!.model!.toMap(), id: step.model!.id!);
+      //* STEPS *//
+      for (StepLogicalModel? step in model.steps ?? []) {
+        if (step?.model != null) {
+          Map<String, dynamic> argsB = {};
+          argsB['atr_id'] = step!.model!.id!;
 
-        await Future.wait(step.substeps!.map((substep) async {
-          await methods.update(consts.substep,
-              map: substep!.model!.toMap(), id: substep.model!.id!);
-        }));
-      }));
+          await methods.update(consts.step,
+              map: model.model!.toMap(), args: argsB);
+
+          //* SUBSTEPS *//
+          for (SubstepLogicalModel? substep in step.substeps ?? []) {
+            if (substep?.model != null) {
+              Map<String, dynamic> argsC = {};
+              argsC['atr_id'] = substep!.model!.id!;
+
+              await methods.update(consts.substep,
+                  map: model.model!.toMap(), args: argsC);
+            }
+          }
+        }
+      }
 
       await readWorkflow();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> deleteWorkflow({required WorkflowLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
+      if (model.model == null) throw "O modelo do workflow é nulo";
 
-      await Future.wait(model.steps!.map((step) async {
-        await Future.wait(step!.substeps!.map((substep) async {
-          await methods.delete(consts.substep, id: substep!.model?.id);
-        }));
-      }));
+      //* WORKFLOW *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
 
-      await Future.wait(model.steps!.map((step) async {
-        await methods.delete(consts.step, id: step!.model?.id);
-      }));
-
-      await methods.delete(consts.workflow, id: model.model?.id);
+        await methods.delete(consts.workflow, args: argsA);
+      }
 
       await readWorkflow();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 }

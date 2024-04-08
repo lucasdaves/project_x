@@ -39,10 +39,14 @@ class ProjectController {
 
       model.model!.userId = userId;
 
-      int? projectId = await methods.create(
-        consts.project,
-        map: model.model!.toMap(),
-      );
+      //* PROJECT *//
+      int? projectId;
+      if (model.model != null) {
+        projectId = await methods.create(
+          consts.project,
+          map: model.model!.toMap(),
+        );
+      }
 
       if (projectId == null) throw "Projeto não criado";
 
@@ -51,71 +55,87 @@ class ProjectController {
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readProject({int? id, int? userId}) async {
+  Future<bool> readProject() async {
     try {
-      if (userId == null) throw "Usuário ainda não logado";
+      int? userId = await userController.getUserId();
+      if (userId == null) throw "O id do usuário é nulo";
 
       ProjectStreamModel model = ProjectStreamModel();
 
-      List<Map<String, Object?>>? mapA = await methods.read(consts.project);
+      //* PROJECT *//
+      Map<String, dynamic> argsA = {};
+      argsA['tb_user_atr_id'] = userId;
 
-      model.projects = mapA!.map((a) {
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.project, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Projeto não encontrado";
+      }
+
+      model.projects = mapA.map((a) {
         return ProjectLogicalModel(model: ProjectDatabaseModel.fromMap(a));
       }).toList();
 
       projectStream.sink.add(model);
 
-      log(projectStream.value.toString());
-
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateProject({required ProjectLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
+      if (userId == null) throw "O id do usuário é nulo";
+      if (model.model == null) throw "O modelo do projeto é nulo";
 
-      if (userId == null) throw "Usuário ainda não logado";
+      model.model!.userId = userId;
 
-      if (model.model == null) {
-        throw "O modelo do projeto é nulo";
+      //* PROJECT *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.update(consts.project,
+            map: model.model!.toMap(), args: argsA);
       }
-
-      await methods.update(consts.project,
-          map: model.model!.toMap(), id: model.model!.id!);
 
       await readProject();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> deleteProject({required ProjectLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
-
-      if (userId == null) throw "Usuário ainda não logado";
-
+      if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do projeto é nulo";
 
-      await methods.delete(consts.project, id: model.model?.id);
+      //* PROJECT *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.delete(consts.project, args: argsA);
+      }
 
       await readProject();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 }

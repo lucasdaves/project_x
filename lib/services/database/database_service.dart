@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,25 +27,37 @@ class DatabaseService {
   }
 
   Future<void> clearDatabase() async {
-    _checkPlatformSupport();
+    try {
+      _checkPlatformSupport();
 
-    await databaseModel.database!.close();
-    await _databaseFactory.deleteDatabase(databaseModel.databasePath!);
+      await databaseModel.database!.close();
+      await _databaseFactory.deleteDatabase(databaseModel.databasePath!);
+
+      log("Banco de dados apagado");
+    } catch (error) {
+      log(error.toString());
+    }
   }
 
   Future<void> initDatabase() async {
-    _checkPlatformSupport();
+    try {
+      _checkPlatformSupport();
 
-    await _initInformation();
+      await _initInformation();
 
-    final database = await _databaseFactory.openDatabase(
-      databaseModel.databasePath!,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: _onCreate,
-      ),
-    );
-    databaseModel.database = database;
+      final database = await _databaseFactory.openDatabase(
+        databaseModel.databasePath!,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: _onCreate,
+        ),
+      );
+      databaseModel.database = database;
+
+      log("Banco de dados inicializado");
+    } catch (error) {
+      log(error.toString());
+    }
   }
 
   Future<void> _initInformation() async {

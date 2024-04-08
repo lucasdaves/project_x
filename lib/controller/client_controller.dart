@@ -3,6 +3,7 @@ import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/client_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
+import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
 import 'package:rxdart/rxdart.dart';
@@ -40,8 +41,9 @@ class ClientController {
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do cliente é nulo";
 
-      model.model!.userId = userId;
+      model.model?.userId = userId;
 
+      //* ADDRESS *//
       int? addressId;
       if (model.personal?.address != null) {
         addressId = await methods.create(
@@ -50,6 +52,7 @@ class ClientController {
         );
       }
 
+      //* PERSONAL *//
       int? personalId;
       if (model.personal != null) {
         PersonalDatabaseModel personalModel = model.personal!.model!;
@@ -62,6 +65,7 @@ class ClientController {
         );
       }
 
+      //* CLIENT *//
       int? clientId;
       if (model.model != null) {
         ClientDatabaseModel clientModel = model.model!;
@@ -74,50 +78,82 @@ class ClientController {
         );
       }
 
-      if (clientId != null) {
-        await methods.create(
-          consts.client,
-          map: {'tb_user_atr_id': userId, 'tb_client_atr_id': clientId},
-        );
-      }
+      if (clientId == null) throw "Erro ao criar cliente";
 
       await readClient();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readClient({int? id}) async {
+  Future<bool> readClient() async {
     try {
       int? userId = await userController.getUserId();
-      if (userId == null) throw "Usuário ainda não logado";
+      if (userId == null) throw "O id do usuário é nulo";
 
       ClientStreamModel model = ClientStreamModel();
 
-      List<Map<String, Object?>>? mapA = await methods.read(
-        consts.client,
-        id: id,
-        userId: userId,
-      );
+      //* CLIENT *//
+      Map<String, dynamic> argsA = {};
+      argsA['tb_user_atr_id'] = userId;
 
-      if (mapA == null || mapA.isEmpty) throw "Cliente não encontrado";
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.client, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Cliente não encontrado";
+      }
 
       model.clients = mapA.map((a) {
         return ClientLogicalModel(model: ClientDatabaseModel.fromMap(a));
       }).toList();
 
-      clientStream.sink.add(model);
+      for (ClientLogicalModel? client in model.clients ?? []) {
+        //* PERSONAL *//
+        if (client?.model?.personalId != null) {
+          Map<String, dynamic> argsB = {};
+          if (client?.model?.personalId != null) {
+            argsB['atr_id'] = client?.model?.personalId;
+          }
 
-      log(clientStream.value.toString());
+          List<Map<String, Object?>>? mapB =
+              await methods.read(consts.personal, args: argsB);
+
+          if (mapB != null && mapB.isNotEmpty) {
+            client!.personal = PersonalLogicalModel(
+              model: PersonalDatabaseModel.fromMap(mapB.first),
+            );
+          }
+        }
+
+        //* ADDRESS *//
+        if (client?.personal?.model?.addressId != null) {
+          Map<String, dynamic> argsC = {};
+          if (client?.personal?.model?.addressId != null) {
+            argsC['atr_id'] = client?.personal?.model?.addressId;
+          }
+
+          List<Map<String, Object?>>? mapC =
+              await methods.read(consts.address, args: argsC);
+
+          if (mapC != null && mapC.isNotEmpty) {
+            client!.personal!.address = AddressLogicalModel(
+              model: AddressDatabaseModel.fromMap(mapC.first),
+            );
+          }
+        }
+      }
+
+      clientStream.sink.add(model);
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateClient({required ClientLogicalModel model}) async {
@@ -128,48 +164,31 @@ class ClientController {
 
       model.model!.userId = userId;
 
-      if (model.personal?.address != null) {
-        if (model.personal!.address!.model == null) {
-          throw "O modelo de endereço é nulo";
-        }
+      //* ADDRESS *//
+      if (model.personal?.address?.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.personal!.address!.model!.id;
 
-        if (model.personal!.address!.model!.id != null) {
-          await methods.update(
-            consts.address,
-            map: model.personal!.address!.model!.toMap(),
-            id: model.personal!.address!.model!.id!,
-          );
-        } else {
-          throw "O ID do endereço é nulo";
-        }
+        await methods.update(consts.address,
+            map: model.personal!.address!.model!.toMap(), args: argsA);
       }
 
-      if (model.personal != null) {
-        if (model.personal!.model == null) {
-          throw "O modelo de dados pessoais é nulo";
-        }
+      //* PERSONAL *//
+      if (model.personal?.model != null) {
+        Map<String, dynamic> argsB = {};
+        argsB['atr_id'] = model.personal!.model!.id;
 
-        if (model.personal!.model!.id != null) {
-          await methods.update(
-            consts.personal,
-            map: model.personal!.model!.toMap(),
-            id: model.personal!.model!.id!,
-          );
-        } else {
-          throw "O ID dos dados pessoais é nulo";
-        }
+        await methods.update(consts.personal,
+            map: model.personal!.model!.toMap(), args: argsB);
       }
 
+      //* CLIENT *//
       if (model.model != null) {
-        if (model.model!.id != null) {
-          await methods.update(
-            consts.client,
-            map: model.model!.toMap(),
-            id: model.model!.id!,
-          );
-        } else {
-          throw "O ID do cliente é nulo";
-        }
+        Map<String, dynamic> argsC = {};
+        argsC['atr_id'] = model.model!.id;
+
+        await methods.update(consts.client,
+            map: model.model!.toMap(), args: argsC);
       }
 
       await readClient();
@@ -177,8 +196,8 @@ class ClientController {
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> deleteClient({required ClientLogicalModel model}) async {
@@ -186,16 +205,21 @@ class ClientController {
       int? userId = await userController.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo do cliente é nulo";
-      if (model.model!.id != null) throw "O id do modelo é nulo";
 
-      await methods.delete(consts.client, id: model.model!.id);
+      //* CLIENT *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.delete(consts.client, args: argsA);
+      }
 
       await readClient();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 }

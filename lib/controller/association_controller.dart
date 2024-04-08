@@ -40,89 +40,107 @@ class AssociationController {
 
       model.model?.userId = userId;
 
-      int? associationId = await methods.create(
-        consts.association,
-        map: model.model!.toMap(),
-      );
+      //* ASSOCIATION *//
+      int? associationId;
+      if (model.model != null) {
+        AssociationDatabaseModel associationModel = model.model!;
+        associationModel.userId = userId;
+        associationId = await methods.create(
+          consts.association,
+          map: associationModel.toMap(),
+        );
+      }
 
-      if (associationId == null) throw "Associação não criada";
+      if (associationId == null) throw "Erro ao criar associação";
 
       await readAssociation();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readAssociation({int? id, int? userId}) async {
+  Future<bool> readAssociation() async {
     try {
+      int? userId = await userController.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
       AssociationStreamModel model = AssociationStreamModel();
 
-      List<Map<String, Object?>>? mapA = await methods.read(
-        consts.association,
-        id: id,
-        userId: userId,
-      );
+      //* ASSOCIATION *//
+      Map<String, dynamic> argsA = {};
+      argsA['tb_user_atr_id'] = userId;
 
-      model.associations = mapA!.map((a) {
-        return AssociationLogicalModel(
-          model: AssociationDatabaseModel.fromMap(a),
-        );
-      }).toList();
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.association, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Associação não encontrada";
+      }
 
       associationStream.sink.add(model);
-
-      log(associationStream.value.toString());
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateAssociation(
       {required AssociationLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
-
       if (userId == null) throw "Usuário ainda não logado";
-
       if (model.model == null) throw "O modelo da associação é nulo";
 
-      await methods.update(consts.association,
-          map: model.model!.toMap(), id: model.model!.id!);
+      model.model!.userId = userId;
+
+      //* ASSOCIATION *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.update(consts.association,
+            map: model.model!.toMap(), args: argsA);
+
+        if (model.model!.clientId == null &&
+            model.model!.clientId == null &&
+            model.model!.clientId == null) {
+          deleteAssociation(model: model);
+        }
+      }
 
       await readAssociation();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> deleteAssociation(
       {required AssociationLogicalModel model}) async {
     try {
       int? userId = await userController.getUserId();
-
       if (userId == null) throw "Usuário ainda não logado";
-
       if (model.model == null) throw "O modelo da associação é nulo";
 
-      await methods.delete(consts.association, id: model.model?.id);
+      //* ASSOCIATION *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
 
-      await readAssociation();
+        await methods.delete(consts.association, args: argsA);
+      }
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:developer';
 
 import 'package:project_x/controller/user_controller.dart';
@@ -40,22 +42,25 @@ class FinanceController {
 
       model.model!.userId = userId;
 
-      int? financeId = await methods.create(
-        consts.finance,
-        map: model.model!.toMap(),
-      );
+      //* FINANCE *//
+      int? financeId;
+      if (model.model != null) {
+        financeId = await methods.create(
+          consts.finance,
+          map: model.model!.toMap(),
+        );
+      }
 
-      if (financeId != null) {
-        if (model.operations != null) {
-          await Future.forEach(model.operations!, (operation) async {
-            if (operation?.model != null) {
-              operation!.model!.financeId = financeId;
-              await methods.create(
-                consts.financeOperation,
-                map: operation.model!.toMap(),
-              );
-            }
-          });
+      if (financeId == null) throw "Erro ao criar finança";
+
+      //* FINANCE OPERATIONS *//
+      for (FinanceOperationLogicalModel? operation in model.operations ?? []) {
+        if (operation?.model != null) {
+          operation!.model!.financeId = financeId;
+          await methods.create(
+            consts.financeOperation,
+            map: operation.model!.toMap(),
+          );
         }
       }
 
@@ -68,41 +73,49 @@ class FinanceController {
     }
   }
 
-  Future<bool> readFinance({int? id, int? userId}) async {
+  Future<bool> readFinance() async {
     try {
+      int? userId = await userController.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
       FinanceStreamModel model = FinanceStreamModel();
 
-      List<Map<String, Object?>>? mapA = await methods.read(
-        consts.finance,
-        id: id,
-        userId: userId,
-      );
+      //* FINANCE *//
+      Map<String, dynamic> argsA = {};
+      argsA['tb_user_atr_id'] = userId;
 
-      model.finances = mapA!.map((a) {
-        FinanceLogicalModel financeModel = FinanceLogicalModel(
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.finance, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Finança não encontrada";
+      }
+
+      model.finances = mapA.map((a) {
+        return FinanceLogicalModel(
           model: FinanceDatabaseModel.fromMap(a),
           operations: [],
         );
-        return financeModel;
       }).toList();
 
-      await Future.forEach(model.finances!, (finance) async {
-        List<Map<String, Object?>>? mapB = await methods.rawRead(
-          query:
-              'SELECT * FROM tb_finance_operation WHERE tb_finance_atr_id = ${finance?.model?.id}',
-        );
+      //* FINANCE OPERATIONS *//
+      for (FinanceLogicalModel? finance in model.finances ?? []) {
+        Map<String, dynamic> argsB = {};
+        argsB['tb_finance_atr_id'] = finance?.model?.id;
 
-        finance!.operations = mapB!.map((b) {
-          return FinanceOperationLogicalModel(
-              model: FinanceOperationDatabaseModel.fromMap(b));
-        }).toList();
-      });
+        List<Map<String, Object?>>? mapB =
+            await methods.read(consts.financeOperation, args: argsB);
+
+        if (mapB != null && mapB.isNotEmpty) {
+          finance!.operations = mapB.map((b) {
+            return FinanceOperationLogicalModel(
+              model: FinanceOperationDatabaseModel.fromMap(b),
+            );
+          }).toList();
+        }
+      }
 
       financeStream.sink.add(model);
-
-      log(financeStream.value.toString());
 
       return true;
     } catch (error) {
@@ -117,15 +130,27 @@ class FinanceController {
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da finança é nulo";
 
-      await methods.update(consts.finance,
-          map: model.model!.toMap(), id: model.model!.id!);
+      model.model!.userId = userId;
 
-      await Future.forEach(model.operations!, (operation) async {
+      //* FINANCE *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.update(consts.finance,
+            map: model.model!.toMap(), args: argsA);
+      }
+
+      //* FINANCE OPERATIONS *//
+      for (FinanceOperationLogicalModel? operation in model.operations ?? []) {
         if (operation?.model != null) {
+          Map<String, dynamic> argsB = {};
+          argsB['atr_id'] = operation!.model!.id;
+
           await methods.update(consts.financeOperation,
-              map: operation!.model!.toMap(), id: operation.model!.id!);
+              map: operation.model!.toMap(), args: argsB);
         }
-      });
+      }
 
       await readFinance();
 
@@ -142,16 +167,13 @@ class FinanceController {
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da finança é nulo";
 
-      await Future.forEach(model.operations!, (operation) async {
-        if (operation?.model != null) {
-          await methods.delete(
-            consts.financeOperation,
-            id: operation!.model?.id,
-          );
-        }
-      });
+      //* FINANCE *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
 
-      await methods.delete(consts.finance, id: model.model?.id);
+        await methods.delete(consts.finance, args: argsA);
+      }
 
       await readFinance();
 

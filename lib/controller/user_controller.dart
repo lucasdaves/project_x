@@ -4,7 +4,6 @@ import 'package:project_x/model/user_controller_model.dart';
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
 import 'package:project_x/services/database/model/recover_model.dart';
-import 'package:project_x/services/database/model/system_model.dart';
 import 'package:project_x/services/database/model/user_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/memory/memory_service.dart';
@@ -51,8 +50,8 @@ class UserController {
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> setLogin(
@@ -63,21 +62,36 @@ class UserController {
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
+  }
+
+  Future<bool> setLogout() async {
+    try {
+      await storage.setLogout();
+      return true;
+    } catch (error) {
+      log(error.toString());
+      return false;
+    }
   }
 
   Future<bool> createUser({required UserLogicalModel model}) async {
     try {
       if (model.model == null) throw "O modelo do usuário é nulo";
 
-      List<Map<String, Object?>>? mapA = await methods.rawRead(
-        query:
-            'SELECT * FROM tb_user AS user WHERE user.atr_login = "${model.model!.login}"',
-      );
+      //* VERIFY USER *//
+      Map<String, dynamic> argsA = {};
+      argsA['user.atr_login'] = model.model!.login;
 
-      if (mapA != null && mapA.isNotEmpty) throw "Login com cadastro existente";
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.user, args: argsA);
 
+      if (mapA == null || mapA.isEmpty) {
+        throw "Usuário já cadastrado";
+      }
+
+      //* ADDRESS *//
       int? addressId;
       if (model.personal?.address != null) {
         addressId = await methods.create(
@@ -86,6 +100,7 @@ class UserController {
         );
       }
 
+      //* PERSONAL *//
       int? personalId;
       if (model.personal != null) {
         PersonalDatabaseModel personalModel = model.personal!.model!;
@@ -98,11 +113,25 @@ class UserController {
         );
       }
 
+      //* RECOVER *//
+      int? recoverId;
+      if (model.recover != null) {
+        RecoverDatabaseModel recoverModel = model.recover!.model!;
+        recoverId = await methods.create(
+          consts.recover,
+          map: recoverModel.toMap(),
+        );
+      }
+
+      //* USER *//
       int? userId;
       if (model.model != null) {
         UserDatabaseModel userModel = model.model!;
         if (personalId != null) {
           userModel.personalId = personalId;
+        }
+        if (recoverId != null) {
+          userModel.recoverId = recoverId;
         }
         userId = await methods.create(
           consts.user,
@@ -110,186 +139,181 @@ class UserController {
         );
       }
 
-      if (model.recover != null && userId != null) {
-        RecoverDatabaseModel recoverModel = model.recover!.model!;
-        recoverModel.userId = userId;
-        await methods.create(
-          consts.recover,
-          map: recoverModel.toMap(),
-        );
-      }
-
-      SystemLogicalModel? systemModel =
-          systemController.systemStream.valueOrNull?.system;
+      //* SYSTEM *//
+      final systemModel = systemController.systemStream.valueOrNull?.system;
+      final isLoggedIn = userId != null;
 
       if (systemModel != null &&
-          systemModel.model?.userId == null &&
-          userId != null) {
+          isLoggedIn &&
+          systemModel.model?.userId == null) {
         systemModel.model?.userId = userId;
         systemController.updateSystem(model: systemModel);
       }
 
-      await readUser(
-          login: model.model!.login, password: model.model!.password);
+      await readUser();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readUser(
-      {required String login, required String password}) async {
+  Future<bool> readUser() async {
     try {
       UserStreamModel model = UserStreamModel();
 
-      List<Map<String, Object?>>? map = await methods.rawRead(
-          query:
-              'SELECT * FROM tb_user AS user WHERE user.atr_login = "$login" AND user.atr_password = "$password"');
+      String? credentials = await storage.getLogin();
 
-      if (map == null || map.isEmpty) throw "Erro ao logar, dados errados";
+      if (credentials == null || credentials.isEmpty) {
+        throw "Usuário não está logado";
+      }
+
+      //* USER *//
+      Map<String, dynamic> argsA = {};
+      argsA['atr_login'] = credentials.split(",").first;
+      argsA['atr_password'] = credentials.split(",").last;
+
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.user, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Usuário não encontrado";
+      }
 
       model.user = UserLogicalModel(
-        model: UserDatabaseModel.fromMap(map.first),
+        model: UserDatabaseModel.fromMap(mapA.first),
       );
 
-      if (model.user!.model!.personalId != null) {
-        List<Map<String, Object?>>? personalMap = await methods.read(
-          consts.personal,
-          id: model.user!.model!.personalId,
-        );
+      //* PERSONAL *//
+      if (model.user?.model?.personalId != null) {
+        Map<String, dynamic> argsB = {};
+        argsB['atr_id'] = model.user!.model!.personalId;
 
-        if (personalMap == null || personalMap.isEmpty) {
-          throw "Dados pessoais não encontrados";
+        List<Map<String, Object?>>? mapB =
+            await methods.read(consts.personal, args: argsB);
+
+        if (mapB != null && mapB.isNotEmpty) {
+          model.user!.personal = PersonalLogicalModel(
+            model: PersonalDatabaseModel.fromMap(mapB.first),
+          );
         }
-
-        model.user!.personal = PersonalLogicalModel(
-          model: PersonalDatabaseModel.fromMap(personalMap.first),
-        );
       }
 
-      if (model.user!.personal!.model!.addressId != null) {
-        List<Map<String, Object?>>? addressMap = await methods.read(
-          consts.address,
-          id: model.user!.personal!.model!.addressId,
-        );
+      //* ADDRESS *//
+      if (model.user?.personal?.model?.addressId != null) {
+        Map<String, dynamic> argsC = {};
+        argsC['atr_id'] = model.user!.personal!.model!.addressId;
 
-        if (addressMap == null || addressMap.isEmpty) {
-          throw "Endereço não encontrado";
+        List<Map<String, Object?>>? mapC =
+            await methods.read(consts.address, args: argsC);
+
+        if (mapC != null && mapC.isNotEmpty) {
+          model.user!.personal!.address = AddressLogicalModel(
+            model: AddressDatabaseModel.fromMap(mapC.first),
+          );
         }
-
-        model.user!.personal!.address = AddressLogicalModel(
-          model: AddressDatabaseModel.fromMap(addressMap.first),
-        );
       }
 
-      var recoverQuery =
-          'SELECT * FROM tb_recover AS recover WHERE recover.tb_user_atr_id = ${model.user!.model!.id}';
+      //* RECOVER *//
+      if (model.user?.model?.id != null) {
+        Map<String, dynamic> argsD = {};
+        argsD['tb_user_atr_id'] = model.user?.model?.id;
 
-      List<Map<String, Object?>>? recoverMap =
-          await methods.rawRead(query: recoverQuery);
+        List<Map<String, Object?>>? mapD =
+            await methods.read(consts.recover, args: argsD);
 
-      if (recoverMap == null || recoverMap.isEmpty) {
-        throw "Recuperação de conta não encontrada";
+        if (mapD != null && mapD.isNotEmpty) {
+          model.user?.recover = RecoverLogicalModel(
+            model: RecoverDatabaseModel.fromMap(mapD.first),
+          );
+        }
       }
-
-      model.user!.recover = RecoverLogicalModel(
-        model: RecoverDatabaseModel.fromMap(recoverMap.first),
-      );
-
-      await setLogin(
-          login: model.user!.model!.login,
-          password: model.user!.model!.password);
-
-      await systemController.readSystem(userId: model.user!.model!.id);
 
       userStream.sink.add(model);
 
-      log(userStream.value.toString());
+      await systemController.readSystem();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateUser({required UserLogicalModel model}) async {
     try {
-      if (model.model == null) {
-        throw "O modelo de usuário é nulo";
+      int? userId = await getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+      if (model.model == null) throw "O modelo do usuário é nulo";
+
+      //* ADDRESS *//
+      if (model.personal?.address?.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.personal!.address!.model!.id;
+
+        await methods.update(consts.address,
+            map: model.personal!.address!.model!.toMap(), args: argsA);
       }
 
-      if (model.personal?.address != null) {
-        if (model.personal!.address!.model == null) {
-          throw "O modelo de endereço é nulo";
-        }
+      //* PERSONAL *//
+      if (model.personal?.model != null) {
+        Map<String, dynamic> argsB = {};
+        argsB['atr_id'] = model.personal!.model!.id;
 
-        if (model.personal!.address!.model!.id != null) {
-          await methods.update(
-            consts.address,
-            map: model.personal!.address!.model!.toMap(),
-            id: model.personal!.address!.model!.id!,
-          );
-        } else {
-          throw "O ID do endereço é nulo";
-        }
+        await methods.update(consts.personal,
+            map: model.personal!.model!.toMap(), args: argsB);
       }
 
-      if (model.personal != null) {
-        if (model.personal!.model == null) {
-          throw "O modelo de dados pessoais é nulo";
-        }
+      //* RECOVER *//
+      if (model.recover?.model != null) {
+        Map<String, dynamic> argsC = {};
+        argsC['atr_id'] = model.recover!.model!.id;
 
-        if (model.personal!.model!.id != null) {
-          await methods.update(
-            consts.personal,
-            map: model.personal!.model!.toMap(),
-            id: model.personal!.model!.id!,
-          );
-        } else {
-          throw "O ID dos dados pessoais é nulo";
-        }
+        await methods.update(consts.recover,
+            map: model.recover!.model!.toMap(), args: argsC);
       }
 
+      //* USER *//
       if (model.model != null) {
-        if (model.model!.id != null) {
-          await methods.update(
-            consts.user,
-            map: model.model!.toMap(),
-            id: model.model!.id!,
-          );
-        } else {
-          throw "O ID do usuário é nulo";
-        }
+        Map<String, dynamic> argsD = {};
+        argsD['atr_id'] = model.model!.id;
+
+        await methods.update(consts.user,
+            map: model.model!.toMap(), args: argsD);
       }
 
-      if (model.recover != null) {
-        if (model.recover!.model == null) {
-          throw "O modelo de recuperação de conta é nulo";
-        }
-
-        if (model.recover!.model!.id != null) {
-          await methods.update(
-            consts.recover,
-            map: model.recover!.model!.toMap(),
-            id: model.recover!.model!.id!,
-          );
-        } else {
-          throw "O ID da recuperação de conta é nulo";
-        }
-      }
-
-      await systemController.readSystem(userId: model.model!.id);
-
-      await readUser(
-          login: model.model!.login, password: model.model!.password);
+      await readUser();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
+  }
+
+  Future<bool> deleteUser({required UserLogicalModel model}) async {
+    try {
+      int? userId = await getUserId();
+      if (userId == null) throw "Usuário ainda não logado";
+      if (model.model == null) throw "O modelo do usuário é nulo";
+
+      //* USER *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+
+        await methods.delete(consts.user, args: argsA);
+      }
+
+      userStream.sink.add(UserStreamModel());
+
+      setLogout();
+
+      return true;
+    } catch (error) {
+      log(error.toString());
+      return false;
+    }
   }
 }

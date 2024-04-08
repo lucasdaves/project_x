@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/system_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/system_model.dart';
@@ -18,6 +19,10 @@ class SystemController {
   final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
+
+  //* CONTROLLER INSTANCES *//
+
+  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -47,50 +52,66 @@ class SystemController {
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
-  Future<bool> readSystem({int? id, int? userId}) async {
+  Future<bool> readSystem() async {
     try {
-      List<Map<String, Object?>>? map =
-          await methods.read(consts.system, userId: userId);
+      int? userId = await userController.getUserId();
 
-      if (map == null || map.isEmpty) throw "Sistema não encontrado";
+      SystemStreamModel model = SystemStreamModel();
 
-      Map<String, Object?> systemMap = map.first;
+      //* SYSTEM *//
+      Map<String, dynamic> argsA = {};
+      if (userId != null) {
+        argsA['tb_user_atr_id'] = userId;
+      }
 
-      SystemLogicalModel systemModel = SystemLogicalModel(
-        model: SystemDatabaseModel.fromMap(systemMap),
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.system, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Sistema não encontrado";
+      }
+
+      model.system = SystemLogicalModel(
+        model: SystemDatabaseModel.fromMap(mapA.first),
       );
 
-      SystemStreamModel systemStreamModel =
-          SystemStreamModel(system: systemModel);
-
-      systemStream.sink.add(systemStreamModel);
-
-      log(systemStream.value.toString());
+      systemStream.sink.add(model);
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 
   Future<bool> updateSystem({required SystemLogicalModel model}) async {
     try {
-      if (model.model == null) throw "O modelo do sistema é nulo";
+      int? userId = await userController.getUserId();
+      if (model.model == null) throw "O modelo do usuário é nulo";
 
-      await methods.update(consts.system,
-          map: model.model!.toMap(), id: model.model!.id!);
+      //* SYSTEM *//
+      if (model.model != null) {
+        Map<String, dynamic> argsA = {};
+        argsA['atr_id'] = model.model!.id;
+        if (userId != null) {
+          model.model!.userId = userId;
+          argsA['tb_user_atr_id'] = userId;
+        }
+
+        await methods.update(consts.system,
+            map: model.model!.toMap(), args: argsA);
+      }
 
       await readSystem();
 
       return true;
     } catch (error) {
       log(error.toString());
+      return false;
     }
-    return false;
   }
 }

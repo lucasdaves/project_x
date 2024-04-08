@@ -16,6 +16,7 @@ class DatabaseMethods {
     Database? database = DatabaseService.instance.databaseModel.database;
     if (database != null) {
       map["atr_created_at"] = DateTime.now().toIso8601String();
+
       int res = await database.insert(table, map);
       return res;
     }
@@ -24,25 +25,18 @@ class DatabaseMethods {
 
   Future<List<Map<String, Object?>>?> read(
     String table, {
-    int? id,
-    int? userId,
+    required Map<String, dynamic>? args,
   }) async {
     Database? database = DatabaseService.instance.databaseModel.database;
     if (database != null) {
       String whereClause = "";
       List<dynamic> whereArgs = [];
 
-      if (id != null) {
+      args?.forEach((key, value) {
         whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
-        whereClause += 'atr_id = ?';
-        whereArgs.add(id);
-      }
-
-      if (userId != null) {
-        whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
-        whereClause += 'tb_user_atr_id = ?';
-        whereArgs.add(userId);
-      }
+        whereClause += key;
+        whereArgs.add(value);
+      });
 
       List<Map<String, Object?>> res = await database.query(
         table,
@@ -57,16 +51,26 @@ class DatabaseMethods {
   Future<int?> update(
     String table, {
     required Map<String, dynamic> map,
-    int? id,
+    required Map<String, dynamic>? args,
   }) async {
     Database? database = DatabaseService.instance.databaseModel.database;
     if (database != null) {
+      String whereClause = "";
+      List<dynamic> whereArgs = [];
+
+      args?.forEach((key, value) {
+        whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
+        whereClause += key;
+        whereArgs.add(value);
+      });
+
       map["atr_updated_at"] = DateTime.now().toIso8601String();
+
       int res = await database.update(
         table,
         map,
-        where: (id != null) ? 'atr_id = ?' : null,
-        whereArgs: (id != null) ? [id] : null,
+        where: whereClause.isNotEmpty ? whereClause : null,
+        whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
       );
       return res;
     }
@@ -75,14 +79,23 @@ class DatabaseMethods {
 
   Future<int?> delete(
     String table, {
-    int? id,
+    required Map<String, dynamic>? args,
   }) async {
     Database? database = DatabaseService.instance.databaseModel.database;
     if (database != null) {
+      String whereClause = "";
+      List<dynamic> whereArgs = [];
+
+      args?.forEach((key, value) {
+        whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
+        whereClause += key;
+        whereArgs.add(value);
+      });
+
       int res = await database.delete(
         table,
-        where: (id != null) ? 'atr_id = ?' : null,
-        whereArgs: (id != null) ? [id] : null,
+        where: whereClause.isNotEmpty ? whereClause : null,
+        whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
       );
       return res;
     }

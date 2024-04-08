@@ -140,12 +140,7 @@ class DatabaseScripts {
           atr_response text,
           atr_code text NOT NULL,
           atr_created_at datetime,
-          atr_updated_at datetime,
-          tb_user_atr_id integer NOT NULL,
-          CONSTRAINT tb_recover_tb_user FOREIGN KEY (tb_user_atr_id)
-          REFERENCES tb_user (atr_id)
-          ON DELETE RESTRICT 
-          ON UPDATE CASCADE
+          atr_updated_at datetime
       );
 
       CREATE TABLE tb_step (
@@ -203,8 +198,11 @@ class DatabaseScripts {
           atr_created_at datetime,
           atr_updated_at datetime,
           tb_personal_atr_id integer,
+          tb_recover_atr_id integer,
           CONSTRAINT tb_user_tb_personal FOREIGN KEY (tb_personal_atr_id)
           REFERENCES tb_personal (atr_id)
+          CONSTRAINT tb_user_tb_recover FOREIGN KEY (tb_recover_atr_id)
+          REFERENCES tb_recover (atr_id)
           ON DELETE CASCADE 
           ON UPDATE CASCADE
       );

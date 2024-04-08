@@ -18,6 +18,10 @@ class MemoryService {
     await storage.write(key: "login", value: credentials);
   }
 
+  Future<void> setLogout() async {
+    await storage.delete(key: "login");
+  }
+
   Future<String?> getLogin() async {
     return await storage.read(key: "login");
   }
