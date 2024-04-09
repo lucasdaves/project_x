@@ -18,10 +18,6 @@ class FinanceController {
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
 
-  //* CONTROLLER INSTANCES *//
-
-  final userController = UserController.instance;
-
   //* STREAMS *//
 
   final financeStream = BehaviorSubject<FinanceStreamModel>();
@@ -36,7 +32,7 @@ class FinanceController {
 
   Future<bool> createFinance({required FinanceLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da finança é nulo";
 
@@ -75,7 +71,7 @@ class FinanceController {
 
   Future<bool> readFinance() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
       FinanceStreamModel model = FinanceStreamModel();
@@ -126,7 +122,7 @@ class FinanceController {
 
   Future<bool> updateFinance({required FinanceLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da finança é nulo";
 
@@ -163,7 +159,7 @@ class FinanceController {
 
   Future<bool> deleteFinance({required FinanceLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da finança é nulo";
 

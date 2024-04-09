@@ -14,17 +14,24 @@ class AppLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLandscape = AppResponsive.instance.isLandscape();
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          decoration: const BoxDecoration(
+          width: AppResponsive.instance.getDeviceWidth(),
+          height: AppResponsive.instance.getDeviceHeight(),
+          decoration: BoxDecoration(
             color: Colors.transparent,
             image: DecorationImage(
-              image: AssetImage(AppConst.imageBackground),
+              image: AssetImage(
+                isLandscape
+                    ? AppConst.imageBackgroundLandscape
+                    : AppConst.imageBackgroundPortrait,
+              ),
               fit: BoxFit.cover,
             ),
           ),
-          child: AppResponsive.instance.isLandscape() ? landscape : portrait,
+          child: isLandscape ? landscape : portrait,
         );
       },
     );

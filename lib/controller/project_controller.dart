@@ -11,13 +11,8 @@ class ProjectController {
 
   //* DATABASE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -33,7 +28,7 @@ class ProjectController {
 
   Future<bool> createProject({required ProjectLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do projeto é nulo";
 
@@ -61,7 +56,7 @@ class ProjectController {
 
   Future<bool> readProject() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
       ProjectStreamModel model = ProjectStreamModel();
@@ -92,7 +87,7 @@ class ProjectController {
 
   Future<bool> updateProject({required ProjectLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do projeto é nulo";
 
@@ -118,7 +113,7 @@ class ProjectController {
 
   Future<bool> deleteProject({required ProjectLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do projeto é nulo";
 

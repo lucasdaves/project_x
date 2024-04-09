@@ -11,13 +11,8 @@ class AssociationController {
 
   //* DATABASE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -34,7 +29,7 @@ class AssociationController {
   Future<bool> createAssociation(
       {required AssociationLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo da associação é nulo";
 
@@ -64,7 +59,7 @@ class AssociationController {
 
   Future<bool> readAssociation() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
       AssociationStreamModel model = AssociationStreamModel();
@@ -92,7 +87,7 @@ class AssociationController {
   Future<bool> updateAssociation(
       {required AssociationLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo da associação é nulo";
 
@@ -125,7 +120,7 @@ class AssociationController {
   Future<bool> deleteAssociation(
       {required AssociationLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo da associação é nulo";
 

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
+import 'package:project_x/utils/app_route.dart';
+import 'package:project_x/utils/app_text_style.dart';
+import 'package:project_x/view/home/home_view.dart';
+import 'package:project_x/view/login/login_view.dart';
 import 'package:project_x/view/widgets/widget_app_bar.dart';
 
 class SplashView extends StatefulWidget {
+  static const String tag = "/splash_view";
   const SplashView({super.key});
 
   @override
@@ -18,7 +24,17 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
   }
 
-  void _initAppConfigs() {}
+  Future<void> _initAppConfigs() async {
+    bool hasLogin = await UserController.instance.hasLogin();
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    if (mounted) {
+      AppRoute(
+        tag: hasLogin ? HomeView.tag : LoginView.tag,
+        screen: hasLogin ? HomeView() : LoginView(),
+      ).navigate(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,55 +57,82 @@ class _SplashViewState extends State<SplashView> {
   }
 
   Widget _buildLandscape(BuildContext context) {
-    return Container(
-      height: AppResponsive.instance.getDeviceHeight(),
-      width: AppResponsive.instance.getDeviceWidth(),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
+    Widget buildTitle() {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "ProjectX",
+            textAlign: TextAlign.center,
+            style: AppTextStyle.size48(fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: AppResponsive.instance.getHeight(24),
+          ),
+          Text(
+            "gerencie seus clientes, projetos e financeiros",
+            textAlign: TextAlign.center,
+            style: AppTextStyle.size24(fontWeight: FontWeight.w300),
+          ),
+        ],
+      );
+    }
+
+    Widget buildLoader() {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: AppResponsive.instance.getWidth(302),
-            height: AppResponsive.instance.getHeight(492),
-            color: Colors.white,
-            child: Column(
-              children: [
-                Text("ProjectX"),
-                Text("Gerencie seus clientes, projetos e financeiro"),
-              ],
+            height: AppResponsive.instance.getHeight(32),
+            width: AppResponsive.instance.getHeight(32),
+            child: CircularProgressIndicator(
+              color: AppColor.colorSecondary,
+            ),
+          ),
+          SizedBox(
+            height: AppResponsive.instance.getHeight(32),
+          ),
+          Text(
+            "Validando sessão ...",
+            textAlign: TextAlign.center,
+            style: AppTextStyle.size20(
+              color: AppColor.colorSecondary,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ],
-      ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: AppResponsive.instance.getWidth(500),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildTitle(),
+              SizedBox(
+                height: AppResponsive.instance.getHeight(64),
+              ),
+              buildLoader(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildPortrait(BuildContext context) {
-    return Container(
-      height: AppResponsive.instance.getDeviceHeight(),
-      width: AppResponsive.instance.getDeviceWidth(),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: AppResponsive.instance.getWidth(200),
-            height: AppResponsive.instance.getHeight(500),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                Text("ProjectX"),
-                Text("Gerencie seus clientes, projetos e financeiro"),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    return Container();
   }
 }

@@ -20,28 +20,17 @@ class AppController {
   final responsive = AppResponsive.instance;
   final service = DatabaseService.instance;
 
-  //* CONTROLLER INSTANCES *//
-
   //* METHODS *//
 
   void dispose() {
     WidgetsFlutterBinding.ensureInitialized();
-
-    final associationController = AssociationController.instance;
-    final clientController = ClientController.instance;
-    final financeController = FinanceController.instance;
-    final projectController = ProjectController.instance;
-    final systemController = SystemController.instance;
-    final userController = UserController.instance;
-    final workflowController = WorkflowController.instance;
-
-    associationController.dispose();
-    clientController.dispose();
-    financeController.dispose();
-    projectController.dispose();
-    systemController.dispose();
-    userController.dispose();
-    workflowController.dispose();
+    AssociationController.instance.dispose();
+    ClientController.instance.dispose();
+    FinanceController.instance.dispose();
+    ProjectController.instance.dispose();
+    SystemController.instance.dispose();
+    UserController.instance.dispose();
+    WorkflowController.instance.dispose();
   }
 
   Future<void> initAppConfigs() async {
@@ -65,7 +54,6 @@ class AppController {
     Size screenSize = data.size;
     AppResponsive.instance.addRealSpec(screenSize.height, screenSize.width);
     await DatabaseService.instance.initDatabase();
-    //await DatabaseService.instance.clearDatabase();
   }
 
   void changeDeviceSize() {

@@ -15,14 +15,9 @@ class UserController {
 
   //* SERVICE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
   final storage = MemoryService.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final systemController = SystemController.instance;
 
   //* STREAMS *//
 
@@ -44,7 +39,7 @@ class UserController {
   Future<bool> hasLogin() async {
     try {
       String? hasLogin = await storage.getLogin();
-      if (hasLogin == null) {
+      if (hasLogin == null || hasLogin == "") {
         throw "Não há usuário logado";
       }
       return true;
@@ -140,14 +135,15 @@ class UserController {
       }
 
       //* SYSTEM *//
-      final systemModel = systemController.systemStream.valueOrNull?.system;
+      final systemModel =
+          SystemController.instance.systemStream.valueOrNull?.system;
       final isLoggedIn = userId != null;
 
       if (systemModel != null &&
           isLoggedIn &&
           systemModel.model?.userId == null) {
         systemModel.model?.userId = userId;
-        systemController.updateSystem(model: systemModel);
+        SystemController.instance.updateSystem(model: systemModel);
       }
 
       await readUser();
@@ -232,7 +228,7 @@ class UserController {
 
       userStream.sink.add(model);
 
-      await systemController.readSystem();
+      await SystemController.instance.readSystem();
 
       return true;
     } catch (error) {

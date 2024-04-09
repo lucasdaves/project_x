@@ -1,5 +1,8 @@
 class AppConst {
   //* IMAGES *//
   static const String imagePath = "assets/images/";
-  static const String imageBackground = "${imagePath}image_background.png";
+  static const String imageBackgroundLandscape =
+      "${imagePath}image_background_landscape.png";
+  static const String imageBackgroundPortrait =
+      "${imagePath}image_background_portrait.png";
 }

@@ -16,13 +16,8 @@ class SystemController {
 
   //* DATABASE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -58,7 +53,7 @@ class SystemController {
 
   Future<bool> readSystem() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
 
       SystemStreamModel model = SystemStreamModel();
 
@@ -90,7 +85,7 @@ class SystemController {
 
   Future<bool> updateSystem({required SystemLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (model.model == null) throw "O modelo do usuário é nulo";
 
       //* SYSTEM *//

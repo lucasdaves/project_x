@@ -38,6 +38,7 @@ class _MyAppState extends State<MyApp> {
           maxScaleFactor: 1.0,
         );
         return MediaQuery(
+          key: UniqueKey(),
           data: mediaQueryData.copyWith(textScaler: scale),
           child: child!,
         );
@@ -49,12 +50,7 @@ class _MyAppState extends State<MyApp> {
         Locale('pt', 'BR'),
       ],
       debugShowCheckedModeBanner: false,
-      home: OrientationBuilder(
-        builder: (BuildContext context, Orientation orientation) {
-          AppController.instance.changeDeviceSize();
-          return SplashView();
-        },
-      ),
+      home: SplashView(),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/client_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
@@ -14,14 +13,8 @@ class ClientController {
 
   //* DATABASE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final systemController = SystemController.instance;
-  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -37,7 +30,7 @@ class ClientController {
 
   Future<bool> createClient({required ClientLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do cliente é nulo";
 
@@ -91,7 +84,7 @@ class ClientController {
 
   Future<bool> readClient() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
       ClientStreamModel model = ClientStreamModel();
@@ -158,7 +151,7 @@ class ClientController {
 
   Future<bool> updateClient({required ClientLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo do cliente é nulo";
 
@@ -202,7 +195,7 @@ class ClientController {
 
   Future<bool> deleteClient({required ClientLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo do cliente é nulo";
 

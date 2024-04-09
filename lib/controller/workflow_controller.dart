@@ -13,13 +13,8 @@ class WorkflowController {
 
   //* DATABASE INSTANCES *//
 
-  final service = DatabaseService.instance;
   final methods = DatabaseMethods.instance;
   final consts = DatabaseConsts.instance;
-
-  //* CONTROLLER INSTANCES *//
-
-  final userController = UserController.instance;
 
   //* STREAMS *//
 
@@ -35,7 +30,7 @@ class WorkflowController {
 
   Future<bool> createWorkflow({required WorkflowLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do projeto é nulo";
 
@@ -85,7 +80,7 @@ class WorkflowController {
 
   Future<bool> readWorkflow() async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
       WorkflowStreamModel model = WorkflowStreamModel();
@@ -151,7 +146,7 @@ class WorkflowController {
 
   Future<bool> updateWorkflow({required WorkflowLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo do workflow é nulo";
 
@@ -197,7 +192,7 @@ class WorkflowController {
 
   Future<bool> deleteWorkflow({required WorkflowLogicalModel model}) async {
     try {
-      int? userId = await userController.getUserId();
+      int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
       if (model.model == null) throw "O modelo do workflow é nulo";
 
