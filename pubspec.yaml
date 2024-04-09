@@ -19,13 +19,12 @@ dependencies:
   rxdart: ^0.27.7
   flutter_secure_storage: ^9.0.0
   window_manager: ^0.3.8
+  icons_launcher: ^2.1.7
 
 dev_dependencies:
-
   flutter_lints: ^3.0.0
 
 flutter:
-
   uses-material-design: true
 
   assets:
@@ -44,3 +43,13 @@ flutter:
           weight: 700
         - asset: assets/fonts/mulish/Mulish-Black.ttf
           weight: 900
+
+icons_launcher:
+  image_path: "assets/images/app_icon.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    windows:
+      enable: true
