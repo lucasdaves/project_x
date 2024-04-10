@@ -33,12 +33,23 @@ class SystemController {
 
   Future<bool> createSystem({required SystemLogicalModel model}) async {
     try {
+      int? userId = await UserController.instance.getUserId();
       if (model.model == null) throw "O modelo do sistema é nulo";
 
-      int? createSystem =
+      Map<String, dynamic> argsA = {};
+      if (userId != null) argsA['tb_user_atr_id'] = userId;
+
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.system, args: argsA);
+
+      if (mapA != null && mapA.isNotEmpty) {
+        throw "Sistema já criado para usuário";
+      }
+
+      int? mapB =
           await methods.create(consts.system, map: model.model!.toMap());
 
-      if (createSystem == null) {
+      if (mapB == null) {
         throw "Sistema não criado";
       }
 
@@ -108,5 +119,15 @@ class SystemController {
       log(error.toString());
       return false;
     }
+  }
+
+  //* MOCK *//
+  Future<void> mockSystem() async {
+    SystemLogicalModel model = SystemLogicalModel(
+      model: SystemDatabaseModel(
+        language: 1,
+      ),
+    );
+    await createSystem(model: model);
   }
 }

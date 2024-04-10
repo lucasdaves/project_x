@@ -34,7 +34,7 @@ class DatabaseMethods {
 
       args?.forEach((key, value) {
         whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
-        whereClause += key;
+        whereClause += '$key = ?';
         whereArgs.add(value);
       });
 
@@ -60,7 +60,7 @@ class DatabaseMethods {
 
       args?.forEach((key, value) {
         whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
-        whereClause += key;
+        whereClause += '$key = ?';
         whereArgs.add(value);
       });
 
@@ -88,7 +88,7 @@ class DatabaseMethods {
 
       args?.forEach((key, value) {
         whereClause += (whereClause.isNotEmpty) ? ' AND ' : '';
-        whereClause += key;
+        whereClause += '$key = ?';
         whereArgs.add(value);
       });
 

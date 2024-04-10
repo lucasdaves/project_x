@@ -7,6 +7,7 @@ import 'package:project_x/services/database/model/recover_model.dart';
 import 'package:project_x/services/database/model/user_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/memory/memory_service.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UserController {
@@ -38,13 +39,13 @@ class UserController {
 
   Future<bool> hasLogin() async {
     try {
-      String? hasLogin = await storage.getLogin();
-      if (hasLogin == null || hasLogin == "") {
+      if (!(await readUser())) {
         throw "Não há usuário logado";
       }
       return true;
     } catch (error) {
       log(error.toString());
+      await setLogout();
       return false;
     }
   }
@@ -52,11 +53,17 @@ class UserController {
   Future<bool> setLogin(
       {required String login, required String password}) async {
     try {
+      userStream.sink.add(UserStreamModel(status: EntityStatus.Loading));
       List<String> credential = [login, password];
-      await storage.setLogin(credential.toString());
+      await storage.setLogin("${credential.first},${credential.last}");
+      if (!(await readUser())) {
+        throw "Não há usuário logado";
+      }
       return true;
     } catch (error) {
       log(error.toString());
+      await setLogout();
+      userStream.sink.add(UserStreamModel(status: EntityStatus.Idle));
       return false;
     }
   }
@@ -64,6 +71,7 @@ class UserController {
   Future<bool> setLogout() async {
     try {
       await storage.setLogout();
+      userStream.sink.add(UserStreamModel());
       return true;
     } catch (error) {
       log(error.toString());
@@ -77,12 +85,12 @@ class UserController {
 
       //* VERIFY USER *//
       Map<String, dynamic> argsA = {};
-      argsA['user.atr_login'] = model.model!.login;
+      argsA['atr_login'] = model.model!.login;
 
       List<Map<String, Object?>>? mapA =
           await methods.read(consts.user, args: argsA);
 
-      if (mapA == null || mapA.isEmpty) {
+      if (mapA != null && mapA.isNotEmpty) {
         throw "Usuário já cadastrado";
       }
 
@@ -162,7 +170,7 @@ class UserController {
       String? credentials = await storage.getLogin();
 
       if (credentials == null || credentials.isEmpty) {
-        throw "Usuário não está logado";
+        throw "Não há credenciais";
       }
 
       //* USER *//
@@ -212,9 +220,9 @@ class UserController {
       }
 
       //* RECOVER *//
-      if (model.user?.model?.id != null) {
+      if (model.user?.recover?.model?.id != null) {
         Map<String, dynamic> argsD = {};
-        argsD['tb_user_atr_id'] = model.user?.model?.id;
+        argsD['atr_id'] = model.user?.recover?.model?.id;
 
         List<Map<String, Object?>>? mapD =
             await methods.read(consts.recover, args: argsD);
@@ -226,6 +234,7 @@ class UserController {
         }
       }
 
+      model.status = EntityStatus.Completed;
       userStream.sink.add(model);
 
       await SystemController.instance.readSystem();
@@ -233,6 +242,7 @@ class UserController {
       return true;
     } catch (error) {
       log(error.toString());
+      await setLogout();
       return false;
     }
   }
@@ -304,12 +314,24 @@ class UserController {
 
       userStream.sink.add(UserStreamModel());
 
-      setLogout();
+      await setLogout();
 
       return true;
     } catch (error) {
       log(error.toString());
       return false;
     }
+  }
+
+  //* MOCK *//
+  Future<void> mockUser() async {
+    UserLogicalModel model = UserLogicalModel(
+      model: UserDatabaseModel(
+        login: "lucasdaves",
+        password: "1234",
+        type: 1,
+      ),
+    );
+    await UserController.instance.createUser(model: model);
   }
 }

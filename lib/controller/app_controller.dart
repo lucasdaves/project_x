@@ -8,6 +8,7 @@ import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/services/database/database_files.dart';
+import 'package:project_x/services/memory/memory_service.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -54,6 +55,8 @@ class AppController {
     Size screenSize = data.size;
     AppResponsive.instance.addRealSpec(screenSize.height, screenSize.width);
     await DatabaseService.instance.initDatabase();
+    // await DatabaseService.instance.clearDatabase();
+    // await MemoryService.instance.clearMemory();
   }
 
   void changeDeviceSize() {

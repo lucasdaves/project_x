@@ -2,11 +2,13 @@ import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
 import 'package:project_x/services/database/model/recover_model.dart';
 import 'package:project_x/services/database/model/user_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 
 class UserStreamModel {
+  EntityStatus status;
   UserLogicalModel? user;
 
-  UserStreamModel({this.user});
+  UserStreamModel({this.status = EntityStatus.Idle, this.user});
 
   UserStreamModel copy() {
     return UserStreamModel(

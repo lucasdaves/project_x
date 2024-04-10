@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_layout.dart';
@@ -7,7 +8,7 @@ import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/home/home_view.dart';
 import 'package:project_x/view/login/login_view.dart';
-import 'package:project_x/view/widgets/widget_app_bar.dart';
+import 'package:project_x/view/widgets/header/widget_app_bar.dart';
 
 class SplashView extends StatefulWidget {
   static const String tag = "/splash_view";
@@ -26,14 +27,13 @@ class _SplashViewState extends State<SplashView> {
 
   Future<void> _initAppConfigs() async {
     bool hasLogin = await UserController.instance.hasLogin();
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await SystemController.instance.mockSystem();
+    await UserController.instance.mockUser();
 
-    if (mounted) {
-      AppRoute(
-        tag: hasLogin ? HomeView.tag : LoginView.tag,
-        screen: hasLogin ? HomeView() : LoginView(),
-      ).navigate(context);
-    }
+    AppRoute(
+      tag: hasLogin ? HomeView.tag : LoginView.tag,
+      screen: hasLogin ? HomeView() : LoginView(),
+    ).navigate(context);
   }
 
   @override

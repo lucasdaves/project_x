@@ -10,14 +10,16 @@ class AppRoute {
   });
 
   void navigate(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => screen,
-        settings: RouteSettings(
-          name: tag,
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => screen,
+          settings: RouteSettings(
+            name: tag,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
