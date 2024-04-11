@@ -54,9 +54,15 @@ class AppController {
         WidgetsBinding.instance.platformDispatcher.views.single);
     Size screenSize = data.size;
     AppResponsive.instance.addRealSpec(screenSize.height, screenSize.width);
+    await AppResponsive.instance.setOrientations();
     await DatabaseService.instance.initDatabase();
-    // await DatabaseService.instance.clearDatabase();
-    // await MemoryService.instance.clearMemory();
+    //await clearAppConfigs();
+  }
+
+  Future<void> clearAppConfigs() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await DatabaseService.instance.clearDatabase();
+    await MemoryService.instance.clearMemory();
   }
 
   void changeDeviceSize() {

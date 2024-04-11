@@ -8,7 +8,7 @@ import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/home/home_view.dart';
 import 'package:project_x/view/login/login_view.dart';
-import 'package:project_x/view/widgets/header/widget_app_bar.dart';
+import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 
 class SplashView extends StatefulWidget {
   static const String tag = "/splash_view";
@@ -46,7 +46,7 @@ class _SplashViewState extends State<SplashView> {
   }
 
   PreferredSizeWidget _buildBar() {
-    return const CustomAppBar();
+    return const WidgetAppBar();
   }
 
   Widget _buildBody() {

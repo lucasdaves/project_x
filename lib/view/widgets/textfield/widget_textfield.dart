@@ -40,17 +40,12 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
             child: TextFormField(
               controller: widget.model.controller,
               validator: (value) {
-                setState(() {
-                  if (widget.model.validator != null &&
-                      !widget.model.validator!(value ?? "")) {
-                    hasError = true;
-                    //return widget.model.feedbackText;
-                  } else {
-                    hasError = false;
-                  }
-
+                if (widget.model.validator != null &&
+                    widget.model.validator!(value)) {
+                  return widget.model.feedbackText;
+                } else {
                   return null;
-                });
+                }
               },
               initialValue: null,
               maxLines: null,

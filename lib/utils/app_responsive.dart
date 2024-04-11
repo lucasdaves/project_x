@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'dart:io';
 
@@ -37,6 +38,22 @@ class AppResponsive {
 
   bool isLandscape() {
     return AppResponsive.instance.getDeviceAspect() > orientationThreshold;
+  }
+
+  Future<void> setOrientations() async {
+    List<DeviceOrientation> orientations = [];
+    if (Platform.isAndroid || Platform.isIOS) {
+      orientations.addAll([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    } else if (Platform.isWindows) {
+      orientations.addAll([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
+    }
+    await SystemChrome.setPreferredOrientations(orientations);
   }
 
   //* COMPONENT SIZE *//
