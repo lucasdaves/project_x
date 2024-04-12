@@ -10,7 +10,7 @@ class AppFeedback {
     required this.color,
   });
 
-  void showTopSnackBar(BuildContext context) {
+  void showSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

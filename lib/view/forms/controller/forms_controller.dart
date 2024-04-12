@@ -8,7 +8,7 @@ import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
-class CreateController {
+class FormsController {
   final stream = BehaviorSubject<CreateModel>.seeded(CreateModel());
 
   void dispose() {

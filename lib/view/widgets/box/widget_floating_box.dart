@@ -15,22 +15,22 @@ class WidgetFloatingBox extends StatefulWidget {
 class _WidgetFloatingBoxState extends State<WidgetFloatingBox> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.model.label != null) ...[
-            Text(
-              widget.model.label!,
-              style: AppTextStyle.size20(),
-            ),
-            SizedBox(
-              height: AppResponsive.instance.getHeight(16),
-            )
-          ],
-          Container(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.model.label != null) ...[
+          Text(
+            widget.model.label!,
+            style: AppTextStyle.size20(),
+          ),
+          SizedBox(
+            height: AppResponsive.instance.getHeight(16),
+          )
+        ],
+        Flexible(
+          child: Container(
             width: double.maxFinite,
             padding: widget.model.padding ??
                 EdgeInsets.all(
@@ -42,8 +42,8 @@ class _WidgetFloatingBoxState extends State<WidgetFloatingBox> {
             ),
             child: widget.model.widget,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

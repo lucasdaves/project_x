@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
-import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
-import 'package:project_x/view/create/create_controller.dart';
-import 'package:project_x/view/home/home_view.dart';
+import 'package:project_x/view/forms/controller/forms_controller.dart';
+import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
-import 'package:project_x/view/widgets/forms/widget_entity_form.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
 
-class CreateView extends StatefulWidget {
-  static const String tag = "/create_view";
+class WidgetProjectForm extends StatefulWidget {
+  static const String tag = "/project_form_view";
+  final EntityOperation operation;
 
-  final EntityType type;
-
-  const CreateView({super.key, required this.type});
+  const WidgetProjectForm({super.key, required this.operation});
 
   @override
-  State<CreateView> createState() => _CreateViewState();
+  State<WidgetProjectForm> createState() => _WidgetProjectFormState();
 }
 
-class _CreateViewState extends State<CreateView> {
-  CreateController controller = CreateController();
+class _WidgetProjectFormState extends State<WidgetProjectForm> {
+  final descriptionSection = DescriptionSection();
+  final formKey = GlobalKey<FormState>();
+  final controller = FormsController();
+  final entity = "Projeto";
 
   @override
   void dispose() {
@@ -37,7 +37,7 @@ class _CreateViewState extends State<CreateView> {
 
   @override
   void initState() {
-    controller.setType(widget.type);
+    controller.setType(EntityType.Client);
     super.initState();
   }
 
@@ -71,7 +71,7 @@ class _CreateViewState extends State<CreateView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             WidgetTitleHeader(
-              model: WidgetTitleHeaderModel(title: _getTitle()),
+              model: WidgetTitleHeaderModel(title: getTitle()),
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
             WidgetActionHeader(
@@ -79,7 +79,7 @@ class _CreateViewState extends State<CreateView> {
                 backAction: WidgetActionBack(
                   model: WidgetActionBackModel(
                     icon: Icons.chevron_left_rounded,
-                    label: _getActionTitle(),
+                    label: getActionHeaderText(),
                     function: () {
                       Navigator.pop(context);
                     },
@@ -91,10 +91,10 @@ class _CreateViewState extends State<CreateView> {
                     cards: [
                       WidgetActionIcon(
                         model: WidgetActionIconModel(
-                          icon: Icons.add,
-                          label: "Cadastrar",
-                          function: () {
-                            _createFunction();
+                          icon: getActionIcon(),
+                          label: getActionText(),
+                          function: () async {
+                            await getFunction();
                           },
                         ),
                       ),
@@ -105,9 +105,10 @@ class _CreateViewState extends State<CreateView> {
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
             Expanded(
-              child: WidgetEntityForm(
-                controller: controller,
-              ),
+              child: Form(
+                key: formKey,
+                child: Container(),
+              ), //IMPLEMENTAR
             ),
           ],
         ),
@@ -121,57 +122,65 @@ class _CreateViewState extends State<CreateView> {
 
   //* FUNCTIONS *//
 
-  Future<void> _createFunction() async {
-    if (controller.getValidator()()) {
-      if (await controller.createEntity()) {
-        AppFeedback(
-          text: "Sucesso ao cadastrar",
-          color: AppColor.colorPositiveStatus,
-        ).showTopSnackBar(context);
-        Navigator.popUntil(
-          context,
-          ModalRoute.withName(HomeView.tag),
-        );
-      } else {
-        AppFeedback(
-          text: "Erro ao cadastrar",
-          color: AppColor.colorNegativeStatus,
-        ).showTopSnackBar(context);
-      }
-    } else {}
+  String getTitle() {
+    return "${entity}s";
   }
 
-  String _getTitle() {
-    String title = "";
-    switch (controller.stream.value.type!) {
-      case EntityType.User:
-        title = "Usuário";
-      case EntityType.Client:
-        title = "Clientes";
-      case EntityType.Project:
-        title = "Projetos";
-      case EntityType.Finance:
-        title = "Finanças";
-      case EntityType.Workflow:
-        title = "Workflows";
+  String getActionHeaderText() {
+    String value = "";
+    switch (widget.operation) {
+      case EntityOperation.Create:
+        value = "Cadastrar um";
+      case EntityOperation.Read:
+        value = "Ler um";
+      case EntityOperation.Update:
+        value = "Atualizar um";
+      case EntityOperation.Delete:
+        value = "Deletar um";
     }
-    return title;
+    return "$value $entity";
   }
 
-  String _getActionTitle() {
-    String action = "";
-    switch (controller.stream.value.type!) {
-      case EntityType.User:
-        action = "Cadastro de Usuário";
-      case EntityType.Client:
-        action = "Cadastro de Clientes";
-      case EntityType.Project:
-        action = "Cadastro de Projetos";
-      case EntityType.Finance:
-        action = "Cadastro de Finanças";
-      case EntityType.Workflow:
-        action = "Cadastro de Workflows";
+  String getActionText() {
+    String value = "";
+    switch (widget.operation) {
+      case EntityOperation.Create:
+        value = "Cadastrar";
+      case EntityOperation.Read:
+        value = "Ler";
+      case EntityOperation.Update:
+        value = "Atualizar";
+      case EntityOperation.Delete:
+        value = "Deletar";
     }
-    return action;
+    return value;
+  }
+
+  IconData getActionIcon() {
+    late IconData value;
+    switch (widget.operation) {
+      case EntityOperation.Create:
+        value = Icons.add;
+      case EntityOperation.Read:
+        value = Icons.read_more;
+      case EntityOperation.Update:
+        value = Icons.update;
+      case EntityOperation.Delete:
+        value = Icons.delete;
+    }
+    return value;
+  }
+
+  Future<void> getFunction() async {
+    switch (widget.operation) {
+      case EntityOperation.Create:
+        break;
+      case EntityOperation.Read:
+        break;
+      case EntityOperation.Update:
+        break;
+      case EntityOperation.Delete:
+        break;
+    }
   }
 }

@@ -8,9 +8,11 @@ class AppColor {
   static const Color colorPositiveStatus = Color(0xFFA2E0B8);
   static const Color colorNegativeStatus = Color(0xFFFF6E80);
   static const Color colorAlertStatus = Color(0xFFFFC700);
+  static const Color colorOpcionalStatus = Color(0xFFE985F2);
   static const Color colorDivider = Color(0xFF696969);
   static const Color colorSelected = Color(0x9C8A8D9C);
   static const Color colorFieldBackground = Color(0xFF2B2E3A);
+  static const Color colorWorkflowBackground = Color(0xFF1E2631);
 
   static const Color text_1 = Color(0xFFFFFFFF);
 }

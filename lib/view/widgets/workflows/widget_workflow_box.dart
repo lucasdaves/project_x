@@ -6,12 +6,13 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/create/create_controller.dart';
+import 'package:project_x/view/forms/controller/forms_controller.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
+import 'package:project_x/view/widgets/checkbox/widget_checkbox.dart';
 import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
 
 class WidgetWorkflowBox extends StatefulWidget {
-  final CreateController controller;
+  final FormsController controller;
 
   const WidgetWorkflowBox({super.key, required this.controller});
 
@@ -57,60 +58,67 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: AppResponsive.instance.getWidth(150),
-              decoration: BoxDecoration(
-                color: AppColor.colorPrimary,
-                borderRadius: BorderRadius.circular(8),
+            Flexible(
+              child: Container(
+                width: AppResponsive.instance.getWidth(150),
+                decoration: BoxDecoration(
+                  color: AppColor.colorPrimary,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColor.colorPrimary,
+                    width: AppResponsive.instance.getWidth(4),
+                  ),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: isFinalStep
+                    ? button(
+                        type: WorkflowType.Step,
+                        isFirst: true,
+                        isLast: false,
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          button(
+                            type: WorkflowType.Step,
+                            step: model.steps![stpIndex]!,
+                            isFirst: true,
+                            isLast: false,
+                          ),
+                          Flexible(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemCount:
+                                  model.steps![stpIndex]!.substeps!.length,
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppResponsive.instance.getHeight(12),
+                              ),
+                              separatorBuilder: (context, subIndex) {
+                                return SizedBox(
+                                  height: AppResponsive.instance.getHeight(12),
+                                );
+                              },
+                              itemBuilder: (context, subIndex) {
+                                return button(
+                                  type: WorkflowType.Substep,
+                                  substep: model
+                                      .steps![stpIndex]!.substeps![subIndex],
+                                  isFirst: false,
+                                  isLast: false,
+                                );
+                              },
+                            ),
+                          ),
+                          button(
+                            type: WorkflowType.Substep,
+                            index: stpIndex,
+                            isFirst: false,
+                            isLast: true,
+                          ),
+                        ],
+                      ),
               ),
-              padding: EdgeInsets.only(
-                top: AppResponsive.instance.getHeight(4),
-                right: AppResponsive.instance.getWidth(4),
-                left: AppResponsive.instance.getWidth(4),
-                bottom: AppResponsive.instance.getHeight(4),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: isFinalStep
-                  ? button(
-                      type: WorkflowType.Step,
-                      isFirst: true,
-                      isLast: true,
-                    )
-                  : Column(
-                      children: [
-                        button(
-                          type: WorkflowType.Step,
-                          step: model.steps![stpIndex]!,
-                          isFirst: true,
-                          isLast: false,
-                        ),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: model.steps![stpIndex]!.substeps!.length,
-                          separatorBuilder: (context, subIndex) {
-                            return SizedBox(
-                              height: AppResponsive.instance.getHeight(24),
-                            );
-                          },
-                          itemBuilder: (context, subIndex) {
-                            return button(
-                              type: WorkflowType.Substep,
-                              substep:
-                                  model.steps![stpIndex]!.substeps![subIndex],
-                              isFirst: false,
-                              isLast: false,
-                            );
-                          },
-                        ),
-                        button(
-                          type: WorkflowType.Substep,
-                          index: stpIndex,
-                          isFirst: false,
-                          isLast: true,
-                        ),
-                      ],
-                    ),
             ),
           ],
         );
@@ -138,46 +146,74 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       },
       child: Container(
         width: AppResponsive.instance.getWidth(150),
-        height: AppResponsive.instance.getHeight(53),
-        margin: EdgeInsets.only(
-          bottom: AppResponsive.instance.getHeight(24),
-        ),
+        height: AppResponsive.instance.getHeight(60),
         decoration: BoxDecoration(
-          color: AppColor.colorSelected,
-          borderRadius: isFirst
-              ? BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                )
-              : null,
-          border: isFirst
-              ? Border(
-                  bottom: BorderSide(width: 2, color: AppColor.colorDivider),
-                )
-              : null,
+          color: AppColor.colorWorkflowBackground,
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? Radius.circular(8) : Radius.zero,
+            topRight: isFirst ? Radius.circular(8) : Radius.zero,
+            bottomLeft: isLast ? Radius.circular(8) : Radius.zero,
+            bottomRight: isLast ? Radius.circular(8) : Radius.zero,
+          ),
+          border: Border(
+            top: isLast
+                ? BorderSide(width: 2, color: AppColor.colorDivider)
+                : BorderSide.none,
+            bottom: isFirst
+                ? BorderSide(width: 2, color: AppColor.colorDivider)
+                : BorderSide.none,
+          ),
         ),
         alignment: Alignment.center,
-        child: isLast
-            ? Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Adicionar ${type == WorkflowType.Step ? "Etapa" : "Subetapa"}",
-                    style: AppTextStyle.size12(),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppResponsive.instance.getWidth(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if ((isLast || isFirst) && (step == null && substep == null)) ...[
+                Text(
+                  "Adicionar ${type == WorkflowType.Step ? "Etapa" : "Subetapa"}",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.size12(),
+                ),
+                SizedBox(
+                  height: AppResponsive.instance.getHeight(4),
+                ),
+                Icon(
+                  Icons.add,
+                  size: AppResponsive.instance.getWidth(20),
+                  color: AppColor.colorSecondary,
+                ),
+              ] else ...[
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: (step?.model?.mandatory == true ||
+                                substep?.model?.mandatory == true)
+                            ? ""
+                            : "(Opcional) ",
+                        style: AppTextStyle.size12(
+                          color: AppColor.colorOpcionalStatus,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: step?.model?.name ?? substep?.model?.name ?? "",
+                        style: AppTextStyle.size12(),
+                      ),
+                    ],
                   ),
-                  Icon(
-                    Icons.add,
-                    size: AppResponsive.instance.getWidth(20),
-                    color: Colors.white,
-                  ),
-                ],
-              )
-            : Text(
-                step?.model?.name ?? substep?.model?.name ?? "",
-                style: AppTextStyle.size12(),
-              ),
+                  style: AppTextStyle.size48(),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -253,6 +289,31 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       }
     }
 
+    Widget buildMandatoryField(StateSetter modalState) {
+      WidgetCheckBoxModel model = WidgetCheckBoxModel(
+        checked: isMandatory,
+        function: () {
+          modalState(() {
+            isMandatory = !isMandatory;
+          });
+        },
+      );
+      return Row(
+        children: [
+          Text(
+            "Ela é obrigatória ?",
+            style: AppTextStyle.size12(),
+          ),
+          SizedBox(
+            width: AppResponsive.instance.getWidth(12),
+          ),
+          WidgetCheckBox(
+            model: model,
+          ),
+        ],
+      );
+    }
+
     Widget buildTitleField() {
       WidgetTextFieldModel model = WidgetTextFieldModel(
         controller: titleController,
@@ -302,60 +363,71 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            width: AppResponsive.instance.getWidth(300),
-            padding: EdgeInsets.symmetric(
-              vertical: AppResponsive.instance.getHeight(24),
-              horizontal: AppResponsive.instance.getWidth(24),
-            ),
-            decoration: BoxDecoration(
-              color: AppColor.colorFloating,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Wrap(
-              children: [
-                Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                width: AppResponsive.instance.getWidth(300),
+                padding: EdgeInsets.symmetric(
+                  vertical: AppResponsive.instance.getHeight(24),
+                  horizontal: AppResponsive.instance.getWidth(24),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColor.colorFloating,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Wrap(
+                  children: [
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: AppColor.colorSecondary,
-                            ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: AppColor.colorSecondary,
+                                ),
+                              ),
+                              SizedBox(
+                                  width: AppResponsive.instance.getWidth(24)),
+                              Text(
+                                "${(step != null || substep != null) ? "Editar" : "Adicionar"} ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColor.text_1,
+                                  fontSize: AppResponsive.instance.getWidth(16),
+                                  fontWeight: FontWeight.w500,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: AppResponsive.instance.getWidth(24)),
-                          Text(
-                            "${(step != null || substep != null) ? "Editar" : "Adicionar"} ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.text_1,
-                              fontSize: AppResponsive.instance.getWidth(16),
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            ),
-                          ),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(24)),
+                          buildMandatoryField(setState),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(24)),
+                          buildTitleField(),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(24)),
+                          buildDescriptionField(),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(36)),
+                          buildWorkflowButton(false),
                         ],
                       ),
-                      SizedBox(height: AppResponsive.instance.getHeight(24)),
-                      buildTitleField(),
-                      SizedBox(height: AppResponsive.instance.getHeight(24)),
-                      buildDescriptionField(),
-                      SizedBox(height: AppResponsive.instance.getHeight(36)),
-                      buildWorkflowButton(false),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

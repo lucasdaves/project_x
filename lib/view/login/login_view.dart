@@ -207,7 +207,7 @@ class _LoginViewState extends State<LoginView> {
           AppFeedback(
             text: 'Login efetuado com sucesso',
             color: AppColor.colorPositiveStatus,
-          ).showTopSnackBar(context);
+          ).showSnackbar(context);
           AppRoute(
             tag: LoadView.tag,
             screen: LoadView(),
@@ -216,7 +216,7 @@ class _LoginViewState extends State<LoginView> {
           AppFeedback(
             text: 'Credênciais de login erradas!',
             color: AppColor.colorNegativeStatus,
-          ).showTopSnackBar(context);
+          ).showSnackbar(context);
         }
       } catch (error) {
         print("Erro durante o login: $error");

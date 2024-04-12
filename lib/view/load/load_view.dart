@@ -187,7 +187,7 @@ class _LoadViewState extends State<LoadView> {
     AppFeedback(
       text: "Dados carregados",
       color: AppColor.colorPositiveStatus,
-    ).showTopSnackBar(context);
+    ).showSnackbar(context);
     await Future.delayed(const Duration(milliseconds: 1000));
     AppRoute(
       tag: HomeView.tag,

@@ -8,7 +8,9 @@ import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/create/create_view.dart';
+import 'package:project_x/view/forms/forms/widget_client_form.dart';
+import 'package:project_x/view/forms/forms/widget_finance_form.dart';
+import 'package:project_x/view/forms/forms/widget_workflow_form.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
@@ -66,8 +68,10 @@ class _HomeViewState extends State<HomeView> {
                             label: "Cadastrar cliente",
                             function: () {
                               AppRoute(
-                                tag: CreateView.tag,
-                                screen: CreateView(type: EntityType.Client),
+                                tag: WidgetClientForm.tag,
+                                screen: WidgetClientForm(
+                                  operation: EntityOperation.Create,
+                                ),
                               ).navigate(context);
                             },
                           ),
@@ -91,8 +95,10 @@ class _HomeViewState extends State<HomeView> {
                             label: "Cadastrar financeiro",
                             function: () {
                               AppRoute(
-                                tag: CreateView.tag,
-                                screen: CreateView(type: EntityType.Finance),
+                                tag: WidgetFinanceForm.tag,
+                                screen: WidgetFinanceForm(
+                                  operation: EntityOperation.Create,
+                                ),
                               ).navigate(context);
                             },
                           ),
@@ -116,8 +122,10 @@ class _HomeViewState extends State<HomeView> {
                             label: "Cadastrar workflow",
                             function: () {
                               AppRoute(
-                                tag: CreateView.tag,
-                                screen: CreateView(type: EntityType.Workflow),
+                                tag: WidgetWorkflowForm.tag,
+                                screen: WidgetWorkflowForm(
+                                  operation: EntityOperation.Create,
+                                ),
                               ).navigate(context);
                             },
                           ),

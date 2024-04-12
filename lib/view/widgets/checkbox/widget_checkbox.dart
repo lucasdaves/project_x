@@ -9,20 +9,23 @@ class WidgetCheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: AppResponsive.instance.getWidth(model.size),
-      width: AppResponsive.instance.getWidth(model.size),
-      child: FittedBox(
-        fit: BoxFit.fill,
-        child: model.checked
-            ? Icon(
-                Icons.check_box_rounded,
-                color: model.color,
-              )
-            : Icon(
-                Icons.check_box_outline_blank_rounded,
-                color: model.color,
-              ),
+    return GestureDetector(
+      onTap: model.function,
+      child: Container(
+        height: AppResponsive.instance.getWidth(model.size),
+        width: AppResponsive.instance.getWidth(model.size),
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: model.checked
+              ? Icon(
+                  Icons.check_box_rounded,
+                  color: model.color,
+                )
+              : Icon(
+                  Icons.check_box_outline_blank_rounded,
+                  color: model.color,
+                ),
+        ),
       ),
     );
   }
@@ -32,10 +35,12 @@ class WidgetCheckBoxModel {
   final double size;
   final Color color;
   final bool checked;
+  final Function()? function;
 
   WidgetCheckBoxModel({
     this.size = 20,
     this.color = AppColor.colorSecondary,
     this.checked = false,
+    this.function,
   });
 }
