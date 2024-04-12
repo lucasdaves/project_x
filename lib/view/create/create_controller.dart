@@ -1,6 +1,10 @@
 import 'dart:developer';
 
 import 'package:project_x/controller/client_controller.dart';
+import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/project_controller.dart';
+import 'package:project_x/controller/user_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -43,6 +47,9 @@ class CreateController {
     try {
       switch (stream.value.type!) {
         case EntityType.User:
+          result = await UserController.instance.createUser(
+            model: stream.value.model,
+          );
           break;
         case EntityType.Client:
           result = await ClientController.instance.createClient(
@@ -50,10 +57,19 @@ class CreateController {
           );
           break;
         case EntityType.Project:
+          result = await ProjectController.instance.createProject(
+            model: stream.value.model,
+          );
           break;
         case EntityType.Finance:
+          result = await FinanceController.instance.createFinance(
+            model: stream.value.model,
+          );
           break;
         case EntityType.Workflow:
+          result = await WorkflowController.instance.createWorkflow(
+            model: stream.value.model,
+          );
           break;
       }
     } catch (error) {

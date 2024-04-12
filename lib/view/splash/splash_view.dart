@@ -82,34 +82,6 @@ class _SplashViewState extends State<SplashView> {
       );
     }
 
-    Widget buildLoader() {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: AppResponsive.instance.getHeight(32),
-            width: AppResponsive.instance.getHeight(32),
-            child: CircularProgressIndicator(
-              color: AppColor.colorSecondary,
-            ),
-          ),
-          SizedBox(
-            height: AppResponsive.instance.getHeight(32),
-          ),
-          Text(
-            "Validando sessão ...",
-            textAlign: TextAlign.center,
-            style: AppTextStyle.size20(
-              color: AppColor.colorSecondary,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
-      );
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -123,10 +95,6 @@ class _SplashViewState extends State<SplashView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildTitle(),
-              SizedBox(
-                height: AppResponsive.instance.getHeight(64),
-              ),
-              buildLoader(),
             ],
           ),
         ),

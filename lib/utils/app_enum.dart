@@ -5,3 +5,7 @@ enum ScreenOrientation { Portrait, Landscape }
 enum EntityStatus { Loading, Idle, Completed }
 
 enum EntityType { User, Client, Project, Finance, Workflow }
+
+//* WORKFLOW *//
+
+enum WorkflowType { Step, Substep }

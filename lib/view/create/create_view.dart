@@ -71,7 +71,7 @@ class _CreateViewState extends State<CreateView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             WidgetTitleHeader(
-              model: WidgetTitleHeaderModel(title: "Clientes"),
+              model: WidgetTitleHeaderModel(title: _getTitle()),
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
             WidgetActionHeader(
@@ -79,7 +79,7 @@ class _CreateViewState extends State<CreateView> {
                 backAction: WidgetActionBack(
                   model: WidgetActionBackModel(
                     icon: Icons.chevron_left_rounded,
-                    label: "Cadastro de cliente",
+                    label: _getActionTitle(),
                     function: () {
                       Navigator.pop(context);
                     },
@@ -91,7 +91,7 @@ class _CreateViewState extends State<CreateView> {
                     cards: [
                       WidgetActionIcon(
                         model: WidgetActionIconModel(
-                          icon: Icons.person_add_rounded,
+                          icon: Icons.add,
                           label: "Cadastrar",
                           function: () {
                             _createFunction();
@@ -139,5 +139,39 @@ class _CreateViewState extends State<CreateView> {
         ).showTopSnackBar(context);
       }
     } else {}
+  }
+
+  String _getTitle() {
+    String title = "";
+    switch (controller.stream.value.type!) {
+      case EntityType.User:
+        title = "Usuário";
+      case EntityType.Client:
+        title = "Clientes";
+      case EntityType.Project:
+        title = "Projetos";
+      case EntityType.Finance:
+        title = "Finanças";
+      case EntityType.Workflow:
+        title = "Workflows";
+    }
+    return title;
+  }
+
+  String _getActionTitle() {
+    String action = "";
+    switch (controller.stream.value.type!) {
+      case EntityType.User:
+        action = "Cadastro de Usuário";
+      case EntityType.Client:
+        action = "Cadastro de Clientes";
+      case EntityType.Project:
+        action = "Cadastro de Projetos";
+      case EntityType.Finance:
+        action = "Cadastro de Finanças";
+      case EntityType.Workflow:
+        action = "Cadastro de Workflows";
+    }
+    return action;
   }
 }

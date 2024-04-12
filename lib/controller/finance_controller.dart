@@ -35,9 +35,8 @@ class FinanceController {
     try {
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
-      if (model.model == null) throw "O modelo da finança é nulo";
 
-      model.model!.userId = userId;
+      model.model?.userId = userId;
 
       //* FINANCE *//
       int? financeId;

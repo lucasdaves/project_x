@@ -1,3 +1,5 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'dart:io';
@@ -54,6 +56,22 @@ class AppResponsive {
       ]);
     }
     await SystemChrome.setPreferredOrientations(orientations);
+  }
+
+  setGestures() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return null;
+    } else if (Platform.isWindows) {
+      return const MaterialScrollBehavior().copyWith(
+        dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+          PointerDeviceKind.stylus,
+          PointerDeviceKind.unknown,
+          PointerDeviceKind.trackpad,
+        },
+      );
+    }
   }
 
   //* COMPONENT SIZE *//

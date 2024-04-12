@@ -2,17 +2,17 @@ import 'package:project_x/services/database/model/finance_operation_model.dart';
 
 class FinanceDatabaseModel {
   int? id;
-  String name;
-  String description;
-  bool status;
-  int userId;
+  String? name;
+  String? description;
+  bool? status;
+  int? userId;
 
   FinanceDatabaseModel({
     this.id,
-    required this.name,
-    required this.description,
-    required this.status,
-    required this.userId,
+    this.name,
+    this.description,
+    this.status,
+    this.userId,
   });
 
   factory FinanceDatabaseModel.fromMap(Map<String, dynamic> map) {
@@ -30,7 +30,7 @@ class FinanceDatabaseModel {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
-      'atr_status': status ? 1 : 0,
+      'atr_status': (status ?? false) ? 1 : 0,
       'tb_user_atr_id': userId,
     };
   }

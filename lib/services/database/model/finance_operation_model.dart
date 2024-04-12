@@ -1,20 +1,20 @@
 class FinanceOperationDatabaseModel {
   int? id;
-  int type;
-  String description;
-  String amount;
+  int? type;
+  String? description;
+  String? amount;
   DateTime? paidAt;
   DateTime? expiresAt;
-  int financeId;
+  int? financeId;
 
   FinanceOperationDatabaseModel({
     this.id,
-    required this.type,
-    required this.description,
-    required this.amount,
+    this.type,
+    this.description,
+    this.amount,
     this.paidAt,
     this.expiresAt,
-    required this.financeId,
+    this.financeId,
   });
 
   factory FinanceOperationDatabaseModel.fromMap(Map<String, dynamic> map) {

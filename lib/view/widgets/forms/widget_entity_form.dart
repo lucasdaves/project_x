@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
+import 'package:project_x/services/database/model/finance_model.dart';
+import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
+import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/view/create/create_controller.dart';
+import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
 import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
+import 'package:project_x/view/widgets/workflows/widget_workflow_box.dart';
 
 class WidgetEntityForm extends StatefulWidget {
   final CreateController controller;
@@ -25,6 +30,8 @@ class _WidgetEntityFormState extends State<WidgetEntityForm> {
   late PersonalDataSection personalDataSection;
   late AddressSection addressSection;
   late ContactSection contactSection;
+  late DescriptionSection descriptionSection;
+  late OperationSection operationSection;
   late GlobalKey<FormState> formKey;
 
   @override
@@ -33,6 +40,8 @@ class _WidgetEntityFormState extends State<WidgetEntityForm> {
     personalDataSection = PersonalDataSection();
     addressSection = AddressSection();
     contactSection = ContactSection();
+    descriptionSection = DescriptionSection();
+    operationSection = OperationSection();
     formKey = GlobalKey<FormState>();
   }
 
@@ -50,6 +59,20 @@ class _WidgetEntityFormState extends State<WidgetEntityForm> {
           formKey: formKey,
         );
         break;
+      case EntityType.Finance:
+        formWidget = FinanceForm(
+          controller: widget.controller,
+          descriptionSection: descriptionSection,
+          operationSection: operationSection,
+          formKey: formKey,
+        );
+      case EntityType.Workflow:
+        formWidget = WorkflowForm(
+          controller: widget.controller,
+          descriptionSection: descriptionSection,
+          operationSection: operationSection,
+          formKey: formKey,
+        );
       default:
         formWidget = const SizedBox.shrink();
         break;
@@ -68,7 +91,7 @@ class ClientForm extends StatelessWidget {
   final ContactSection contactSection;
   final GlobalKey<FormState> formKey;
 
-  ClientForm({
+  const ClientForm({
     super.key,
     required this.controller,
     required this.personalDataSection,
@@ -283,7 +306,177 @@ class ClientForm extends StatelessWidget {
   }
 }
 
-//* VALIDATIONS *//
+class FinanceForm extends StatelessWidget {
+  final CreateController controller;
+  final DescriptionSection descriptionSection;
+  final OperationSection operationSection;
+  final GlobalKey<FormState> formKey;
+
+  const FinanceForm({
+    super.key,
+    required this.controller,
+    required this.descriptionSection,
+    required this.operationSection,
+    required this.formKey,
+  });
+
+  FinanceLogicalModel getModel() {
+    FinanceLogicalModel model = FinanceLogicalModel(
+      model: FinanceDatabaseModel(
+        status: false,
+        name: descriptionSection.titleController.text,
+        description: descriptionSection.descriptionController.text,
+      ),
+      operations: [
+        FinanceOperationLogicalModel(
+          model: FinanceOperationDatabaseModel(
+            type: 0,
+            description: "Valor inicial",
+            amount: operationSection.amountController.text,
+          ),
+        ),
+      ],
+    );
+    return model;
+  }
+
+  bool validate() {
+    if (formKey.currentState?.validate() ?? false) {
+      controller.stream.value.model = getModel();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    controller.setValidator(validate);
+    return Form(
+      key: formKey,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          WidgetContainBox(
+            model: WidgetContainModelBox(
+              height: double.maxFinite,
+              width: 300,
+              widget: WidgetFloatingBox(
+                model: WidgetFloatingBoxModel(
+                  label: "Dados do Financeiro",
+                  padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+                  widget: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildTextfield(
+                        controller: descriptionSection.titleController,
+                        headerText: descriptionSection.titleLabel,
+                        hintText: descriptionSection.titleHint,
+                        validator: (value) =>
+                            descriptionSection.validateTitle(value),
+                      ),
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      buildTextfield(
+                        controller: descriptionSection.descriptionController,
+                        headerText: descriptionSection.descriptionLabel,
+                        hintText: descriptionSection.descriptionHint,
+                        validator: (value) =>
+                            descriptionSection.validateDescription(value),
+                      ),
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      buildTextfield(
+                        controller: operationSection.amountController,
+                        headerText: operationSection.amountLabel,
+                        hintText: operationSection.amountHint,
+                        validator: (value) =>
+                            operationSection.validateAmount(value),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class WorkflowForm extends StatelessWidget {
+  final CreateController controller;
+  final DescriptionSection descriptionSection;
+  final OperationSection operationSection;
+  final GlobalKey<FormState> formKey;
+
+  const WorkflowForm({
+    super.key,
+    required this.controller,
+    required this.descriptionSection,
+    required this.operationSection,
+    required this.formKey,
+  });
+
+  FinanceLogicalModel getModel() {
+    FinanceLogicalModel model = FinanceLogicalModel(
+      model: FinanceDatabaseModel(
+        status: false,
+        name: descriptionSection.titleController.text,
+        description: descriptionSection.descriptionController.text,
+      ),
+      operations: [
+        FinanceOperationLogicalModel(
+          model: FinanceOperationDatabaseModel(
+            type: 0,
+            description: "Valor inicial",
+            amount: operationSection.amountController.text,
+          ),
+        ),
+      ],
+    );
+    return model;
+  }
+
+  bool validate() {
+    if (formKey.currentState?.validate() ?? false) {
+      controller.stream.value.model = getModel();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    controller.setValidator(validate);
+    return Form(
+      key: formKey,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+              child: Container(
+            padding: EdgeInsets.all(
+              AppResponsive.instance.getWidth(12),
+            ),
+            decoration: BoxDecoration(
+              color: AppColor.colorFloating,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: WidgetWorkflowBox(controller: controller),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+//* SECTIONS *//
 
 class PersonalDataSection {
   // LABELS
@@ -451,6 +644,73 @@ class ContactSection {
   String? validateNote(String? value) {
     return null;
   }
+}
+
+class DescriptionSection {
+  // LABELS
+  final String titleLabel = "Titulo";
+  final String descriptionLabel = "Descrição";
+  final String mandatoryLabel = "Obrigatório ?";
+
+  // HINT TEXTS
+  final String titleHint = "Digite o titulo...";
+  final String descriptionHint = "Digite a descrição...";
+  final String mandatoryHint = "Selecione ...";
+
+  // TEXT CONTROLLERS
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController mandatoryController = TextEditingController();
+
+  // VALIDATION FUNCTIONS
+  String? validateTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira o titulo';
+    }
+    return null;
+  }
+
+  String? validateDescription(String? value) {
+    return null;
+  }
+
+  String? validateMandatory(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, selecione uma opção';
+    }
+    return null;
+  }
+}
+
+class OperationSection {
+  // LABELS
+  final String amountLabel = "Quantia";
+  final String descriptionLabel = "Descrição";
+
+  // HINT TEXTS
+  final String amountHint = "Digite a quantia...";
+  final String descriptionHint = "Digite a descrição...";
+
+  // TEXT CONTROLLERS
+  TextEditingController amountController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  // VALIDATION FUNCTIONS
+  String? validateAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a quantia';
+    }
+    return null;
+  }
+
+  String? validateDescription(String? value) {
+    return null;
+  }
+}
+
+class WorkflowSection {
+  List<DescriptionSection> steps = [];
+  Map<String, List<DescriptionSection>> substeps = {};
 }
 
 //* WIDGETS *//

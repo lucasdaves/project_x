@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_x/controller/client_controller.dart';
+import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
@@ -57,26 +59,81 @@ class _HomeViewState extends State<HomeView> {
               model: WidgetFloatingBoxModel(
                 widget: Column(
                   children: [
-                    WidgetTextButton(
-                      model: WidgetTextButtonModel(
-                        label: "Cadastrar cliente",
-                        function: () {
-                          AppRoute(
-                            tag: CreateView.tag,
-                            screen: CreateView(type: EntityType.Client),
-                          ).navigate(context);
-                        },
-                      ),
+                    Row(
+                      children: [
+                        WidgetTextButton(
+                          model: WidgetTextButtonModel(
+                            label: "Cadastrar cliente",
+                            function: () {
+                              AppRoute(
+                                tag: CreateView.tag,
+                                screen: CreateView(type: EntityType.Client),
+                              ).navigate(context);
+                            },
+                          ),
+                        ),
+                        SizedBox(width: AppResponsive.instance.getWidth(24)),
+                        StreamBuilder(
+                          stream: ClientController.instance.clientStream,
+                          builder: (context, snapshot) {
+                            return Text(
+                              "${snapshot.data?.clients?.length}",
+                              style: AppTextStyle.size20(),
+                            );
+                          },
+                        )
+                      ],
                     ),
-                    StreamBuilder(
-                      stream: ClientController.instance.clientStream,
-                      builder: (context, snapshot) {
-                        return Text(
-                          "${snapshot.data?.clients?.length}",
-                          style: AppTextStyle.size20(),
-                        );
-                      },
-                    )
+                    Row(
+                      children: [
+                        WidgetTextButton(
+                          model: WidgetTextButtonModel(
+                            label: "Cadastrar financeiro",
+                            function: () {
+                              AppRoute(
+                                tag: CreateView.tag,
+                                screen: CreateView(type: EntityType.Finance),
+                              ).navigate(context);
+                            },
+                          ),
+                        ),
+                        SizedBox(width: AppResponsive.instance.getWidth(24)),
+                        StreamBuilder(
+                          stream: FinanceController.instance.financeStream,
+                          builder: (context, snapshot) {
+                            return Text(
+                              "${snapshot.data?.finances?.length}",
+                              style: AppTextStyle.size20(),
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        WidgetTextButton(
+                          model: WidgetTextButtonModel(
+                            label: "Cadastrar workflow",
+                            function: () {
+                              AppRoute(
+                                tag: CreateView.tag,
+                                screen: CreateView(type: EntityType.Workflow),
+                              ).navigate(context);
+                            },
+                          ),
+                        ),
+                        SizedBox(width: AppResponsive.instance.getWidth(24)),
+                        StreamBuilder(
+                          stream: WorkflowController.instance.workflowStream,
+                          builder: (context, snapshot) {
+                            return Text(
+                              "${snapshot.data?.workflows?.length}",
+                              style: AppTextStyle.size20(),
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),

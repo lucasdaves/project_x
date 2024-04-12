@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project_x/controller/app_controller.dart';
+import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/view/splash/splash_view.dart';
 import 'package:project_x/view/widgets/transitions/widget_no_transition.dart';
 
@@ -38,6 +39,7 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ),
+      scrollBehavior: AppResponsive.instance.setGestures(),
       builder: (context, child) {
         AppController.instance.changeDeviceSize();
         final mediaQueryData = MediaQuery.of(context);
