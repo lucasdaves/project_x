@@ -3,6 +3,7 @@ import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/project_controller_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/database_files.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ProjectController {
@@ -56,6 +57,7 @@ class ProjectController {
 
   Future<bool> readProject() async {
     try {
+      projectStream.sink.add(ProjectStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -76,10 +78,13 @@ class ProjectController {
         return ProjectLogicalModel(model: ProjectDatabaseModel.fromMap(a));
       }).toList();
 
+      model.status = EntityStatus.Completed;
       projectStream.sink.add(model);
 
       return true;
     } catch (error) {
+      projectStream.sink
+          .add(ProjectStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

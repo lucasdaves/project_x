@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
+import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/create/create_view.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
@@ -60,11 +63,20 @@ class _HomeViewState extends State<HomeView> {
                         function: () {
                           AppRoute(
                             tag: CreateView.tag,
-                            screen: CreateView(),
+                            screen: CreateView(type: EntityType.Client),
                           ).navigate(context);
                         },
                       ),
                     ),
+                    StreamBuilder(
+                      stream: ClientController.instance.clientStream,
+                      builder: (context, snapshot) {
+                        return Text(
+                          "${snapshot.data?.clients?.length}",
+                          style: AppTextStyle.size20(),
+                        );
+                      },
+                    )
                   ],
                 ),
               ),

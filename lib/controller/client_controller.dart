@@ -5,6 +5,7 @@ import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ClientController {
@@ -32,9 +33,8 @@ class ClientController {
     try {
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
-      if (model.model == null) throw "O modelo do cliente é nulo";
 
-      model.model?.userId = userId;
+      model.model = ClientDatabaseModel(userId: userId);
 
       //* ADDRESS *//
       int? addressId;
@@ -56,6 +56,7 @@ class ClientController {
           consts.personal,
           map: personalModel.toMap(),
         );
+        model.model?.personalId = personalId;
       }
 
       //* CLIENT *//
@@ -84,6 +85,7 @@ class ClientController {
 
   Future<bool> readClient() async {
     try {
+      clientStream.sink.add(ClientStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -140,10 +142,12 @@ class ClientController {
         }
       }
 
+      model.status = EntityStatus.Completed;
       clientStream.sink.add(model);
 
       return true;
     } catch (error) {
+      clientStream.sink.add(ClientStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

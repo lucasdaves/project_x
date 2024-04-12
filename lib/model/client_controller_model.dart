@@ -1,11 +1,13 @@
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 
 class ClientStreamModel {
+  EntityStatus status;
   List<ClientLogicalModel?>? clients;
 
-  ClientStreamModel({this.clients});
+  ClientStreamModel({this.status = EntityStatus.Idle, this.clients});
 
   ClientStreamModel copy() {
     return ClientStreamModel(

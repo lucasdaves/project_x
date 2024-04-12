@@ -1,10 +1,12 @@
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/finance_operation_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 
 class FinanceStreamModel {
+  EntityStatus status;
   List<FinanceLogicalModel?>? finances;
 
-  FinanceStreamModel({this.finances});
+  FinanceStreamModel({this.status = EntityStatus.Idle, this.finances});
 
   FinanceStreamModel copy() {
     return FinanceStreamModel(

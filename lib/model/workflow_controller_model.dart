@@ -1,11 +1,13 @@
 import 'package:project_x/services/database/model/step_model.dart';
 import 'package:project_x/services/database/model/substep_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 
 class WorkflowStreamModel {
+  EntityStatus status;
   List<WorkflowLogicalModel?>? workflows;
 
-  WorkflowStreamModel({this.workflows});
+  WorkflowStreamModel({this.status = EntityStatus.Idle, this.workflows});
 
   WorkflowStreamModel copy() {
     return WorkflowStreamModel(

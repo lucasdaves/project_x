@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project_x/controller/app_controller.dart';
 import 'package:project_x/view/splash/splash_view.dart';
+import 'package:project_x/view/widgets/transitions/widget_no_transition.dart';
 
 void main() async {
   await AppController.instance.initAppConfigs();
@@ -29,6 +30,13 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         fontFamily: 'Mulish',
         useMaterial3: true,
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: NoTransitionBuilder(),
+            TargetPlatform.iOS: NoTransitionBuilder(),
+            TargetPlatform.windows: NoTransitionBuilder(),
+          },
+        ),
       ),
       builder: (context, child) {
         AppController.instance.changeDeviceSize();

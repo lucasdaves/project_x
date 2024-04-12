@@ -15,33 +15,35 @@ class WidgetFloatingBox extends StatefulWidget {
 class _WidgetFloatingBoxState extends State<WidgetFloatingBox> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.model.label != null) ...[
-          Text(
-            widget.model.label!,
-            style: AppTextStyle.size20(),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.model.label != null) ...[
+            Text(
+              widget.model.label!,
+              style: AppTextStyle.size20(),
+            ),
+            SizedBox(
+              height: AppResponsive.instance.getHeight(16),
+            )
+          ],
+          Container(
+            width: double.maxFinite,
+            padding: widget.model.padding ??
+                EdgeInsets.all(
+                  AppResponsive.instance.getWidth(12),
+                ),
+            decoration: BoxDecoration(
+              color: AppColor.colorFloating,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: widget.model.widget,
           ),
-          SizedBox(
-            height: AppResponsive.instance.getHeight(16),
-          )
         ],
-        Container(
-          width: double.maxFinite,
-          padding: widget.model.padding ??
-              EdgeInsets.all(
-                AppResponsive.instance.getWidth(12),
-              ),
-          decoration: BoxDecoration(
-            color: AppColor.colorFloating,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: widget.model.widget,
-        ),
-      ],
+      ),
     );
   }
 }

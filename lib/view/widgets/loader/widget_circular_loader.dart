@@ -9,9 +9,10 @@ class WidgetCircularLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: AppResponsive.instance.getWidth(model.size),
-      width: AppResponsive.instance.getHeight(model.size),
+      width: AppResponsive.instance.getWidth(model.size),
+      alignment: Alignment.center,
       child: CircularProgressIndicator(
         color: model.color,
         strokeWidth: 2,

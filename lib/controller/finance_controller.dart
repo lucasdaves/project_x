@@ -7,6 +7,7 @@ import 'package:project_x/model/finance_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/finance_operation_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FinanceController {
@@ -71,6 +72,7 @@ class FinanceController {
 
   Future<bool> readFinance() async {
     try {
+      financeStream.sink.add(FinanceStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -111,10 +113,13 @@ class FinanceController {
         }
       }
 
+      model.status = EntityStatus.Completed;
       financeStream.sink.add(model);
 
       return true;
     } catch (error) {
+      financeStream.sink
+          .add(FinanceStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

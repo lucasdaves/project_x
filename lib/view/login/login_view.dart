@@ -6,7 +6,7 @@ import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
-import 'package:project_x/view/home/home_view.dart';
+import 'package:project_x/view/load/load_view.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
 import 'package:project_x/view/widgets/buttons/widget_text_button.dart';
@@ -53,9 +53,11 @@ class _LoginViewState extends State<LoginView> {
         controller: loginController,
         headerText: "Conta",
         hintText: "Digite sua conta ...",
-        feedbackText: "Preencha um login valido ...",
         validator: (value) {
-          return (value == null || value == "");
+          if ((value == null || value == "")) {
+            return "Preencha um login valido ...";
+          }
+          return null;
         },
       );
       return WidgetTextField(
@@ -68,9 +70,11 @@ class _LoginViewState extends State<LoginView> {
         controller: passwordController,
         headerText: "Senha",
         hintText: "Digite sua senha ...",
-        feedbackText: "Preencha uma senha valida ...",
         validator: (value) {
-          return (value == null || value == "");
+          if ((value == null || value == "")) {
+            return "Preencha uma senha valida ...";
+          }
+          return null;
         },
       );
       return WidgetTextField(
@@ -200,9 +204,13 @@ class _LoginViewState extends State<LoginView> {
         );
 
         if (success) {
+          AppFeedback(
+            text: 'Login efetuado com sucesso',
+            color: AppColor.colorPositiveStatus,
+          ).showTopSnackBar(context);
           AppRoute(
-            tag: HomeView.tag,
-            screen: HomeView(),
+            tag: LoadView.tag,
+            screen: LoadView(),
           ).navigate(context);
         } else {
           AppFeedback(

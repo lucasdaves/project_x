@@ -20,6 +20,7 @@ class AppFeedback {
           width: double.maxFinite,
           child: Text(
             text,
+            textAlign: TextAlign.center,
             style: AppTextStyle.size16(),
           ),
         ),

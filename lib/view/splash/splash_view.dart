@@ -6,7 +6,7 @@ import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/home/home_view.dart';
+import 'package:project_x/view/load/load_view.dart';
 import 'package:project_x/view/login/login_view.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 
@@ -29,10 +29,11 @@ class _SplashViewState extends State<SplashView> {
     bool hasLogin = await UserController.instance.hasLogin();
     await SystemController.instance.mockSystem();
     await UserController.instance.mockUser();
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     AppRoute(
-      tag: hasLogin ? HomeView.tag : LoginView.tag,
-      screen: hasLogin ? HomeView() : LoginView(),
+      tag: hasLogin ? LoadView.tag : LoginView.tag,
+      screen: hasLogin ? LoadView() : LoginView(),
     ).navigate(context);
   }
 
@@ -58,25 +59,26 @@ class _SplashViewState extends State<SplashView> {
 
   Widget _buildLandscape(BuildContext context) {
     Widget buildTitle() {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "ProjectX",
-            textAlign: TextAlign.center,
-            style: AppTextStyle.size48(fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: AppResponsive.instance.getHeight(24),
-          ),
-          Text(
-            "gerencie seus clientes, projetos e financeiros",
-            textAlign: TextAlign.center,
-            style: AppTextStyle.size24(fontWeight: FontWeight.w300),
-          ),
-        ],
+      return Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: "Project",
+              style: AppTextStyle.size48(
+                color: AppColor.text_1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextSpan(
+              text: "X",
+              style: AppTextStyle.size48(
+                color: AppColor.text_1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        style: AppTextStyle.size48(),
       );
     }
 

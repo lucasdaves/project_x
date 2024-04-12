@@ -5,6 +5,7 @@ import 'package:project_x/services/database/model/step_model.dart';
 import 'package:project_x/services/database/model/substep_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/services/database/database_files.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
 class WorkflowController {
@@ -80,6 +81,8 @@ class WorkflowController {
 
   Future<bool> readWorkflow() async {
     try {
+      workflowStream.sink
+          .add(WorkflowStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
@@ -135,10 +138,13 @@ class WorkflowController {
         }
       }
 
+      model.status = EntityStatus.Completed;
       workflowStream.sink.add(model);
 
       return true;
     } catch (error) {
+      workflowStream.sink
+          .add(WorkflowStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

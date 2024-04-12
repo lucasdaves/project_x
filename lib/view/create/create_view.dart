@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
+import 'package:project_x/view/create/create_controller.dart';
+import 'package:project_x/view/home/home_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
-import 'package:project_x/view/widgets/box/widget_floating_box.dart';
-import 'package:project_x/view/widgets/buttons/widget_text_button.dart';
+import 'package:project_x/view/widgets/forms/widget_entity_form.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
 
 class CreateView extends StatefulWidget {
   static const String tag = "/create_view";
-  const CreateView({super.key});
+
+  final EntityType type;
+
+  const CreateView({super.key, required this.type});
 
   @override
   State<CreateView> createState() => _CreateViewState();
 }
 
 class _CreateViewState extends State<CreateView> {
+  CreateController controller = CreateController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    controller.setType(widget.type);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +67,8 @@ class _CreateViewState extends State<CreateView> {
         height: double.maxFinite,
         width: 900,
         widget: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             WidgetTitleHeader(
               model: WidgetTitleHeaderModel(title: "Clientes"),
@@ -71,7 +93,9 @@ class _CreateViewState extends State<CreateView> {
                         model: WidgetActionIconModel(
                           icon: Icons.person_add_rounded,
                           label: "Cadastrar",
-                          function: () {},
+                          function: () {
+                            _createFunction();
+                          },
                         ),
                       ),
                     ],
@@ -80,18 +104,9 @@ class _CreateViewState extends State<CreateView> {
               ),
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
-            WidgetFloatingBox(
-              model: WidgetFloatingBoxModel(
-                widget: Column(
-                  children: [
-                    WidgetTextButton(
-                      model: WidgetTextButtonModel(
-                        label: "Acessar clientes",
-                        function: () {},
-                      ),
-                    ),
-                  ],
-                ),
+            Expanded(
+              child: WidgetEntityForm(
+                controller: controller,
               ),
             ),
           ],
@@ -102,5 +117,27 @@ class _CreateViewState extends State<CreateView> {
 
   Widget _buildPortrait(BuildContext context) {
     return Container();
+  }
+
+  //* FUNCTIONS *//
+
+  Future<void> _createFunction() async {
+    if (controller.getValidator()()) {
+      if (await controller.createEntity()) {
+        AppFeedback(
+          text: "Sucesso ao cadastrar",
+          color: AppColor.colorPositiveStatus,
+        ).showTopSnackBar(context);
+        Navigator.popUntil(
+          context,
+          ModalRoute.withName(HomeView.tag),
+        );
+      } else {
+        AppFeedback(
+          text: "Erro ao cadastrar",
+          color: AppColor.colorNegativeStatus,
+        ).showTopSnackBar(context);
+      }
+    } else {}
   }
 }

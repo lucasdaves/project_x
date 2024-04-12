@@ -39,14 +39,7 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
             ),
             child: TextFormField(
               controller: widget.model.controller,
-              validator: (value) {
-                if (widget.model.validator != null &&
-                    widget.model.validator!(value)) {
-                  return widget.model.feedbackText;
-                } else {
-                  return null;
-                }
-              },
+              validator: widget.model.validator,
               initialValue: null,
               maxLines: null,
               expands: true,
@@ -72,18 +65,6 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
             ),
           ),
         ),
-        if (hasError && widget.model.feedbackText != null) ...[
-          Padding(
-            padding: EdgeInsets.only(top: AppResponsive.instance.getHeight(4)),
-            child: Text(
-              widget.model.feedbackText!,
-              style: AppTextStyle.size12(
-                color: AppColor.colorNegativeStatus,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -93,14 +74,13 @@ class WidgetTextFieldModel {
   final TextEditingController controller;
   final String? headerText;
   final String? hintText;
-  final String? feedbackText;
-  final bool Function(String?)? validator;
+
+  final String? Function(String?)? validator;
 
   WidgetTextFieldModel({
     required this.controller,
     this.headerText,
     this.hintText,
-    this.feedbackText,
     this.validator,
   });
 }
