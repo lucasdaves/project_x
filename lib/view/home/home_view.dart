@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:project_x/controller/client_controller.dart';
-import 'package:project_x/controller/finance_controller.dart';
-import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
+import 'package:project_x/view/list/list_view.dart';
 import 'package:project_x/view/widgets/drawer/widget_flow_drawer.dart';
-import 'package:project_x/view/forms/forms/widget_client_form.dart';
-import 'package:project_x/view/forms/forms/widget_finance_form.dart';
-import 'package:project_x/view/forms/forms/widget_workflow_form.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
-import 'package:project_x/view/widgets/buttons/widget_text_button.dart';
 import 'package:project_x/view/widgets/drawer/widget_user_drawer.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
+import 'package:project_x/view/widgets/list/widget_list_box.dart';
 
 class HomeView extends StatefulWidget {
   static const String tag = "/home_view";
+  static GlobalKey<ScaffoldState> homeKey = GlobalKey();
 
   const HomeView({super.key});
 
@@ -29,12 +25,10 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final GlobalKey<ScaffoldState> _key = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _key,
+      key: HomeView.homeKey,
       appBar: _buildBar(),
       body: _buildBody(),
       drawer: WidgetStartDrawer(),
@@ -65,94 +59,95 @@ class _HomeViewState extends State<HomeView> {
               model: WidgetTitleHeaderModel(title: "Dashboard"),
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
-            WidgetFloatingBox(
-              model: WidgetFloatingBoxModel(
-                widget: Column(
-                  children: [
-                    Row(
-                      children: [
-                        WidgetTextButton(
-                          model: WidgetTextButtonModel(
-                            label: "Cadastrar cliente",
-                            function: () {
-                              AppRoute(
-                                tag: WidgetClientForm.tag,
-                                screen: WidgetClientForm(
-                                  operation: EntityOperation.Create,
-                                ),
-                              ).navigate(context);
-                            },
-                          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: WidgetFloatingBox(
+                    model: WidgetFloatingBoxModel(
+                      label: "Clientes",
+                      actionWidget: GestureDetector(
+                        onTap: () {
+                          AppRoute(
+                            tag: EntityListView.tag,
+                            screen: EntityListView(
+                              type: EntityType.Client,
+                            ),
+                          ).navigate(context);
+                        },
+                        child: Text(
+                          "Ver mais",
+                          style: AppTextStyle.size20(
+                              color: AppColor.colorSecondary),
                         ),
-                        SizedBox(width: AppResponsive.instance.getWidth(24)),
-                        StreamBuilder(
-                          stream: ClientController.instance.clientStream,
-                          builder: (context, snapshot) {
-                            return Text(
-                              "${snapshot.data?.clients?.length}",
-                              style: AppTextStyle.size20(),
-                            );
-                          },
-                        )
-                      ],
+                      ),
+                      widget: WidgetListEntity(
+                        isResume: true,
+                        type: EntityType.Client,
+                      ),
                     ),
-                    Row(
-                      children: [
-                        WidgetTextButton(
-                          model: WidgetTextButtonModel(
-                            label: "Cadastrar financeiro",
-                            function: () {
-                              AppRoute(
-                                tag: WidgetFinanceForm.tag,
-                                screen: WidgetFinanceForm(
-                                  operation: EntityOperation.Create,
-                                ),
-                              ).navigate(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(width: AppResponsive.instance.getWidth(24)),
-                        StreamBuilder(
-                          stream: FinanceController.instance.financeStream,
-                          builder: (context, snapshot) {
-                            return Text(
-                              "${snapshot.data?.finances?.length}",
-                              style: AppTextStyle.size20(),
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        WidgetTextButton(
-                          model: WidgetTextButtonModel(
-                            label: "Cadastrar workflow",
-                            function: () {
-                              AppRoute(
-                                tag: WidgetWorkflowForm.tag,
-                                screen: WidgetWorkflowForm(
-                                  operation: EntityOperation.Create,
-                                ),
-                              ).navigate(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(width: AppResponsive.instance.getWidth(24)),
-                        StreamBuilder(
-                          stream: WorkflowController.instance.workflowStream,
-                          builder: (context, snapshot) {
-                            return Text(
-                              "${snapshot.data?.workflows?.length}",
-                              style: AppTextStyle.size20(),
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: AppResponsive.instance.getWidth(20),
+                ),
+                Expanded(
+                  child: WidgetFloatingBox(
+                    model: WidgetFloatingBoxModel(
+                      label: "Projetos",
+                      actionWidget: GestureDetector(
+                        onTap: () {
+                          AppRoute(
+                            tag: EntityListView.tag,
+                            screen: EntityListView(
+                              type: EntityType.Project,
+                            ),
+                          ).navigate(context);
+                        },
+                        child: Text(
+                          "Ver mais",
+                          style: AppTextStyle.size20(
+                              color: AppColor.colorSecondary),
+                        ),
+                      ),
+                      widget: WidgetListEntity(
+                        isResume: true,
+                        type: EntityType.Project,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: AppResponsive.instance.getWidth(20),
+                ),
+                Expanded(
+                  child: WidgetFloatingBox(
+                    model: WidgetFloatingBoxModel(
+                      label: "Financeiros",
+                      actionWidget: GestureDetector(
+                        onTap: () {
+                          AppRoute(
+                            tag: EntityListView.tag,
+                            screen: EntityListView(
+                              type: EntityType.Finance,
+                            ),
+                          ).navigate(context);
+                        },
+                        child: Text(
+                          "Ver mais",
+                          style: AppTextStyle.size20(
+                              color: AppColor.colorSecondary),
+                        ),
+                      ),
+                      widget: WidgetListEntity(
+                        isResume: true,
+                        type: EntityType.Finance,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

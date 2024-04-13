@@ -30,8 +30,7 @@ class WidgetEndDrawer extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Text(
-              UserController
-                  .instance.userStream.value.user!.personal!.model!.name,
+              UserController.instance.stream.value.user!.personal!.model!.name,
               style: AppTextStyle.size24(),
             ),
           ),

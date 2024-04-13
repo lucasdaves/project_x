@@ -98,7 +98,7 @@ class _LoadViewState extends State<LoadView> {
 
   Widget _buildUserStatus() {
     return StreamBuilder(
-      stream: UserController.instance.userStream,
+      stream: UserController.instance.stream,
       builder: (context, snapshot) {
         return _buildStatusRow(
           title: "Carregando dados do usuário",
@@ -110,7 +110,7 @@ class _LoadViewState extends State<LoadView> {
 
   Widget _buildClientStatus() {
     return StreamBuilder(
-      stream: ClientController.instance.clientStream,
+      stream: ClientController.instance.stream,
       builder: (context, snapshot) {
         return _buildStatusRow(
           title: "Carregando clientes",
@@ -122,7 +122,7 @@ class _LoadViewState extends State<LoadView> {
 
   Widget _buildProjectStatus() {
     return StreamBuilder(
-      stream: ProjectController.instance.projectStream,
+      stream: ProjectController.instance.stream,
       builder: (context, snapshot) {
         return _buildStatusRow(
           title: "Carregando projetos",
@@ -134,7 +134,7 @@ class _LoadViewState extends State<LoadView> {
 
   Widget _buildFinanceStatus() {
     return StreamBuilder(
-      stream: FinanceController.instance.financeStream,
+      stream: FinanceController.instance.stream,
       builder: (context, snapshot) {
         return _buildStatusRow(
           title: "Carregando financeiros",
@@ -146,7 +146,7 @@ class _LoadViewState extends State<LoadView> {
 
   Widget _buildWorkflowStatus() {
     return StreamBuilder(
-      stream: WorkflowController.instance.workflowStream,
+      stream: WorkflowController.instance.stream,
       builder: (context, snapshot) {
         return _buildStatusRow(
           title: "Carregando workflows",

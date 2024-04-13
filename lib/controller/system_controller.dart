@@ -21,12 +21,12 @@ class SystemController {
 
   //* STREAMS *//
 
-  final systemStream = BehaviorSubject<SystemStreamModel>();
+  final stream = BehaviorSubject<SystemStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    systemStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -85,7 +85,7 @@ class SystemController {
         model: SystemDatabaseModel.fromMap(mapA.first),
       );
 
-      systemStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {

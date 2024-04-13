@@ -139,7 +139,7 @@ class _LoginViewState extends State<LoginView> {
                 label: "Project X",
                 padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
                 widget: StreamBuilder<Object>(
-                  stream: UserController.instance.userStream,
+                  stream: UserController.instance.stream,
                   builder: (context, snapshot) {
                     return Form(
                       key: _formKey,
@@ -166,7 +166,7 @@ class _LoginViewState extends State<LoginView> {
                           SizedBox(
                               height: AppResponsive.instance.getHeight(36)),
                           buildLoginButton(
-                            UserController.instance.userStream.value.status ==
+                            UserController.instance.stream.value.status ==
                                 EntityStatus.Loading,
                           ),
                           SizedBox(

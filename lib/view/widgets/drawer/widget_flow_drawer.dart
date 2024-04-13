@@ -5,6 +5,7 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/client/client_view.dart';
+import 'package:project_x/view/list/list_view.dart';
 
 class WidgetStartDrawer extends StatelessWidget {
   const WidgetStartDrawer({super.key});
@@ -38,7 +39,6 @@ class WidgetStartDrawer extends StatelessWidget {
           buildCard(context, type: EntityType.Client),
           buildCard(context, type: EntityType.Project),
           buildCard(context, type: EntityType.Finance),
-          buildCard(context, type: EntityType.Workflow),
         ],
       ),
     );
@@ -55,8 +55,10 @@ class WidgetStartDrawer extends StatelessWidget {
         label = "Clientes";
         function = () {
           AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
+            tag: EntityListView.tag,
+            screen: EntityListView(
+              type: EntityType.Client,
+            ),
           ).navigate(context);
         };
         break;
@@ -64,8 +66,10 @@ class WidgetStartDrawer extends StatelessWidget {
         label = "Projetos";
         function = () {
           AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
+            tag: EntityListView.tag,
+            screen: EntityListView(
+              type: EntityType.Project,
+            ),
           ).navigate(context);
         };
         break;
@@ -73,24 +77,15 @@ class WidgetStartDrawer extends StatelessWidget {
         label = "Financeiros";
         function = () {
           AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
-          ).navigate(context);
-        };
-        break;
-      case EntityType.Workflow:
-        label = "Workflows";
-        function = () {
-          AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
+            tag: EntityListView.tag,
+            screen: EntityListView(
+              type: EntityType.Finance,
+            ),
           ).navigate(context);
         };
         break;
       default:
-        label = "";
-        function = () {};
-        break;
+        throw Exception("Unsuported Type");
     }
 
     return GestureDetector(

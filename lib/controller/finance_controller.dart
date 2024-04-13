@@ -21,12 +21,12 @@ class FinanceController {
 
   //* STREAMS *//
 
-  final financeStream = BehaviorSubject<FinanceStreamModel>();
+  final stream = BehaviorSubject<FinanceStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    financeStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -71,7 +71,7 @@ class FinanceController {
 
   Future<bool> readFinance() async {
     try {
-      financeStream.sink.add(FinanceStreamModel(status: EntityStatus.Loading));
+      stream.sink.add(FinanceStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -113,12 +113,11 @@ class FinanceController {
       }
 
       model.status = EntityStatus.Completed;
-      financeStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {
-      financeStream.sink
-          .add(FinanceStreamModel(status: EntityStatus.Completed));
+      stream.sink.add(FinanceStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

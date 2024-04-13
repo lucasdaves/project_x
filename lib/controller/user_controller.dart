@@ -22,18 +22,18 @@ class UserController {
 
   //* STREAMS *//
 
-  final userStream = BehaviorSubject<UserStreamModel>();
+  final stream = BehaviorSubject<UserStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    userStream.close();
+    stream.close();
   }
 
   //* METHODS *//
 
   Future<int?> getUserId() async {
-    int? id = userStream.valueOrNull?.user?.model?.id;
+    int? id = stream.valueOrNull?.user?.model?.id;
     return id;
   }
 
@@ -53,7 +53,7 @@ class UserController {
   Future<bool> setLogin(
       {required String login, required String password}) async {
     try {
-      userStream.sink.add(UserStreamModel(status: EntityStatus.Loading));
+      stream.sink.add(UserStreamModel(status: EntityStatus.Loading));
       List<String> credential = [login, password];
       await storage.setLogin("${credential.first},${credential.last}");
       if (!(await readUser())) {
@@ -63,7 +63,7 @@ class UserController {
     } catch (error) {
       log(error.toString());
       await setLogout();
-      userStream.sink.add(UserStreamModel(status: EntityStatus.Idle));
+      stream.sink.add(UserStreamModel(status: EntityStatus.Idle));
       return false;
     }
   }
@@ -71,7 +71,7 @@ class UserController {
   Future<bool> setLogout() async {
     try {
       await storage.setLogout();
-      userStream.sink.add(UserStreamModel());
+      stream.sink.add(UserStreamModel());
       return true;
     } catch (error) {
       log(error.toString());
@@ -143,8 +143,7 @@ class UserController {
       }
 
       //* SYSTEM *//
-      final systemModel =
-          SystemController.instance.systemStream.valueOrNull?.system;
+      final systemModel = SystemController.instance.stream.valueOrNull?.system;
       final isLoggedIn = userId != null;
 
       if (systemModel != null &&
@@ -235,7 +234,7 @@ class UserController {
       }
 
       model.status = EntityStatus.Completed;
-      userStream.sink.add(model);
+      stream.sink.add(model);
 
       await SystemController.instance.readSystem();
 
@@ -312,7 +311,7 @@ class UserController {
         await methods.delete(consts.user, args: argsA);
       }
 
-      userStream.sink.add(UserStreamModel());
+      stream.sink.add(UserStreamModel());
 
       await setLogout();
 

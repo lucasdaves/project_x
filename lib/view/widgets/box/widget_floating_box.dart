@@ -21,9 +21,19 @@ class _WidgetFloatingBoxState extends State<WidgetFloatingBox> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.model.label != null) ...[
-          Text(
-            widget.model.label!,
-            style: AppTextStyle.size20(),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                widget.model.label!,
+                style: AppTextStyle.size20(),
+              ),
+              if (widget.model.actionWidget != null) ...[
+                widget.model.actionWidget!,
+              ],
+            ],
           ),
           SizedBox(
             height: AppResponsive.instance.getHeight(16),
@@ -52,10 +62,12 @@ class WidgetFloatingBoxModel {
   final String? label;
   final EdgeInsets? padding;
   final Widget widget;
+  final Widget? actionWidget;
 
   WidgetFloatingBoxModel({
     this.label,
     this.padding,
     required this.widget,
+    this.actionWidget,
   });
 }

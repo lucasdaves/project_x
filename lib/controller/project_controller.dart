@@ -17,12 +17,12 @@ class ProjectController {
 
   //* STREAMS *//
 
-  final projectStream = BehaviorSubject<ProjectStreamModel>();
+  final stream = BehaviorSubject<ProjectStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    projectStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -57,7 +57,7 @@ class ProjectController {
 
   Future<bool> readProject() async {
     try {
-      projectStream.sink.add(ProjectStreamModel(status: EntityStatus.Loading));
+      stream.sink.add(ProjectStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -79,12 +79,11 @@ class ProjectController {
       }).toList();
 
       model.status = EntityStatus.Completed;
-      projectStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {
-      projectStream.sink
-          .add(ProjectStreamModel(status: EntityStatus.Completed));
+      stream.sink.add(ProjectStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

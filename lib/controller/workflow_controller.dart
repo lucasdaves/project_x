@@ -19,12 +19,12 @@ class WorkflowController {
 
   //* STREAMS *//
 
-  final workflowStream = BehaviorSubject<WorkflowStreamModel>();
+  final stream = BehaviorSubject<WorkflowStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    workflowStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -81,8 +81,7 @@ class WorkflowController {
 
   Future<bool> readWorkflow() async {
     try {
-      workflowStream.sink
-          .add(WorkflowStreamModel(status: EntityStatus.Loading));
+      stream.sink.add(WorkflowStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "Usuário ainda não logado";
 
@@ -139,12 +138,11 @@ class WorkflowController {
       }
 
       model.status = EntityStatus.Completed;
-      workflowStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {
-      workflowStream.sink
-          .add(WorkflowStreamModel(status: EntityStatus.Completed));
+      stream.sink.add(WorkflowStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

@@ -19,12 +19,12 @@ class ClientController {
 
   //* STREAMS *//
 
-  final clientStream = BehaviorSubject<ClientStreamModel>();
+  final stream = BehaviorSubject<ClientStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    clientStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -85,7 +85,7 @@ class ClientController {
 
   Future<bool> readClient() async {
     try {
-      clientStream.sink.add(ClientStreamModel(status: EntityStatus.Loading));
+      stream.sink.add(ClientStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
 
@@ -143,11 +143,11 @@ class ClientController {
       }
 
       model.status = EntityStatus.Completed;
-      clientStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {
-      clientStream.sink.add(ClientStreamModel(status: EntityStatus.Completed));
+      stream.sink.add(ClientStreamModel(status: EntityStatus.Completed));
       log(error.toString());
       return false;
     }

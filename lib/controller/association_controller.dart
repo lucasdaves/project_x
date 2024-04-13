@@ -16,12 +16,12 @@ class AssociationController {
 
   //* STREAMS *//
 
-  final associationStream = BehaviorSubject<AssociationStreamModel>();
+  final stream = BehaviorSubject<AssociationStreamModel>();
 
   //* DISPOSE *//
 
   void dispose() {
-    associationStream.close();
+    stream.close();
   }
 
   //* METHODS *//
@@ -75,7 +75,7 @@ class AssociationController {
         throw "Associação não encontrada";
       }
 
-      associationStream.sink.add(model);
+      stream.sink.add(model);
 
       return true;
     } catch (error) {
