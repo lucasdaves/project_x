@@ -71,6 +71,8 @@ class FormsController {
             model: stream.value.model,
           );
           break;
+        default:
+          break;
       }
     } catch (error) {
       log(error.toString());

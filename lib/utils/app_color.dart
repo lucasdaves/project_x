@@ -11,7 +11,7 @@ class AppColor {
   static const Color colorOpcionalStatus = Color(0xFFE985F2);
   static const Color colorDivider = Color(0xFF696969);
   static const Color colorSelected = Color(0x9C8A8D9C);
-  static const Color colorFieldBackground = Color(0xFF2B2E3A);
+  static const Color colorFieldBackground = Color(0xFF1E2631);
   static const Color colorWorkflowBackground = Color(0xFF1E2631);
 
   static const Color text_1 = Color(0xFFFFFFFF);

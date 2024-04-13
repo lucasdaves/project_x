@@ -45,7 +45,7 @@ class _WidgetUserFormState extends State<WidgetUserForm> {
 
   @override
   void initState() {
-    controller.setType(EntityType.Client);
+    controller.setType(EntityType.User);
     super.initState();
   }
 

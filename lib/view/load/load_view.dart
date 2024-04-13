@@ -6,7 +6,6 @@ import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
-import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
@@ -184,10 +183,6 @@ class _LoadViewState extends State<LoadView> {
   }
 
   Future<void> _onAllStreamsLoaded() async {
-    AppFeedback(
-      text: "Dados carregados",
-      color: AppColor.colorPositiveStatus,
-    ).showSnackbar(context);
     await Future.delayed(const Duration(milliseconds: 1000));
     AppRoute(
       tag: HomeView.tag,

@@ -43,7 +43,7 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
 
   @override
   void initState() {
-    controller.setType(EntityType.Client);
+    controller.setType(EntityType.Finance);
     super.initState();
   }
 

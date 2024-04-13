@@ -36,6 +36,8 @@ class _WidgetWorkflowFormState extends State<WidgetWorkflowForm> {
   final controller = FormsController();
   final entity = "Workflow";
 
+  WorkflowLogicalModel auxModel = WorkflowLogicalModel(steps: []);
+
   @override
   void dispose() {
     controller.dispose();
@@ -44,7 +46,7 @@ class _WidgetWorkflowFormState extends State<WidgetWorkflowForm> {
 
   @override
   void initState() {
-    controller.setType(EntityType.Client);
+    controller.setType(EntityType.Workflow);
     super.initState();
   }
 
@@ -167,7 +169,7 @@ class _WidgetWorkflowFormState extends State<WidgetWorkflowForm> {
                             children: [
                               Flexible(
                                 child: WidgetWorkflowBox(
-                                  controller: controller,
+                                  model: auxModel,
                                 ),
                               ),
                             ],
@@ -281,6 +283,7 @@ class _WidgetWorkflowFormState extends State<WidgetWorkflowForm> {
         name: descriptionSection.titleController.text,
         description: descriptionSection.descriptionController.text,
       ),
+      steps: auxModel.steps,
     );
     return model;
   }

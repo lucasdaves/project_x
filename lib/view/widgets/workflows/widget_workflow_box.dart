@@ -6,61 +6,42 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/forms/controller/forms_controller.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
 import 'package:project_x/view/widgets/checkbox/widget_checkbox.dart';
 import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
 
 class WidgetWorkflowBox extends StatefulWidget {
-  final FormsController controller;
+  final WorkflowLogicalModel model;
 
-  const WidgetWorkflowBox({super.key, required this.controller});
+  const WidgetWorkflowBox({super.key, required this.model});
 
   @override
   State<WidgetWorkflowBox> createState() => _WidgetWorkflowBoxState();
 }
 
 class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
-  WorkflowLogicalModel model = WorkflowLogicalModel();
-
-  @override
-  void initState() {
-    model.model = WorkflowDatabaseModel(
-      name: "",
-      description: "",
-    );
-    model.steps = [];
-    super.initState();
-  }
-
-  bool validate() {
-    if (model.steps?.isNotEmpty ?? false) {
-      widget.controller.stream.value.model = model;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      itemCount: model.steps!.length + 1,
+      itemCount: widget.model.steps!.length + 1,
       separatorBuilder: (context, stpIndex) {
         return SizedBox(
           width: AppResponsive.instance.getWidth(20),
         );
       },
       itemBuilder: (context, stpIndex) {
-        bool isFinalStep = (stpIndex == model.steps!.length);
+        bool isFinalStep = (stpIndex == widget.model.steps!.length);
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
               child: Container(
                 width: AppResponsive.instance.getWidth(150),
+                padding: EdgeInsets.only(
+                  bottom: AppResponsive.instance.getHeight(24),
+                ),
                 decoration: BoxDecoration(
                   color: AppColor.colorPrimary,
                   borderRadius: BorderRadius.circular(8),
@@ -81,7 +62,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                         children: [
                           button(
                             type: WorkflowType.Step,
-                            step: model.steps![stpIndex]!,
+                            step: widget.model.steps![stpIndex]!,
                             isFirst: true,
                             isLast: false,
                           ),
@@ -89,8 +70,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                             child: ListView.separated(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              itemCount:
-                                  model.steps![stpIndex]!.substeps!.length,
+                              itemCount: widget
+                                  .model.steps![stpIndex]!.substeps!.length,
                               padding: EdgeInsets.symmetric(
                                 vertical: AppResponsive.instance.getHeight(12),
                               ),
@@ -102,8 +83,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                               itemBuilder: (context, subIndex) {
                                 return button(
                                   type: WorkflowType.Substep,
-                                  substep: model
-                                      .steps![stpIndex]!.substeps![subIndex],
+                                  substep: widget.model.steps![stpIndex]!
+                                      .substeps![subIndex],
                                   isFirst: false,
                                   isLast: false,
                                 );
@@ -152,8 +133,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
           borderRadius: BorderRadius.only(
             topLeft: isFirst ? Radius.circular(8) : Radius.zero,
             topRight: isFirst ? Radius.circular(8) : Radius.zero,
-            bottomLeft: isLast ? Radius.circular(8) : Radius.zero,
-            bottomRight: isLast ? Radius.circular(8) : Radius.zero,
+            // bottomLeft: isLast ? Radius.circular(8) : Radius.zero,
+            // bottomRight: isLast ? Radius.circular(8) : Radius.zero,
           ),
           border: Border(
             top: isLast
@@ -245,7 +226,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       if (form != null && form.validate()) {
         try {
           setState(() {
-            print("Sucesso");
             if (step != null) {
               step.model!.name = titleController.text;
               step.model!.description = descriptionController.text;
@@ -256,7 +236,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
               substep.model!.mandatory = isMandatory;
             } else {
               if (type == WorkflowType.Step) {
-                model.steps!.add(
+                widget.model.steps!.add(
                   StepLogicalModel(
                     model: StepDatabaseModel(
                       name: titleController.text,
@@ -268,7 +248,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   ),
                 );
               } else if (type == WorkflowType.Substep && index != null) {
-                model.steps![index]!.substeps!.add(
+                widget.model.steps![index]!.substeps!.add(
                   SubstepLogicalModel(
                     model: SubstepDatabaseModel(
                       name: titleController.text,
@@ -279,7 +259,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   ),
                 );
               }
-              widget.controller.setValidator(validate);
             }
           });
           Navigator.pop(context);

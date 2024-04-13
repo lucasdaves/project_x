@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:project_x/controller/user_controller.dart';
+import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 
@@ -23,17 +26,48 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {},
-            child: Icon(
-              Icons.dehaze_rounded,
-              color: Colors.white,
-              size: AppResponsive.instance.getWidth(32),
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.dehaze_rounded,
+                  color: AppColor.colorSecondary,
+                  size: AppResponsive.instance.getWidth(32),
+                ),
+                SizedBox(width: AppResponsive.instance.getWidth(24)),
+                Text(
+                  widget.model.title,
+                  style: AppTextStyle.size24(),
+                ),
+              ],
             ),
           ),
-          SizedBox(width: AppResponsive.instance.getWidth(32)),
-          Text(
-            widget.model.title,
-            style: AppTextStyle.size24(),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              Scaffold.of(context).openEndDrawer();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  UserController
+                      .instance.userStream.value.user!.personal!.model!.name,
+                  style: AppTextStyle.size24(),
+                ),
+                SizedBox(
+                  width: AppResponsive.instance.getWidth(12),
+                ),
+                Icon(
+                  Icons.person_rounded,
+                  color: AppColor.colorSecondary,
+                  size: AppResponsive.instance.getWidth(32),
+                )
+              ],
+            ),
           )
         ],
       ),

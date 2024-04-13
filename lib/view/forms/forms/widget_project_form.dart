@@ -37,7 +37,7 @@ class _WidgetProjectFormState extends State<WidgetProjectForm> {
 
   @override
   void initState() {
-    controller.setType(EntityType.Client);
+    controller.setType(EntityType.Project);
     super.initState();
   }
 

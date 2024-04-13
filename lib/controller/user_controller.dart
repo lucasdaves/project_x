@@ -331,6 +331,12 @@ class UserController {
         password: "1234",
         type: 1,
       ),
+      personal: PersonalLogicalModel(
+        model: PersonalDatabaseModel(
+          name: "Lucas Daves",
+          document: "AA",
+        ),
+      ),
     );
     await UserController.instance.createUser(model: model);
   }
