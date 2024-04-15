@@ -41,4 +41,11 @@ class FinanceLogicalModel {
   List<FinanceOperationLogicalModel?>? operations;
 
   FinanceLogicalModel({this.model, this.operations});
+
+  List<FinanceOperationLogicalModel?> getType({required int type}) {
+    return operations
+            ?.where((element) => element?.model?.type == type)
+            .toList() ??
+        [];
+  }
 }

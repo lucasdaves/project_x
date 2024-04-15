@@ -4,7 +4,7 @@ import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/client/client_view.dart';
+import 'package:project_x/view/home/home_view.dart';
 import 'package:project_x/view/list/list_view.dart';
 
 class WidgetStartDrawer extends StatelessWidget {
@@ -36,6 +36,7 @@ class WidgetStartDrawer extends StatelessWidget {
           SizedBox(
             height: AppResponsive.instance.getHeight(24),
           ),
+          buildCard(context, type: EntityType.Dashboard),
           buildCard(context, type: EntityType.Client),
           buildCard(context, type: EntityType.Project),
           buildCard(context, type: EntityType.Finance),
@@ -51,11 +52,22 @@ class WidgetStartDrawer extends StatelessWidget {
     String label;
     Function() function;
     switch (type) {
+      case EntityType.Dashboard:
+        label = "Dashboard";
+        function = () {
+          AppRoute(
+            tag: HomeView.tag,
+            reset: true,
+            screen: HomeView(),
+          ).navigate(context);
+        };
+        break;
       case EntityType.Client:
         label = "Clientes";
         function = () {
           AppRoute(
             tag: EntityListView.tag,
+            reset: true,
             screen: EntityListView(
               type: EntityType.Client,
             ),
@@ -67,6 +79,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityListView.tag,
+            reset: true,
             screen: EntityListView(
               type: EntityType.Project,
             ),
@@ -78,6 +91,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityListView.tag,
+            reset: true,
             screen: EntityListView(
               type: EntityType.Finance,
             ),

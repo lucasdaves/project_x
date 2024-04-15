@@ -17,6 +17,8 @@ import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
+import 'package:project_x/view/widgets/drawer/widget_flow_drawer.dart';
+import 'package:project_x/view/widgets/drawer/widget_user_drawer.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
 import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
@@ -56,6 +58,8 @@ class _WidgetClientFormState extends State<WidgetClientForm> {
     return Scaffold(
       appBar: _buildBar(),
       body: _buildBody(),
+      drawer: WidgetStartDrawer(),
+      endDrawer: WidgetEndDrawer(),
       backgroundColor: AppColor.colorPrimary,
     );
   }

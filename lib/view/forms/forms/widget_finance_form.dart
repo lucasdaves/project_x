@@ -15,8 +15,13 @@ import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
+import 'package:project_x/view/widgets/box/widget_floating_box.dart';
+import 'package:project_x/view/widgets/drawer/widget_flow_drawer.dart';
+import 'package:project_x/view/widgets/drawer/widget_user_drawer.dart';
+import 'package:project_x/view/widgets/finances/widget_finance_box.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
+import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
 
 class WidgetFinanceForm extends StatefulWidget {
   static const String tag = "/finance_form_view";
@@ -35,6 +40,8 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
   final controller = FormsController();
   final entity = "Financeiro";
 
+  FinanceLogicalModel auxModel = FinanceLogicalModel(operations: []);
+
   @override
   void dispose() {
     controller.dispose();
@@ -52,6 +59,8 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
     return Scaffold(
       appBar: _buildBar(),
       body: _buildBody(),
+      drawer: WidgetStartDrawer(),
+      endDrawer: WidgetEndDrawer(),
       backgroundColor: AppColor.colorPrimary,
     );
   }
@@ -113,7 +122,73 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
             Expanded(
               child: Form(
                 key: formKey,
-                child: Container(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(width: AppResponsive.instance.getWidth(24)),
+                    Expanded(
+                      flex: 1,
+                      child: WidgetFloatingBox(
+                        model: WidgetFloatingBoxModel(
+                          label: "Dados da finança",
+                          padding: EdgeInsets.all(
+                              AppResponsive.instance.getWidth(24)),
+                          widget: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildTextfield(
+                                controller: descriptionSection.titleController,
+                                headerText: descriptionSection.titleLabel,
+                                hintText: descriptionSection.titleHint,
+                                validator: (value) =>
+                                    descriptionSection.validateTitle(value),
+                              ),
+                              SizedBox(
+                                height: AppResponsive.instance.getHeight(24),
+                              ),
+                              buildTextfield(
+                                controller:
+                                    descriptionSection.descriptionController,
+                                headerText: descriptionSection.descriptionLabel,
+                                hintText: descriptionSection.descriptionHint,
+                                validator: (value) => descriptionSection
+                                    .validateDescription(value),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: AppResponsive.instance.getWidth(24),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: WidgetFloatingBox(
+                        model: WidgetFloatingBoxModel(
+                          label: "Dados Financeiros",
+                          padding: EdgeInsets.all(
+                              AppResponsive.instance.getWidth(24)),
+                          widget: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: WidgetFinanceBox(
+                                  model: auxModel,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ), //IMPLEMENTAR
             ),
           ],
@@ -230,5 +305,24 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
       ],
     );
     return model;
+  }
+
+  //* WIDGETS *//
+
+  Widget buildTextfield({
+    required TextEditingController controller,
+    String? headerText,
+    String? hintText,
+    String? Function(String?)? validator,
+  }) {
+    WidgetTextFieldModel model = WidgetTextFieldModel(
+      controller: controller,
+      headerText: headerText,
+      hintText: hintText,
+      validator: validator,
+    );
+    return WidgetTextField(
+      model: model,
+    );
   }
 }

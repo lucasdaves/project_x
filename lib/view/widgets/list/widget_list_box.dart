@@ -8,6 +8,8 @@ import 'package:project_x/model/finance_controller_model.dart';
 import 'package:project_x/model/project_controller_model.dart';
 import 'package:project_x/model/workflow_controller_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
+import 'package:project_x/services/database/model/finance_model.dart';
+import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_enum.dart';
@@ -65,39 +67,49 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
     switch (widget.type) {
       case EntityType.Client:
         snapshot as ClientStreamModel;
-        return ListView.builder(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: (snapshot.clients ?? []).length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return WidgetListEntityCard(
-                value1: "Nome",
-                value2: "Telefone",
-                value3: widget.isResume ? null : "Documento",
-                isHeader: true,
+        return (snapshot.clients ?? []).isEmpty
+            ? emptyWidget()
+            : ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemCount: (snapshot.clients ?? []).length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return WidgetListEntityCard(
+                      value1: "Nome",
+                      value2: "Telefone",
+                      value3: widget.isResume ? null : "Documento",
+                      isHeader: true,
+                    );
+                  }
+                  ClientLogicalModel model = snapshot.clients![index - 1]!;
+                  return WidgetListEntityCard(
+                    value1: model.personal?.model?.name ?? "Não informado",
+                    value2: model.personal?.model?.phone ?? "Não informado",
+                    value3: widget.isResume
+                        ? null
+                        : model.personal?.model?.document ?? "Não informado",
+                  );
+                },
               );
-            }
-            ClientLogicalModel model = snapshot.clients![index - 1]!;
-            return WidgetListEntityCard(
-              value1: model.personal?.model?.name ?? "Não informado",
-              value2: model.personal?.model?.phone ?? "Não informado",
-              value3: widget.isResume
-                  ? null
-                  : model.personal?.model?.document ?? "Não informado",
-            );
-          },
-        );
       case EntityType.Project:
         snapshot as ProjectStreamModel;
-        return (snapshot.projects ?? []).length <= 0
+        return (snapshot.projects ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: (snapshot.projects ?? []).length + 1,
                 itemBuilder: (context, index) {
-                  ProjectLogicalModel model = snapshot.projects![index]!;
+                  if (index == 0) {
+                    return WidgetListEntityCard(
+                      value1: "Nome",
+                      value2: "Telefone",
+                      value3: widget.isResume ? null : "Documento",
+                      isHeader: true,
+                    );
+                  }
+                  ProjectLogicalModel model = snapshot.projects![index - 1]!;
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "",
                     value2: model.model?.name ?? "Não informado",
@@ -106,17 +118,31 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               );
       case EntityType.Finance:
         snapshot as FinanceStreamModel;
-        return (snapshot.finances ?? []).length <= 0
+        return (snapshot.finances ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemCount: (snapshot.finances ?? []).length + 1,
-                itemBuilder: (context, index) {},
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return WidgetListEntityCard(
+                      value1: "Nome",
+                      value2: "Valor",
+                      isHeader: true,
+                    );
+                  }
+                  FinanceLogicalModel model = snapshot.finances![index - 1]!;
+                  return WidgetListEntityCard(
+                    value1: model.model?.name ?? "",
+                    value2: model.getType(type: 0).first?.model?.amount ??
+                        "Não informado",
+                  );
+                },
               );
       case EntityType.Workflow:
         snapshot as WorkflowStreamModel;
-        return (snapshot.workflows ?? []).length <= 0
+        return (snapshot.workflows ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/home/home_view.dart';
 
 class WidgetTitleHeader extends StatefulWidget {
   final WidgetTitleHeaderModel model;
@@ -28,8 +26,7 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
         children: [
           GestureDetector(
             onTap: () {
-              HomeView.homeKey.currentState?.openDrawer();
-              //Scaffold.of(context).openDrawer();
+              Scaffold.of(context).openDrawer();
             },
             child: Row(
               children: [
@@ -49,8 +46,7 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
           const Spacer(),
           GestureDetector(
             onTap: () {
-              HomeView.homeKey.currentState?.openEndDrawer();
-              //Scaffold.of(context).openEndDrawer();
+              Scaffold.of(context).openEndDrawer();
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

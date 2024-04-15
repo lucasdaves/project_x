@@ -9,6 +9,8 @@ import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/load/load_view.dart';
 import 'package:project_x/view/login/login_view.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
+import 'package:project_x/view/widgets/drawer/widget_flow_drawer.dart';
+import 'package:project_x/view/widgets/drawer/widget_user_drawer.dart';
 
 class SplashView extends StatefulWidget {
   static const String tag = "/splash_view";
@@ -42,6 +44,8 @@ class _SplashViewState extends State<SplashView> {
     return Scaffold(
       appBar: _buildBar(),
       body: _buildBody(),
+      drawer: WidgetStartDrawer(),
+      endDrawer: WidgetEndDrawer(),
       backgroundColor: AppColor.colorPrimary,
     );
   }

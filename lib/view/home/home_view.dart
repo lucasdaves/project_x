@@ -16,7 +16,6 @@ import 'package:project_x/view/widgets/list/widget_list_box.dart';
 
 class HomeView extends StatefulWidget {
   static const String tag = "/home_view";
-  static GlobalKey<ScaffoldState> homeKey = GlobalKey();
 
   const HomeView({super.key});
 
@@ -28,7 +27,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: HomeView.homeKey,
       appBar: _buildBar(),
       body: _buildBody(),
       drawer: WidgetStartDrawer(),
