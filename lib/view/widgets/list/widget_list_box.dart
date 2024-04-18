@@ -9,9 +9,9 @@ import 'package:project_x/model/project_controller_model.dart';
 import 'package:project_x/model/workflow_controller_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
-import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
+import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
@@ -79,6 +79,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       value1: "Nome",
                       value2: "Telefone",
                       value3: widget.isResume ? null : "Documento",
+                      value4: widget.isResume ? null : "Status",
                       isHeader: true,
                     );
                   }
@@ -89,6 +90,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                     value3: widget.isResume
                         ? null
                         : model.personal?.model?.document ?? "Não informado",
+                    value4: widget.isResume ? null : "Status",
                   );
                 },
               );
@@ -129,14 +131,20 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                     return WidgetListEntityCard(
                       value1: "Nome",
                       value2: "Valor",
+                      value3: widget.isResume ? null : "Situação",
+                      value4: widget.isResume ? null : "Status",
                       isHeader: true,
                     );
                   }
                   FinanceLogicalModel model = snapshot.finances![index - 1]!;
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "",
-                    value2: model.getType(type: 0).first?.model?.amount ??
-                        "Não informado",
+                    value2: model.getInitialAmount().toString(),
+                    value3: widget.isResume
+                        ? null
+                        : "${model.getRelationPaid()} parcelas pagas",
+                    value4: widget.isResume ? null : "Status",
+                    color3: AppColor.colorNeutralStatus,
                   );
                 },
               );

@@ -1,8 +1,6 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
-import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_feedback.dart';
@@ -294,15 +292,7 @@ class _WidgetFinanceFormState extends State<WidgetFinanceForm> {
         name: descriptionSection.titleController.text,
         description: descriptionSection.descriptionController.text,
       ),
-      operations: [
-        FinanceOperationLogicalModel(
-          model: FinanceOperationDatabaseModel(
-            type: 0,
-            description: "Valor inicial",
-            amount: operationSection.amountController.text,
-          ),
-        ),
-      ],
+      operations: auxModel.operations,
     );
     return model;
   }

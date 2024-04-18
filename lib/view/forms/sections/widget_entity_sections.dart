@@ -1,6 +1,7 @@
 //* SECTIONS *//
 
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class UserSection {
   // LABELS
@@ -55,19 +56,23 @@ class PersonalDataSection {
   // LABELS
   String nameLabel = "Nome Completo";
   String documentLabel = "Documento";
-  String dobLabel = "Data de Nascimento";
-  String genderLabel = "Gênero";
+  String dobLabel = "Data de Nascimento (Opcional)";
+  String genderLabel = "Gênero (Opcional)";
 
   // HINT TEXTS
   String nameHint = "Digite seu nome completo ...";
-  String documentHint = "Digite seu documento ...";
+  String documentHint = "Digite seu cpf ...";
   String dobHint = "Digite sua data de nascimento ...";
   String genderHint = "Digite seu gênero ...";
 
   // TEXT CONTROLLERS
   TextEditingController nameController = TextEditingController();
-  TextEditingController documentController = TextEditingController();
-  TextEditingController dobController = TextEditingController();
+  MaskedTextController documentController = MaskedTextController(
+    mask: '000.000.000-00',
+  );
+  MaskedTextController dobController = MaskedTextController(
+    mask: '00/00/0000',
+  );
   TextEditingController genderController = TextEditingController();
 
   // VALIDATION FUNCTIONS
@@ -86,16 +91,10 @@ class PersonalDataSection {
   }
 
   String? validateDob(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o nascimento';
-    }
     return null;
   }
 
   String? validateGender(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o gênero';
-    }
     return null;
   }
 }
@@ -113,7 +112,7 @@ class AddressSection {
 
   // HINT TEXTS
   String countryHint = "Digite o país ...";
-  String cepHint = "Digite o CEP ...";
+  String cepHint = "00000-000 ...";
   String stateHint = "Digite o estado ...";
   String cityHint = "Digite a cidade ...";
   String streetHint = "Digite a rua ...";
@@ -123,7 +122,9 @@ class AddressSection {
 
   // TEXT CONTROLLERS
   TextEditingController countryController = TextEditingController();
-  TextEditingController cepController = TextEditingController();
+  MaskedTextController cepController = MaskedTextController(
+    mask: '00000-000',
+  );
   TextEditingController stateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController streetController = TextEditingController();
@@ -185,8 +186,8 @@ class AddressSection {
 
 class ContactSection {
   // LABELS
-  final String phoneLabel = "Telefone";
-  final String emailLabel = "E-mail";
+  final String phoneLabel = "Telefone (Opcional)";
+  final String emailLabel = "E-mail (Opcional)";
   final String noteLabel = "Anotação (Opcional)";
 
   // HINT TEXTS
@@ -259,14 +260,24 @@ class OperationSection {
   // LABELS
   final String amountLabel = "Quantia";
   final String descriptionLabel = "Descrição";
+  final String dateLabel = "Data (Opcional)";
 
   // HINT TEXTS
   final String amountHint = "Digite a quantia...";
   final String descriptionHint = "Digite a descrição...";
+  final String dateHint = "Digite a data de pagamento ...";
 
   // TEXT CONTROLLERS
-  TextEditingController amountController = TextEditingController();
+  MoneyMaskedTextController amountController = MoneyMaskedTextController(
+    decimalSeparator: '.',
+    thousandSeparator: '',
+    leftSymbol: '',
+    precision: 2,
+  );
   TextEditingController descriptionController = TextEditingController();
+  MaskedTextController dateController = MaskedTextController(
+    mask: '00/00/0000',
+  );
 
   // VALIDATION FUNCTIONS
   String? validateAmount(String? value) {
@@ -277,6 +288,13 @@ class OperationSection {
   }
 
   String? validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a descrição';
+    }
+    return null;
+  }
+
+  String? validateDate(String? value) {
     return null;
   }
 }

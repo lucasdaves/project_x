@@ -8,6 +8,10 @@ class WidgetListEntityCard extends StatelessWidget {
   final String value2;
   final String? value3;
   final String? value4;
+  final Color color1;
+  final Color color2;
+  final Color? color3;
+  final Color? color4;
   final bool isHeader;
   final Function()? function;
 
@@ -17,6 +21,10 @@ class WidgetListEntityCard extends StatelessWidget {
     required this.value2,
     this.value3,
     this.value4,
+    this.color1 = AppColor.text_1,
+    this.color2 = AppColor.text_1,
+    this.color3 = AppColor.text_1,
+    this.color4 = AppColor.text_1,
     this.isHeader = false,
     this.function,
   });
@@ -43,14 +51,14 @@ class WidgetListEntityCard extends StatelessWidget {
               flex: 2,
               child: Text(
                 value1,
-                style: AppTextStyle.size14(),
+                style: AppTextStyle.size14(color: color1),
               ),
             ),
             Expanded(
               flex: 1,
               child: Text(
                 value2,
-                style: AppTextStyle.size14(),
+                style: AppTextStyle.size14(color: color2),
               ),
             ),
             if (value3 != null) ...[
@@ -58,7 +66,7 @@ class WidgetListEntityCard extends StatelessWidget {
                 flex: 1,
                 child: Text(
                   value3!,
-                  style: AppTextStyle.size14(),
+                  style: AppTextStyle.size14(color: color3),
                 ),
               ),
             ],
@@ -67,7 +75,7 @@ class WidgetListEntityCard extends StatelessWidget {
                 flex: 1,
                 child: Text(
                   value4!,
-                  style: AppTextStyle.size14(),
+                  style: AppTextStyle.size14(color: color4),
                 ),
               ),
             ],
