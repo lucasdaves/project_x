@@ -220,6 +220,83 @@ class ContactSection {
   }
 }
 
+class ProjectSection {
+  // LABELS
+  final String titleLabel = "Titulo";
+  final String descriptionLabel = "Descrição";
+  final String workflowLabel = "Workflow";
+
+  // HINT TEXTS
+  final String titleHint = "Digite o titulo...";
+  final String descriptionHint = "Digite a descrição...";
+  final String workflowHint = "Selecione a workflow ...";
+
+  // TEXT CONTROLLERS
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController workflowController = TextEditingController();
+
+  // VALIDATION FUNCTIONS
+  String? validateTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira o titulo';
+    }
+    return null;
+  }
+
+  String? validateDescription(String? value) {
+    return null;
+  }
+
+  String? validateWorkflow(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, selecione uma opção';
+    }
+    return null;
+  }
+}
+
+class WorkflowOperationSection {
+  // LABELS
+  final String titleLabel = "Titulo";
+  final String descriptionLabel = "Descrição";
+  final String mandatoryLabel = "Entrega obrigatória ?";
+  final String statusLabel = "Concluir ?";
+  final String dateLabel = "Data de entrega";
+
+  // HINT TEXTS
+  final String titleHint = "Digite o titulo...";
+  final String descriptionHint = "Digite a descrição...";
+  final String mandatoryHint = "";
+  final String statusHint = "";
+  final String dateHint = "Digite a data de entrega ...";
+
+  // TEXT CONTROLLERS
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  bool mandatoryController = false;
+  bool statusController = false;
+  MaskedTextController dateController = MaskedTextController(
+    mask: '00/00/0000',
+  );
+
+  // VALIDATION FUNCTIONS
+  String? validateTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira o titulo';
+    }
+    return null;
+  }
+
+  String? validateDescription(String? value) {
+    return null;
+  }
+
+  String? validateDate(String? value) {
+    return null;
+  }
+}
+
 class DescriptionSection {
   // LABELS
   final String titleLabel = "Titulo";

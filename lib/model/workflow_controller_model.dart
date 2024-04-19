@@ -26,4 +26,27 @@ class WorkflowStreamModel {
       }).toList(),
     );
   }
+
+  List<WorkflowLogicalModel?> getAll() {
+    return workflows ?? [];
+  }
+
+  WorkflowLogicalModel? getOne({int? id, String? name}) {
+    for (WorkflowLogicalModel? entity in workflows ?? []) {
+      if (id != null && entity?.model?.id == id) {
+        return entity;
+      } else if (name != null && entity?.model?.name == name) {
+        return entity;
+      }
+    }
+    return null;
+  }
+
+  Map<int, String> getMap() {
+    Map<int, String> map = {};
+    for (WorkflowLogicalModel? entity in workflows ?? []) {
+      map.addAll({entity!.model!.id!: entity.model!.name!});
+    }
+    return map;
+  }
 }

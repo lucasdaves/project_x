@@ -34,4 +34,19 @@ class UserStreamModel {
           : null,
     );
   }
+
+  UserLogicalModel? getOne({int? id, String? name}) {
+    if (id != null && user?.model?.id == id) {
+      return user;
+    } else if (name != null && user?.personal?.model?.name == name) {
+      return user;
+    }
+    return null;
+  }
+
+  Map<int, String> getMap() {
+    Map<int, String> map = {};
+    map.addAll({user!.model!.id!: user!.personal!.model!.name});
+    return map;
+  }
 }

@@ -8,7 +8,7 @@ import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
-import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
+import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
 class WidgetFinanceBox extends StatefulWidget {
   final FinanceLogicalModel model;

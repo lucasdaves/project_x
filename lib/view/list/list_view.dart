@@ -4,10 +4,7 @@ import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
-import 'package:project_x/view/forms/forms/widget_client_form.dart';
-import 'package:project_x/view/forms/forms/widget_finance_form.dart';
-import 'package:project_x/view/forms/forms/widget_project_form.dart';
-import 'package:project_x/view/forms/forms/widget_workflow_form.dart';
+import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
@@ -126,8 +123,9 @@ class _EntityListViewState extends State<EntityListView> {
               label: "+ Cliente",
               function: () async {
                 AppRoute(
-                  tag: WidgetClientForm.tag,
-                  screen: WidgetClientForm(
+                  tag: EntityFormView.tag,
+                  screen: EntityFormView(
+                    type: EntityType.Client,
                     operation: EntityOperation.Create,
                   ),
                 ).navigate(context);
@@ -144,8 +142,9 @@ class _EntityListViewState extends State<EntityListView> {
               label: "+ Workflow",
               function: () async {
                 AppRoute(
-                  tag: WidgetWorkflowForm.tag,
-                  screen: WidgetWorkflowForm(
+                  tag: EntityFormView.tag,
+                  screen: EntityFormView(
+                    type: EntityType.Workflow,
                     operation: EntityOperation.Create,
                   ),
                 ).navigate(context);
@@ -158,8 +157,9 @@ class _EntityListViewState extends State<EntityListView> {
               label: "+ Projeto",
               function: () async {
                 AppRoute(
-                  tag: WidgetProjectForm.tag,
-                  screen: WidgetProjectForm(
+                  tag: EntityFormView.tag,
+                  screen: EntityFormView(
+                    type: EntityType.Project,
                     operation: EntityOperation.Create,
                   ),
                 ).navigate(context);
@@ -177,8 +177,9 @@ class _EntityListViewState extends State<EntityListView> {
               label: "+ Financeiro",
               function: () async {
                 AppRoute(
-                  tag: WidgetFinanceForm.tag,
-                  screen: WidgetFinanceForm(
+                  tag: EntityFormView.tag,
+                  screen: EntityFormView(
+                    type: EntityType.Finance,
                     operation: EntityOperation.Create,
                   ),
                 ).navigate(context);

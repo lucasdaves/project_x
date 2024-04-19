@@ -156,41 +156,56 @@ class WorkflowController {
 
       model.model!.userId = userId;
 
-      //* PROJECT *//
-      Map<String, dynamic> argsA = {};
-      argsA['atr_id'] = model.model!.id;
+      Map<String, dynamic> argsA = {'atr_id': model.model!.id};
 
-      await methods.update(consts.workflow,
-          map: model.model!.toMap(), args: argsA);
+      if (model.model!.id == null) {
+        model.model!.id =
+            await methods.create(consts.workflow, map: model.model!.toMap());
+      } else {
+        await methods.update(consts.workflow,
+            map: model.model!.toMap(), args: argsA);
+      }
 
-      //* STEPS *//
       for (StepLogicalModel? step in model.steps ?? []) {
         if (step?.model != null) {
-          Map<String, dynamic> argsB = {};
-          argsB['atr_id'] = step!.model!.id!;
+          Map<String, dynamic> argsB = {'atr_id': step!.model!.id};
 
-          await methods.update(consts.step,
-              map: model.model!.toMap(), args: argsB);
+          if (step.model!.id == null) {
+            step.model!.workflowId = model.model!.id;
+            step.model!.id = await methods.create(
+              consts.step,
+              map: step.model!.toMap(),
+            );
+          } else {
+            await methods.update(consts.step,
+                map: step.model!.toMap(), args: argsB);
+          }
 
-          //* SUBSTEPS *//
           for (SubstepLogicalModel? substep in step.substeps ?? []) {
             if (substep?.model != null) {
-              Map<String, dynamic> argsC = {};
-              argsC['atr_id'] = substep!.model!.id!;
+              Map<String, dynamic> argsC = {'atr_id': substep!.model!.id};
 
-              await methods.update(consts.substep,
-                  map: model.model!.toMap(), args: argsC);
+              if (substep.model!.id == null) {
+                substep.model!.stepId = step.model!.id;
+                substep.model!.id = await methods.create(
+                  consts.substep,
+                  map: substep.model!.toMap(),
+                );
+              } else {
+                await methods.update(consts.substep,
+                    map: substep.model!.toMap(), args: argsC);
+              }
             }
           }
         }
       }
 
-      await readWorkflow();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readWorkflow();
     }
   }
 

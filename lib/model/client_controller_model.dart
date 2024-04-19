@@ -28,4 +28,27 @@ class ClientStreamModel {
       }).toList(),
     );
   }
+
+  List<ClientLogicalModel?> getAll() {
+    return clients ?? [];
+  }
+
+  ClientLogicalModel? getOne({int? id, String? name}) {
+    for (ClientLogicalModel? entity in clients ?? []) {
+      if (id != null && entity?.model?.id == id) {
+        return entity;
+      } else if (name != null && entity?.personal?.model?.name == name) {
+        return entity;
+      }
+    }
+    return null;
+  }
+
+  Map<int, String> getMap() {
+    Map<int, String> map = {};
+    for (ClientLogicalModel? entity in clients ?? []) {
+      map.addAll({entity!.model!.id!: entity.personal!.model!.name});
+    }
+    return map;
+  }
 }

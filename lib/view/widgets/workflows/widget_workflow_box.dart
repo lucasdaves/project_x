@@ -6,14 +6,20 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
+import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
-import 'package:project_x/view/widgets/checkbox/widget_checkbox.dart';
-import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
+import 'package:project_x/view/widgets/fields/widget_checkbox.dart';
+import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
 class WidgetWorkflowBox extends StatefulWidget {
   final WorkflowLogicalModel model;
+  final EntityOperation operation;
 
-  const WidgetWorkflowBox({super.key, required this.model});
+  const WidgetWorkflowBox({
+    super.key,
+    required this.model,
+    required this.operation,
+  });
 
   @override
   State<WidgetWorkflowBox> createState() => _WidgetWorkflowBoxState();
@@ -25,7 +31,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
-      itemCount: widget.model.steps!.length + 1,
+      itemCount: (widget.model.steps?.length ?? 0) + 1,
       separatorBuilder: (context, stpIndex) {
         return SizedBox(
           width: AppResponsive.instance.getWidth(20),
@@ -70,8 +76,9 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                             child: ListView.separated(
                               shrinkWrap: true,
                               scrollDirection: Axis.vertical,
-                              itemCount: widget
-                                  .model.steps![stpIndex]!.substeps!.length,
+                              itemCount: (widget.model.steps?[stpIndex]
+                                      ?.substeps?.length ??
+                                  0),
                               padding: EdgeInsets.symmetric(
                                 vertical: AppResponsive.instance.getHeight(12),
                               ),
@@ -207,18 +214,16 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     SubstepLogicalModel? substep,
   }) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    final TextEditingController titleController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    bool isMandatory = false;
+    final WorkflowOperationSection section = WorkflowOperationSection();
 
     if (step != null) {
-      titleController.text = step.model!.name;
-      descriptionController.text = step.model!.description ?? "";
-      isMandatory = step.model!.mandatory;
+      section.titleController.text = step.model!.name;
+      section.descriptionController.text = step.model!.description ?? "";
+      section.mandatoryController = step.model!.mandatory;
     } else if (substep != null) {
-      titleController.text = substep.model!.name;
-      descriptionController.text = substep.model!.description ?? "";
-      isMandatory = substep.model!.mandatory;
+      section.titleController.text = substep.model!.name;
+      section.descriptionController.text = substep.model!.description ?? "";
+      section.mandatoryController = substep.model!.mandatory;
     }
 
     Future<void> buildFunction() async {
@@ -227,22 +232,22 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
         try {
           setState(() {
             if (step != null) {
-              step.model!.name = titleController.text;
-              step.model!.description = descriptionController.text;
-              step.model!.mandatory = isMandatory;
+              step.model!.name = section.titleController.text;
+              step.model!.description = section.descriptionController.text;
+              step.model!.mandatory = section.mandatoryController;
             } else if (substep != null) {
-              substep.model!.name = titleController.text;
-              substep.model!.description = descriptionController.text;
-              substep.model!.mandatory = isMandatory;
+              substep.model!.name = section.titleController.text;
+              substep.model!.description = section.descriptionController.text;
+              substep.model!.mandatory = section.mandatoryController;
             } else {
               if (type == WorkflowType.Step) {
                 widget.model.steps!.add(
                   StepLogicalModel(
                     model: StepDatabaseModel(
-                      name: titleController.text,
-                      description: descriptionController.text,
-                      mandatory: isMandatory,
-                      status: false,
+                      name: section.titleController.text,
+                      description: section.descriptionController.text,
+                      mandatory: section.mandatoryController,
+                      status: 0,
                     ),
                     substeps: [],
                   ),
@@ -251,10 +256,10 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                 widget.model.steps![index]!.substeps!.add(
                   SubstepLogicalModel(
                     model: SubstepDatabaseModel(
-                      name: titleController.text,
-                      description: descriptionController.text,
-                      mandatory: isMandatory,
-                      status: false,
+                      name: section.titleController.text,
+                      description: section.descriptionController.text,
+                      mandatory: section.mandatoryController,
+                      status: 0,
                     ),
                   ),
                 );
@@ -268,43 +273,12 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       }
     }
 
-    Widget buildMandatoryField(StateSetter modalState) {
-      WidgetCheckBoxModel model = WidgetCheckBoxModel(
-        checked: isMandatory,
-        function: () {
-          modalState(() {
-            isMandatory = !isMandatory;
-          });
-        },
-      );
-      return Row(
-        children: [
-          Text(
-            "Ela é obrigatória ?",
-            style: AppTextStyle.size12(),
-          ),
-          SizedBox(
-            width: AppResponsive.instance.getWidth(12),
-          ),
-          WidgetCheckBox(
-            model: model,
-          ),
-        ],
-      );
-    }
-
     Widget buildTitleField() {
       WidgetTextFieldModel model = WidgetTextFieldModel(
-        controller: titleController,
-        headerText:
-            "Nome da ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
-        hintText: "Digite o titulo ...",
-        validator: (value) {
-          if ((value == null || value == "")) {
-            return "Preencha um titulo valido...";
-          }
-          return null;
-        },
+        controller: section.titleController,
+        headerText: section.titleLabel,
+        hintText: section.titleHint,
+        validator: (value) => section.validateTitle(value),
       );
       return WidgetTextField(
         model: model,
@@ -313,13 +287,22 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
 
     Widget buildDescriptionField() {
       WidgetTextFieldModel model = WidgetTextFieldModel(
-        controller: descriptionController,
-        headerText:
-            "Descrição da ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
-        hintText: "Digite a descrição ...",
-        validator: (value) {
-          return null;
-        },
+        controller: section.descriptionController,
+        headerText: section.descriptionLabel,
+        hintText: section.descriptionHint,
+        validator: (value) => section.validateDescription(value),
+      );
+      return WidgetTextField(
+        model: model,
+      );
+    }
+
+    Widget buildDateField() {
+      WidgetTextFieldModel model = WidgetTextFieldModel(
+        controller: section.dateController,
+        headerText: section.dateLabel,
+        hintText: section.dateHint,
+        validator: (value) => section.validateDate(value),
       );
       return WidgetTextField(
         model: model,
@@ -389,13 +372,44 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                           ),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
-                          buildMandatoryField(setState),
+                          WidgetCheckBox(
+                            model: WidgetCheckBoxModel(
+                              title: section.mandatoryLabel,
+                              checked: section.mandatoryController,
+                              function: () {
+                                setState(() {
+                                  section.mandatoryController =
+                                      !section.mandatoryController;
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(24)),
+                          WidgetCheckBox(
+                            model: WidgetCheckBoxModel(
+                              title: section.statusLabel,
+                              checked: section.statusController,
+                              color: AppColor.colorPositiveStatus,
+                              function: () {
+                                setState(() {
+                                  section.statusController =
+                                      !section.statusController;
+                                });
+                              },
+                            ),
+                          ),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
                           buildTitleField(),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
                           buildDescriptionField(),
+                          if (widget.operation == EntityOperation.Update) ...[
+                            SizedBox(
+                                height: AppResponsive.instance.getHeight(24)),
+                            buildDateField(),
+                          ],
                           SizedBox(
                               height: AppResponsive.instance.getHeight(36)),
                           buildWorkflowButton(false),

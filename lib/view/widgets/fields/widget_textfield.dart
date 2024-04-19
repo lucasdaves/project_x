@@ -47,6 +47,11 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
               cursorColor: AppColor.colorSecondary,
               cursorErrorColor: AppColor.colorNegativeStatus,
               textAlignVertical: TextAlignVertical.center,
+              onChanged: (value) {
+                if (widget.model.changed != null) {
+                  widget.model.changed!(value);
+                }
+              },
               decoration: InputDecoration(
                 hintText: widget.model.hintText,
                 hintStyle: AppTextStyle.size12(
@@ -74,13 +79,14 @@ class WidgetTextFieldModel {
   final TextEditingController controller;
   final String? headerText;
   final String? hintText;
-
   final String? Function(String?)? validator;
+  final Function(String?)? changed;
 
   WidgetTextFieldModel({
     required this.controller,
     this.headerText,
     this.hintText,
     this.validator,
+    this.changed,
   });
 }

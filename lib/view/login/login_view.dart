@@ -12,7 +12,7 @@ import 'package:project_x/view/widgets/box/widget_floating_box.dart';
 import 'package:project_x/view/widgets/buttons/widget_text_button.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
-import 'package:project_x/view/widgets/textfield/widget_textfield.dart';
+import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
 class LoginView extends StatefulWidget {
   static const String tag = "/login_view";

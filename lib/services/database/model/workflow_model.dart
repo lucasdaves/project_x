@@ -2,14 +2,14 @@ import 'package:project_x/services/database/model/step_model.dart';
 
 class WorkflowDatabaseModel {
   int? id;
-  String name;
-  String description;
+  String? name;
+  String? description;
   int? userId;
 
   WorkflowDatabaseModel({
     this.id,
-    required this.name,
-    required this.description,
+    this.name,
+    this.description,
     this.userId,
   });
 

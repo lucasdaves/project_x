@@ -80,6 +80,84 @@ class FormsController {
     }
     return result;
   }
+
+  Future<bool> updateEntity() async {
+    bool result = false;
+    try {
+      switch (stream.value.type!) {
+        case EntityType.User:
+          result = await UserController.instance.updateUser(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Client:
+          result = await ClientController.instance.updateClient(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Project:
+          result = await ProjectController.instance.updateProject(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Finance:
+          result = await FinanceController.instance.updateFinance(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Workflow:
+          result = await WorkflowController.instance.updateWorkflow(
+            model: stream.value.model,
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      log(error.toString());
+      result = false;
+    }
+    return result;
+  }
+
+  Future<bool> deleteEntity() async {
+    bool result = false;
+    try {
+      switch (stream.value.type!) {
+        case EntityType.User:
+          result = await UserController.instance.deleteUser(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Client:
+          result = await ClientController.instance.deleteClient(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Project:
+          result = await ProjectController.instance.deleteProject(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Finance:
+          result = await FinanceController.instance.deleteFinance(
+            model: stream.value.model,
+          );
+          break;
+        case EntityType.Workflow:
+          result = await WorkflowController.instance.deleteWorkflow(
+            model: stream.value.model,
+          );
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      log(error.toString());
+      result = false;
+    }
+    return result;
+  }
 }
 
 class CreateModel {

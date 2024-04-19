@@ -14,7 +14,7 @@ import 'package:project_x/view/home/home_view.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
-import 'package:project_x/view/widgets/checkbox/widget_checkbox.dart';
+import 'package:project_x/view/widgets/fields/widget_checkbox.dart';
 import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
 
 class LoadView extends StatefulWidget {

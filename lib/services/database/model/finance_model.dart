@@ -4,7 +4,7 @@ class FinanceDatabaseModel {
   int? id;
   String? name;
   String? description;
-  bool? status;
+  int? status;
   int? userId;
 
   FinanceDatabaseModel({
@@ -20,7 +20,7 @@ class FinanceDatabaseModel {
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
-      status: map['atr_status'] == 1 ? true : false,
+      status: map['atr_status'],
       userId: map['tb_user_atr_id'],
     );
   }
@@ -30,7 +30,7 @@ class FinanceDatabaseModel {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
-      'atr_status': (status ?? false) ? 1 : 0,
+      'atr_status': status,
       'tb_user_atr_id': userId,
     };
   }
@@ -85,23 +85,30 @@ class FinanceLogicalModel {
     return getInitialAmount() + getAditiveAmount() - getCostAmount();
   }
 
-  double getRelationAmount({required int type, required bool isPaid}) {
+  double getRelationAmount({required int type, bool? isPaid, bool? isLate}) {
     List<FinanceOperationLogicalModel?> list = getType(type: type);
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = 0.0;
-      bool condition = isPaid
-          ? (element?.model?.paidAt != null && element?.model?.paidAt != "")
-          : (element?.model?.paidAt == null || element?.model?.paidAt == "");
-      if (type == 3 && element?.model?.expiresAt != null) {
-        DateTime now = DateTime.now();
-        DateTime expiresAt = element?.model?.expiresAt ?? now;
-        if (expiresAt.isBefore(now)) {
+      if (isLate != null) {
+        bool condition = isLate
+            ? (element?.model?.expiresAt != null &&
+                element?.model?.expiresAt != "")
+            : (element?.model?.expiresAt == null &&
+                element?.model?.expiresAt == "");
+        if (condition) {
+          DateTime now = DateTime.now();
+          DateTime expiresAt = element?.model?.expiresAt ?? now;
+          if (expiresAt.isBefore(now)) {
+            amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
+          }
+        }
+      } else if (isPaid != null) {
+        bool condition = isPaid
+            ? (element?.model?.paidAt != null && element?.model?.paidAt != "")
+            : (element?.model?.paidAt == null || element?.model?.paidAt == "");
+        if (condition) {
           amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
         }
-      } else {
-        amount = condition
-            ? double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0
-            : 0.0;
       }
       return previousValue + amount;
     });

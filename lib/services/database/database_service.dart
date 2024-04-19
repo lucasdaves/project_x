@@ -50,6 +50,7 @@ class DatabaseService {
         options: OpenDatabaseOptions(
           version: 1,
           onCreate: _onCreate,
+          onConfigure: _onConfigure,
         ),
       );
       databaseModel.database = database;
@@ -76,6 +77,11 @@ class DatabaseService {
   Future<void> _onCreate(Database database, int version) async {
     final db = database;
     await db.execute(scripts.createTablesScript());
+  }
+
+  Future<void> _onConfigure(Database database) async {
+    final db = database;
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   void _checkPlatformSupport() {

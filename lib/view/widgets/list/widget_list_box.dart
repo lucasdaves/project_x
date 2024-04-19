@@ -13,7 +13,9 @@ import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
+import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
 import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
 
@@ -91,6 +93,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                         ? null
                         : model.personal?.model?.document ?? "Não informado",
                     value4: widget.isResume ? null : "Status",
+                    function: () {
+                      function(model.model!.id!);
+                    },
                   );
                 },
               );
@@ -115,6 +120,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "",
                     value2: model.model?.name ?? "Não informado",
+                    function: () {
+                      function(model.model!.id!);
+                    },
                   );
                 },
               );
@@ -143,8 +151,20 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                     value3: widget.isResume
                         ? null
                         : "${model.getRelationPaid()} parcelas pagas",
-                    value4: widget.isResume ? null : "Status",
+                    value4: widget.isResume
+                        ? null
+                        : model.getRelationAmount(type: 1, isPaid: false) > 0
+                            ? "Atrasado"
+                            : "Em dia",
                     color3: AppColor.colorNeutralStatus,
+                    color4: widget.isResume
+                        ? null
+                        : model.getRelationAmount(type: 1, isPaid: false) > 0
+                            ? AppColor.colorNegativeStatus
+                            : AppColor.colorPositiveStatus,
+                    function: () {
+                      function(model.model!.id!);
+                    },
                   );
                 },
               );
@@ -168,6 +188,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "Não informado",
                     value2: model.model?.description ?? "Não informado",
+                    function: () {
+                      function(model.model!.id!);
+                    },
                   );
                 },
               );
@@ -182,5 +205,16 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       textAlign: TextAlign.center,
       style: AppTextStyle.size16(fontWeight: FontWeight.w300),
     );
+  }
+
+  function(int entityIndex) {
+    AppRoute(
+      tag: EntityFormView.tag,
+      screen: EntityFormView(
+        type: widget.type,
+        entityIndex: entityIndex,
+        operation: EntityOperation.Update,
+      ),
+    ).navigate(context);
   }
 }
