@@ -6,6 +6,7 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/client/client_view.dart';
+import 'package:project_x/view/forms/form_view.dart';
 
 class WidgetEndDrawer extends StatelessWidget {
   const WidgetEndDrawer({super.key});
@@ -55,8 +56,12 @@ class WidgetEndDrawer extends StatelessWidget {
         label = "Conta";
         function = () {
           AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
+            tag: EntityFormView.tag,
+            screen: EntityFormView(
+              type: EntityType.User,
+              entityIndex: UserController.instance.stream.value.user?.model?.id,
+              operation: EntityOperation.Update,
+            ),
           ).navigate(context);
         };
         break;

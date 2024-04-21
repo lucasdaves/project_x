@@ -40,10 +40,26 @@ class ProjectDatabaseModel {
       'tb_workflow_atr_id': workflowId,
     };
   }
+
+  ProjectDatabaseModel copy() {
+    return ProjectDatabaseModel(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      status: this.status,
+      userId: this.userId,
+      addressId: this.addressId,
+      workflowId: this.workflowId,
+    );
+  }
 }
 
 class ProjectLogicalModel {
   ProjectDatabaseModel? model;
 
   ProjectLogicalModel({this.model});
+
+  ProjectLogicalModel copy() {
+    return ProjectLogicalModel(model: this.model?.copy());
+  }
 }

@@ -30,6 +30,15 @@ class WorkflowDatabaseModel {
       'tb_user_atr_id': userId,
     };
   }
+
+  WorkflowDatabaseModel copy() {
+    return WorkflowDatabaseModel(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      userId: this.userId,
+    );
+  }
 }
 
 class WorkflowLogicalModel {
@@ -37,4 +46,13 @@ class WorkflowLogicalModel {
   List<StepLogicalModel?>? steps;
 
   WorkflowLogicalModel({this.model, this.steps});
+
+  WorkflowLogicalModel copy() {
+    return WorkflowLogicalModel(
+      model: this.model?.copy(),
+      steps: this.steps?.map((step) {
+        return step?.copy();
+      }).toList(),
+    );
+  }
 }

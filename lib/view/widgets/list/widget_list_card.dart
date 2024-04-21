@@ -48,7 +48,7 @@ class WidgetListEntityCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Text(
                 value1,
                 style: AppTextStyle.size14(color: color1),

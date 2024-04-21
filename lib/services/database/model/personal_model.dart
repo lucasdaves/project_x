@@ -54,6 +54,21 @@ class PersonalDatabaseModel {
       'tb_address_atr_id': addressId,
     };
   }
+
+  PersonalDatabaseModel copy() {
+    return PersonalDatabaseModel(
+      id: this.id,
+      name: this.name,
+      document: this.document,
+      email: this.email,
+      phone: this.phone,
+      gender: this.gender,
+      birth: this.birth,
+      annotation: this.annotation,
+      profession: this.profession,
+      addressId: this.addressId,
+    );
+  }
 }
 
 class PersonalLogicalModel {
@@ -61,4 +76,11 @@ class PersonalLogicalModel {
   AddressLogicalModel? address;
 
   PersonalLogicalModel({this.model, this.address});
+
+  PersonalLogicalModel copy() {
+    return PersonalLogicalModel(
+      model: this.model?.copy(),
+      address: this.address?.copy(),
+    );
+  }
 }

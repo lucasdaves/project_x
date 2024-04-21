@@ -40,6 +40,7 @@ class WorkflowController {
       //* WORKFLOW *//
       int? workflowId;
       if (model.model != null) {
+        model.model!.id = null;
         workflowId = await methods.create(
           consts.workflow,
           map: model.model!.toMap(),
@@ -48,10 +49,13 @@ class WorkflowController {
 
       if (workflowId == null) throw "Erro ao criar workflow";
 
+      model.model?.id = workflowId;
+
       //* STEPS *//
       for (StepLogicalModel? step in model.steps ?? []) {
         if (step?.model != null) {
-          step!.model!.workflowId = workflowId;
+          step!.model!.id = null;
+          step.model!.workflowId = workflowId;
           int? stepId = await methods.create(
             consts.step,
             map: step.model!.toMap(),
@@ -60,7 +64,8 @@ class WorkflowController {
           //* SUBSTEPS *//
           for (SubstepLogicalModel? substep in step.substeps ?? []) {
             if (substep?.model != null) {
-              substep!.model!.stepId = stepId;
+              substep!.model!.id = null;
+              substep.model!.stepId = stepId;
               await methods.create(
                 consts.substep,
                 map: substep.model!.toMap(),
@@ -70,12 +75,12 @@ class WorkflowController {
         }
       }
 
-      await readWorkflow();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readWorkflow();
     }
   }
 
@@ -223,12 +228,12 @@ class WorkflowController {
         await methods.delete(consts.workflow, args: argsA);
       }
 
-      await readWorkflow();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readWorkflow();
     }
   }
 }

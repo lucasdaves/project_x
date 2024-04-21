@@ -11,15 +11,16 @@ class ClientStreamModel {
 
   ClientStreamModel copy() {
     return ClientStreamModel(
-      clients: clients?.map((client) {
+      status: this.status,
+      clients: this.clients?.map((client) {
         return ClientLogicalModel(
-          model: client?.model,
+          model: client?.model?.copy(),
           personal: client?.personal != null
               ? PersonalLogicalModel(
-                  model: client?.personal?.model,
+                  model: client?.personal?.model?.copy(),
                   address: client?.personal?.address != null
                       ? AddressLogicalModel(
-                          model: client?.personal?.address?.model,
+                          model: client?.personal?.address?.model?.copy(),
                         )
                       : null,
                 )
@@ -30,11 +31,13 @@ class ClientStreamModel {
   }
 
   List<ClientLogicalModel?> getAll() {
-    return clients ?? [];
+    ClientStreamModel aux = copy();
+    return aux.clients ?? [];
   }
 
   ClientLogicalModel? getOne({int? id, String? name}) {
-    for (ClientLogicalModel? entity in clients ?? []) {
+    ClientStreamModel aux = copy();
+    for (ClientLogicalModel? entity in aux.clients ?? []) {
       if (id != null && entity?.model?.id == id) {
         return entity;
       } else if (name != null && entity?.personal?.model?.name == name) {
@@ -45,8 +48,9 @@ class ClientStreamModel {
   }
 
   Map<int, String> getMap() {
+    ClientStreamModel aux = copy();
     Map<int, String> map = {};
-    for (ClientLogicalModel? entity in clients ?? []) {
+    for (ClientLogicalModel? entity in aux.clients ?? []) {
       map.addAll({entity!.model!.id!: entity.personal!.model!.name});
     }
     return map;

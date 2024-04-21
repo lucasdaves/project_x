@@ -44,10 +44,28 @@ class FinanceOperationDatabaseModel {
       'tb_finance_atr_id': financeId,
     };
   }
+
+  FinanceOperationDatabaseModel copy() {
+    return FinanceOperationDatabaseModel(
+      id: this.id,
+      type: this.type,
+      description: this.description,
+      amount: this.amount,
+      paidAt: this.paidAt,
+      expiresAt: this.expiresAt,
+      financeId: this.financeId,
+    );
+  }
 }
 
 class FinanceOperationLogicalModel {
   FinanceOperationDatabaseModel? model;
 
   FinanceOperationLogicalModel({this.model});
+
+  FinanceOperationLogicalModel copy() {
+    return FinanceOperationLogicalModel(
+      model: this.model?.copy(),
+    );
+  }
 }

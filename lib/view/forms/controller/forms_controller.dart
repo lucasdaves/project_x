@@ -58,7 +58,8 @@ class FormsController {
           break;
         case EntityType.Project:
           result = await ProjectController.instance.createProject(
-            model: stream.value.model,
+            projectModel: stream.value.model[0],
+            workflowModel: stream.value.model[1],
           );
           break;
         case EntityType.Finance:
@@ -68,8 +69,9 @@ class FormsController {
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.createWorkflow(
-            model: stream.value.model,
-          );
+                model: stream.value.model,
+              ) !=
+              -1;
           break;
         default:
           break;
@@ -97,7 +99,8 @@ class FormsController {
           break;
         case EntityType.Project:
           result = await ProjectController.instance.updateProject(
-            model: stream.value.model,
+            projectModel: stream.value.model[0],
+            workflowModel: stream.value.model[1],
           );
           break;
         case EntityType.Finance:
@@ -136,7 +139,8 @@ class FormsController {
           break;
         case EntityType.Project:
           result = await ProjectController.instance.deleteProject(
-            model: stream.value.model,
+            projectModel: stream.value.model[0],
+            workflowModel: stream.value.model[1],
           );
           break;
         case EntityType.Finance:

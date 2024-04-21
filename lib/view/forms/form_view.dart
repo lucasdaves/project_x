@@ -312,29 +312,47 @@ class _EntityFormViewState extends State<EntityFormView> {
 
   void _setSectionValuesForProject() {
     if (widget.entityIndex != null) {
-      ProjectLogicalModel existingModel = ProjectController
+      ProjectLogicalModel existingProjectModel = ProjectController
           .instance.stream.value
           .getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
-      projectSection.titleController.text = existingModel.model?.name ?? '';
+      WorkflowLogicalModel existingWorkflowModel;
+      if ((existingProjectModel.model?.workflowId != null &&
+          existingProjectModel.model?.workflowId != "")) {
+        existingWorkflowModel = WorkflowController.instance.stream.value
+            .getOne(id: existingProjectModel.model?.workflowId)!;
+      } else {
+        existingWorkflowModel = WorkflowLogicalModel(
+          model: WorkflowDatabaseModel(
+            name: descriptionSection.titleController.text,
+            description: descriptionSection.descriptionController.text,
+          ),
+          steps: [],
+        );
+      }
+      projectSection.workflowController.text =
+          existingWorkflowModel.model?.name ?? "";
+      projectSection.titleController.text =
+          existingProjectModel.model?.name ?? '';
       projectSection.descriptionController.text =
-          existingModel.model?.description ?? '';
-      projectSection.workflowController.text = WorkflowController
-              .instance.stream.value
-              .getOne(id: existingModel.model?.workflowId)
-              ?.model
-              ?.name ??
-          '';
-      print(projectSection.workflowController.text);
+          existingProjectModel.model?.description ?? '';
+
+      controller.setModel([existingProjectModel, existingWorkflowModel]);
     } else {
-      ProjectLogicalModel newModel = ProjectLogicalModel(
+      ProjectLogicalModel newProjectModel = ProjectLogicalModel(
         model: ProjectDatabaseModel(
           name: projectSection.titleController.text,
           description: projectSection.descriptionController.text,
           status: 0,
         ),
       );
-      controller.setModel(newModel);
+      WorkflowLogicalModel newWorkflowModel = WorkflowLogicalModel(
+        model: WorkflowDatabaseModel(
+          name: descriptionSection.titleController.text,
+          description: descriptionSection.descriptionController.text,
+        ),
+        steps: [],
+      );
+      controller.setModel([newProjectModel, newWorkflowModel]);
     }
   }
 
@@ -884,7 +902,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                       hintText: projectSection.titleHint,
                       validator: (value) => projectSection.validateTitle(value),
                       changed: (value) =>
-                          (controller.getModel() as ProjectLogicalModel)
+                          (controller.getModel()[0] as ProjectLogicalModel)
                               .model
                               ?.name = value,
                     ),
@@ -898,7 +916,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                       validator: (value) =>
                           projectSection.validateDescription(value),
                       changed: (value) =>
-                          (controller.getModel() as ProjectLogicalModel)
+                          (controller.getModel()[0] as ProjectLogicalModel)
                               .model
                               ?.description = value,
                     ),
@@ -917,17 +935,21 @@ class _EntityFormViewState extends State<EntityFormView> {
                           .toList(),
                       function: () {
                         setState(() {
-                          ProjectLogicalModel model =
-                              (controller.getModel() as ProjectLogicalModel);
-                          model.model?.workflowId = WorkflowController
-                              .instance.stream.value
-                              .getOne(
-                                name: projectSection.workflowController.text,
-                              )!
-                              .model!
-                              .id;
+                          ProjectLogicalModel projectModel =
+                              (controller.getModel()[0] as ProjectLogicalModel);
+                          WorkflowLogicalModel workflowModel =
+                              WorkflowController.instance.stream.value.getOne(
+                            name: projectSection.workflowController.text,
+                          )!;
+                          projectModel.model?.workflowId =
+                              workflowModel.model?.id;
+                          controller.setModel([projectModel, workflowModel]);
                         });
                       },
+                      isDisabled: (projectSection.workflowController != "" &&
+                              widget.operation == EntityOperation.Update)
+                          ? true
+                          : false,
                     ),
                   ),
                 ],
@@ -950,9 +972,8 @@ class _EntityFormViewState extends State<EntityFormView> {
                   if (projectSection.workflowController.text != "") ...[
                     Flexible(
                       child: WidgetWorkflowBox(
-                        model: WorkflowController.instance.stream.value.getOne(
-                          name: projectSection.workflowController.text,
-                        )!,
+                        model:
+                            (controller.getModel()[1] as WorkflowLogicalModel),
                         operation: EntityOperation.Update,
                       ),
                     ),

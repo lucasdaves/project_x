@@ -48,10 +48,29 @@ class SubstepDatabaseModel {
       'tb_step_atr_id': stepId,
     };
   }
+
+  SubstepDatabaseModel copy() {
+    return SubstepDatabaseModel(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      status: this.status,
+      mandatory: this.mandatory,
+      expiresAt: this.expiresAt,
+      concludedAt: this.concludedAt,
+      stepId: this.stepId,
+    );
+  }
 }
 
 class SubstepLogicalModel {
   SubstepDatabaseModel? model;
 
   SubstepLogicalModel({this.model});
+
+  SubstepLogicalModel copy() {
+    return SubstepLogicalModel(
+      model: this.model?.copy(),
+    );
+  }
 }

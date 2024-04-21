@@ -12,21 +12,19 @@ class UserStreamModel {
 
   UserStreamModel copy() {
     return UserStreamModel(
+      status: status,
       user: user != null
           ? UserLogicalModel(
-              model: user!.model,
+              model: user!.model?.copy(),
               recover: user!.recover != null
-                  ? RecoverLogicalModel(
-                      model: user!.recover!.model,
-                    )
+                  ? RecoverLogicalModel(model: user!.recover!.model?.copy())
                   : null,
               personal: user!.personal != null
                   ? PersonalLogicalModel(
-                      model: user!.personal!.model,
+                      model: user!.personal!.model?.copy(),
                       address: user!.personal!.address != null
                           ? AddressLogicalModel(
-                              model: user!.personal!.address!.model,
-                            )
+                              model: user!.personal!.address!.model?.copy())
                           : null,
                     )
                   : null,
@@ -36,17 +34,19 @@ class UserStreamModel {
   }
 
   UserLogicalModel? getOne({int? id, String? name}) {
-    if (id != null && user?.model?.id == id) {
-      return user;
-    } else if (name != null && user?.personal?.model?.name == name) {
-      return user;
+    UserStreamModel aux = copy();
+    if (id != null && aux.user?.model?.id == id) {
+      return aux.user;
+    } else if (name != null && aux.user?.personal?.model?.name == name) {
+      return aux.user;
     }
     return null;
   }
 
   Map<int, String> getMap() {
+    UserStreamModel aux = copy();
     Map<int, String> map = {};
-    map.addAll({user!.model!.id!: user!.personal!.model!.name});
+    map.addAll({aux.user!.model!.id!: aux.user!.personal!.model!.name});
     return map;
   }
 }

@@ -9,18 +9,21 @@ class ProjectStreamModel {
 
   ProjectStreamModel copy() {
     return ProjectStreamModel(
-      projects: projects?.map((project) {
-        return ProjectLogicalModel(model: project?.model);
+      status: this.status,
+      projects: this.projects?.map((project) {
+        return ProjectLogicalModel(model: project?.model?.copy());
       }).toList(),
     );
   }
 
   List<ProjectLogicalModel?> getAll() {
-    return projects ?? [];
+    ProjectStreamModel aux = copy();
+    return aux.projects ?? [];
   }
 
   ProjectLogicalModel? getOne({int? id, String? name}) {
-    for (ProjectLogicalModel? entity in projects ?? []) {
+    ProjectStreamModel aux = copy();
+    for (ProjectLogicalModel? entity in aux.projects ?? []) {
       if (id != null && entity?.model?.id == id) {
         return entity;
       } else if (name != null && entity?.model?.name == name) {
@@ -31,8 +34,9 @@ class ProjectStreamModel {
   }
 
   Map<int, String> getMap() {
+    ProjectStreamModel aux = copy();
     Map<int, String> map = {};
-    for (ProjectLogicalModel? entity in projects ?? []) {
+    for (ProjectLogicalModel? entity in aux.projects ?? []) {
       map.addAll({entity!.model!.id!: entity.model!.name!});
     }
     return map;

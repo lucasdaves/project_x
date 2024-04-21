@@ -25,6 +25,14 @@ class ClientDatabaseModel {
       'tb_user_atr_id': userId,
     };
   }
+
+  ClientDatabaseModel copy() {
+    return ClientDatabaseModel(
+      id: this.id,
+      personalId: this.personalId,
+      userId: this.userId,
+    );
+  }
 }
 
 class ClientLogicalModel {
@@ -32,4 +40,11 @@ class ClientLogicalModel {
   PersonalLogicalModel? personal;
 
   ClientLogicalModel({this.model, this.personal});
+
+  ClientLogicalModel copy() {
+    return ClientLogicalModel(
+      model: this.model?.copy(),
+      personal: this.personal?.copy(),
+    );
+  }
 }

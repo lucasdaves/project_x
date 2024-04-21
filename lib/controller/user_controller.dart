@@ -153,12 +153,12 @@ class UserController {
         SystemController.instance.updateSystem(model: systemModel);
       }
 
-      await readUser();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readUser();
     }
   }
 
@@ -254,29 +254,50 @@ class UserController {
 
       //* ADDRESS *//
       if (model.personal?.address?.model != null) {
-        Map<String, dynamic> argsA = {};
-        argsA['atr_id'] = model.personal!.address!.model!.id;
+        if (model.personal?.address?.model?.id != null) {
+          Map<String, dynamic> argsA = {};
+          argsA['atr_id'] = model.personal!.address!.model!.id;
 
-        await methods.update(consts.address,
-            map: model.personal!.address!.model!.toMap(), args: argsA);
+          await methods.update(consts.address,
+              map: model.personal!.address!.model!.toMap(), args: argsA);
+        } else {
+          int? addressId = await methods.create(consts.address,
+              map: model.personal!.address!.model!.toMap());
+
+          model.personal?.address?.model?.id = addressId;
+        }
       }
 
       //* PERSONAL *//
       if (model.personal?.model != null) {
-        Map<String, dynamic> argsB = {};
-        argsB['atr_id'] = model.personal!.model!.id;
+        if (model.personal?.model?.id != null) {
+          Map<String, dynamic> argsB = {};
+          argsB['atr_id'] = model.personal!.model!.id;
 
-        await methods.update(consts.personal,
-            map: model.personal!.model!.toMap(), args: argsB);
+          await methods.update(consts.personal,
+              map: model.personal!.model!.toMap(), args: argsB);
+        } else {
+          int? personalId = await methods.create(consts.personal,
+              map: model.personal!.model!.toMap());
+
+          model.model?.personalId = personalId;
+        }
       }
 
       //* RECOVER *//
       if (model.recover?.model != null) {
-        Map<String, dynamic> argsC = {};
-        argsC['atr_id'] = model.recover!.model!.id;
+        if (model.recover?.model?.id != null) {
+          Map<String, dynamic> argsC = {};
+          argsC['atr_id'] = model.recover!.model!.id;
 
-        await methods.update(consts.recover,
-            map: model.recover!.model!.toMap(), args: argsC);
+          await methods.update(consts.recover,
+              map: model.recover!.model!.toMap(), args: argsC);
+        } else {
+          int? recoverId = await methods.create(consts.recover,
+              map: model.recover!.model!.toMap());
+
+          model.model?.recoverId = recoverId;
+        }
       }
 
       //* USER *//
@@ -288,12 +309,12 @@ class UserController {
             map: model.model!.toMap(), args: argsD);
       }
 
-      await readUser();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readUser();
     }
   }
 

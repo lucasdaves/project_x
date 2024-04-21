@@ -60,12 +60,12 @@ class FinanceController {
         }
       }
 
-      await readFinance();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readFinance();
     }
   }
 
@@ -143,20 +143,26 @@ class FinanceController {
       //* FINANCE OPERATIONS *//
       for (FinanceOperationLogicalModel? operation in model.operations ?? []) {
         if (operation?.model != null) {
-          Map<String, dynamic> argsB = {};
-          argsB['atr_id'] = operation!.model!.id;
+          if (operation?.model?.id == null) {
+            operation?.model?.financeId = model.model!.id;
+            operation?.model?.id = await methods.create(consts.financeOperation,
+                map: operation.model!.toMap());
+          } else {
+            Map<String, dynamic> argsB = {};
+            argsB['atr_id'] = operation!.model!.id;
 
-          await methods.update(consts.financeOperation,
-              map: operation.model!.toMap(), args: argsB);
+            await methods.update(consts.financeOperation,
+                map: operation.model!.toMap(), args: argsB);
+          }
         }
       }
-
-      await readFinance();
 
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readFinance();
     }
   }
 
@@ -174,12 +180,12 @@ class FinanceController {
         await methods.delete(consts.finance, args: argsA);
       }
 
-      await readFinance();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readFinance();
     }
   }
 }

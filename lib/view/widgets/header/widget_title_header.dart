@@ -16,60 +16,65 @@ class WidgetTitleHeader extends StatefulWidget {
 class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: AppResponsive.instance.getHeight(56),
-      width: double.maxFinite,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Scaffold.of(context).openDrawer();
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.dehaze_rounded,
-                  color: AppColor.colorSecondary,
-                  size: AppResponsive.instance.getWidth(32),
+    return StreamBuilder(
+      stream: UserController.instance.stream,
+      builder: (context, snapshot) {
+        return Container(
+          height: AppResponsive.instance.getHeight(56),
+          width: double.maxFinite,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.dehaze_rounded,
+                      color: AppColor.colorSecondary,
+                      size: AppResponsive.instance.getWidth(32),
+                    ),
+                    SizedBox(width: AppResponsive.instance.getWidth(24)),
+                    Text(
+                      widget.model.title,
+                      style: AppTextStyle.size24(),
+                    ),
+                  ],
                 ),
-                SizedBox(width: AppResponsive.instance.getWidth(24)),
-                Text(
-                  widget.model.title,
-                  style: AppTextStyle.size24(),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      UserController
+                          .instance.stream.value.user!.personal!.model!.name,
+                      style: AppTextStyle.size24(),
+                    ),
+                    SizedBox(
+                      width: AppResponsive.instance.getWidth(12),
+                    ),
+                    Icon(
+                      Icons.person_rounded,
+                      color: AppColor.colorSecondary,
+                      size: AppResponsive.instance.getWidth(32),
+                    )
+                  ],
                 ),
-              ],
-            ),
+              )
+            ],
           ),
-          const Spacer(),
-          GestureDetector(
-            onTap: () {
-              Scaffold.of(context).openEndDrawer();
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  UserController
-                      .instance.stream.value.user!.personal!.model!.name,
-                  style: AppTextStyle.size24(),
-                ),
-                SizedBox(
-                  width: AppResponsive.instance.getWidth(12),
-                ),
-                Icon(
-                  Icons.person_rounded,
-                  color: AppColor.colorSecondary,
-                  size: AppResponsive.instance.getWidth(32),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 }

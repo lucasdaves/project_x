@@ -74,12 +74,12 @@ class ClientController {
 
       if (clientId == null) throw "Erro ao criar cliente";
 
-      await readClient();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readClient();
     }
   }
 
@@ -188,12 +188,12 @@ class ClientController {
             map: model.model!.toMap(), args: argsC);
       }
 
-      await readClient();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readClient();
     }
   }
 
@@ -211,12 +211,12 @@ class ClientController {
         await methods.delete(consts.client, args: argsA);
       }
 
-      await readClient();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readClient();
     }
   }
 }

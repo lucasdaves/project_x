@@ -1,5 +1,3 @@
-import 'package:project_x/services/database/model/step_model.dart';
-import 'package:project_x/services/database/model/substep_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 
@@ -11,28 +9,21 @@ class WorkflowStreamModel {
 
   WorkflowStreamModel copy() {
     return WorkflowStreamModel(
-      workflows: workflows?.map((workflow) {
-        return WorkflowLogicalModel(
-          model: workflow?.model,
-          steps: workflow?.steps?.map((step) {
-            return StepLogicalModel(
-              model: step?.model,
-              substeps: step?.substeps?.map((substep) {
-                return SubstepLogicalModel(model: substep?.model);
-              }).toList(),
-            );
-          }).toList(),
-        );
+      status: this.status,
+      workflows: this.workflows?.map((workflow) {
+        return workflow?.copy();
       }).toList(),
     );
   }
 
   List<WorkflowLogicalModel?> getAll() {
-    return workflows ?? [];
+    WorkflowStreamModel aux = copy();
+    return aux.workflows ?? [];
   }
 
   WorkflowLogicalModel? getOne({int? id, String? name}) {
-    for (WorkflowLogicalModel? entity in workflows ?? []) {
+    WorkflowStreamModel aux = copy();
+    for (WorkflowLogicalModel? entity in aux.workflows ?? []) {
       if (id != null && entity?.model?.id == id) {
         return entity;
       } else if (name != null && entity?.model?.name == name) {
@@ -43,8 +34,9 @@ class WorkflowStreamModel {
   }
 
   Map<int, String> getMap() {
+    WorkflowStreamModel aux = copy();
     Map<int, String> map = {};
-    for (WorkflowLogicalModel? entity in workflows ?? []) {
+    for (WorkflowLogicalModel? entity in aux.workflows ?? []) {
       map.addAll({entity!.model!.id!: entity.model!.name!});
     }
     return map;

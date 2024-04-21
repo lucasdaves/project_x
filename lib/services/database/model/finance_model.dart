@@ -34,6 +34,16 @@ class FinanceDatabaseModel {
       'tb_user_atr_id': userId,
     };
   }
+
+  FinanceDatabaseModel copy() {
+    return FinanceDatabaseModel(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      status: this.status,
+      userId: this.userId,
+    );
+  }
 }
 
 class FinanceLogicalModel {
@@ -41,6 +51,14 @@ class FinanceLogicalModel {
   List<FinanceOperationLogicalModel?>? operations;
 
   FinanceLogicalModel({this.model, this.operations});
+
+  FinanceLogicalModel copy() {
+    return FinanceLogicalModel(
+      model: this.model?.copy(),
+      operations:
+          this.operations?.map((operation) => operation?.copy()).toList(),
+    );
+  }
 
   List<FinanceOperationLogicalModel?> getType({required int type}) {
     return operations

@@ -50,6 +50,19 @@ class StepDatabaseModel {
       'tb_workflow_atr_id': workflowId,
     };
   }
+
+  StepDatabaseModel copy() {
+    return StepDatabaseModel(
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      status: this.status,
+      mandatory: this.mandatory,
+      expiresAt: this.expiresAt,
+      concludedAt: this.concludedAt,
+      workflowId: this.workflowId,
+    );
+  }
 }
 
 class StepLogicalModel {
@@ -57,4 +70,13 @@ class StepLogicalModel {
   List<SubstepLogicalModel?>? substeps;
 
   StepLogicalModel({this.model, this.substeps});
+
+  StepLogicalModel copy() {
+    return StepLogicalModel(
+      model: this.model?.copy(),
+      substeps: this.substeps?.map((substep) {
+        return substep?.copy();
+      }).toList(),
+    );
+  }
 }

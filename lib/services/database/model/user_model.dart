@@ -39,6 +39,17 @@ class UserDatabaseModel {
       'tb_recover_atr_id': recoverId,
     };
   }
+
+  UserDatabaseModel copy() {
+    return UserDatabaseModel(
+      id: this.id,
+      type: this.type,
+      login: this.login,
+      password: this.password,
+      personalId: this.personalId,
+      recoverId: this.recoverId,
+    );
+  }
 }
 
 class UserLogicalModel {
@@ -47,4 +58,12 @@ class UserLogicalModel {
   PersonalLogicalModel? personal;
 
   UserLogicalModel({this.model, this.recover, this.personal});
+
+  UserLogicalModel copy() {
+    return UserLogicalModel(
+      model: this.model?.copy(),
+      recover: this.recover?.copy(),
+      personal: this.personal?.copy(),
+    );
+  }
 }

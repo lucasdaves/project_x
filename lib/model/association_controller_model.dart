@@ -7,8 +7,8 @@ class AssociationStreamModel {
 
   AssociationStreamModel copy() {
     return AssociationStreamModel(
-      associations: associations?.map((projectFinanceClient) {
-        return AssociationLogicalModel(model: projectFinanceClient?.model);
+      associations: associations?.map((association) {
+        return AssociationLogicalModel(model: association?.model?.copy());
       }).toList(),
     );
   }

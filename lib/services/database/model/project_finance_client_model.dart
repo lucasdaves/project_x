@@ -32,10 +32,24 @@ class AssociationDatabaseModel {
       'tb_project_atr_id': projectId,
     };
   }
+
+  AssociationDatabaseModel copy() {
+    return AssociationDatabaseModel(
+      id: this.id,
+      userId: this.userId,
+      clientId: this.clientId,
+      financeId: this.financeId,
+      projectId: this.projectId,
+    );
+  }
 }
 
 class AssociationLogicalModel {
   AssociationDatabaseModel? model;
 
   AssociationLogicalModel({this.model});
+
+  AssociationLogicalModel copy() {
+    return AssociationLogicalModel(model: this.model?.copy());
+  }
 }

@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'package:project_x/controller/user_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/model/project_controller_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/database_files.dart';
+import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,20 +29,35 @@ class ProjectController {
 
   //* METHODS *//
 
-  Future<bool> createProject({required ProjectLogicalModel model}) async {
+  Future<bool> createProject({
+    required ProjectLogicalModel projectModel,
+    required WorkflowLogicalModel workflowModel,
+  }) async {
     try {
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
-      if (model.model == null) throw "O modelo do projeto é nulo";
+      if (projectModel.model == null) throw "O modelo do projeto é nulo";
 
-      model.model!.userId = userId;
+      projectModel.model!.userId = userId;
+
+      //* WORKFLOW *//
+      if (projectModel.model?.workflowId != null) {
+        workflowModel.model?.name =
+            "${workflowModel.model?.name} - ${projectModel.model?.name}";
+        await WorkflowController.instance.createWorkflow(
+          model: workflowModel,
+        );
+      }
+
+      if (workflowModel.model?.id == null) throw "Workflow não criada";
 
       //* PROJECT *//
       int? projectId;
-      if (model.model != null) {
+      if (projectModel.model != null) {
+        projectModel.model?.workflowId = workflowModel.model?.id;
         projectId = await methods.create(
           consts.project,
-          map: model.model!.toMap(),
+          map: projectModel.model!.toMap(),
         );
       }
 
@@ -89,21 +106,31 @@ class ProjectController {
     }
   }
 
-  Future<bool> updateProject({required ProjectLogicalModel model}) async {
+  Future<bool> updateProject({
+    required ProjectLogicalModel projectModel,
+    required WorkflowLogicalModel workflowModel,
+  }) async {
     try {
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
-      if (model.model == null) throw "O modelo do projeto é nulo";
+      if (projectModel.model == null) throw "O modelo do projeto é nulo";
 
-      model.model!.userId = userId;
+      projectModel.model!.userId = userId;
+
+      //* WORKFLOW *//
+      if (workflowModel.model != null) {
+        await WorkflowController.instance.updateWorkflow(
+          model: workflowModel,
+        );
+      }
 
       //* PROJECT *//
-      if (model.model != null) {
+      if (projectModel.model != null) {
         Map<String, dynamic> argsA = {};
-        argsA['atr_id'] = model.model!.id;
+        argsA['atr_id'] = projectModel.model!.id;
 
         await methods.update(consts.project,
-            map: model.model!.toMap(), args: argsA);
+            map: projectModel.model!.toMap(), args: argsA);
       }
 
       await readProject();
@@ -115,26 +142,36 @@ class ProjectController {
     }
   }
 
-  Future<bool> deleteProject({required ProjectLogicalModel model}) async {
+  Future<bool> deleteProject({
+    required ProjectLogicalModel projectModel,
+    required WorkflowLogicalModel workflowModel,
+  }) async {
     try {
       int? userId = await UserController.instance.getUserId();
       if (userId == null) throw "O id do usuário é nulo";
-      if (model.model == null) throw "O modelo do projeto é nulo";
+      if (projectModel.model == null) throw "O modelo do projeto é nulo";
 
       //* PROJECT *//
-      if (model.model != null) {
+      if (projectModel.model != null) {
         Map<String, dynamic> argsA = {};
-        argsA['atr_id'] = model.model!.id;
+        argsA['atr_id'] = projectModel.model!.id;
 
         await methods.delete(consts.project, args: argsA);
       }
 
-      await readProject();
+      //* WORKFLOW *//
+      if (workflowModel.model != null) {
+        await WorkflowController.instance.deleteWorkflow(
+          model: workflowModel,
+        );
+      }
 
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readProject();
     }
   }
 }

@@ -43,10 +43,29 @@ class AddressDatabaseModel {
       'atr_complement': complement,
     };
   }
+
+  AddressDatabaseModel copy() {
+    return AddressDatabaseModel(
+      id: this.id,
+      country: this.country,
+      state: this.state,
+      city: this.city,
+      postalCode: this.postalCode,
+      street: this.street,
+      number: this.number,
+      complement: this.complement,
+    );
+  }
 }
 
 class AddressLogicalModel {
   AddressDatabaseModel? model;
 
   AddressLogicalModel({this.model});
+
+  AddressLogicalModel copy() {
+    return AddressLogicalModel(
+      model: this.model?.copy(),
+    );
+  }
 }

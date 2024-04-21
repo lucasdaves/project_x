@@ -31,10 +31,23 @@ class SystemDatabaseModel {
       'tb_user_atr_id': userId,
     };
   }
+
+  SystemDatabaseModel copy() {
+    return SystemDatabaseModel(
+      id: this.id,
+      language: this.language,
+      reminderDate: this.reminderDate,
+      userId: this.userId,
+    );
+  }
 }
 
 class SystemLogicalModel {
   SystemDatabaseModel? model;
 
   SystemLogicalModel({this.model});
+
+  SystemLogicalModel copy() {
+    return SystemLogicalModel(model: this.model?.copy());
+  }
 }
