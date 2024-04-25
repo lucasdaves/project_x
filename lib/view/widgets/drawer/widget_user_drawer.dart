@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/client/client_view.dart';
 import 'package:project_x/view/forms/form_view.dart';
 
 class WidgetEndDrawer extends StatelessWidget {
@@ -21,19 +21,26 @@ class WidgetEndDrawer extends StatelessWidget {
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(
-              vertical: AppResponsive.instance.getHeight(24),
-              horizontal: AppResponsive.instance.getWidth(24),
-            ),
-            decoration: const BoxDecoration(
-              color: AppColor.colorFloating,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              UserController.instance.stream.value.user!.personal!.model!.name,
-              style: AppTextStyle.size24(),
-            ),
+          StreamBuilder(
+            stream: UserController.instance.stream,
+            builder: (context, snapshot) {
+              return Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: AppResponsive.instance.getHeight(24),
+                  horizontal: AppResponsive.instance.getWidth(24),
+                ),
+                decoration: const BoxDecoration(
+                  color: AppColor.colorFloating,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  UserController
+                          .instance.stream.value.user?.personal?.model?.name ??
+                      "",
+                  style: AppTextStyle.size24(),
+                ),
+              );
+            },
           ),
           SizedBox(
             height: AppResponsive.instance.getHeight(24),
@@ -57,6 +64,7 @@ class WidgetEndDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityFormView.tag,
+            reset: true,
             screen: EntityFormView(
               type: EntityType.User,
               entityIndex: UserController.instance.stream.value.user?.model?.id,
@@ -69,8 +77,14 @@ class WidgetEndDrawer extends StatelessWidget {
         label = "Sistema";
         function = () {
           AppRoute(
-            tag: ClientView.tag,
-            screen: ClientView(),
+            tag: EntityFormView.tag,
+            reset: true,
+            screen: EntityFormView(
+              type: EntityType.System,
+              entityIndex:
+                  SystemController.instance.stream.value.system?.model?.id,
+              operation: EntityOperation.Update,
+            ),
           ).navigate(context);
         };
         break;

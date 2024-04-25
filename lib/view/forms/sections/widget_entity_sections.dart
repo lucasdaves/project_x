@@ -378,7 +378,21 @@ class OperationSection {
   }
 }
 
-class WorkflowSection {
-  List<DescriptionSection> steps = [];
-  Map<String, List<DescriptionSection>> substeps = {};
+class SystemSection {
+  // LABELS
+  final String dateLabel = "Limite de aviso de atraso";
+
+  // HINT TEXTS
+  final String dateHint = "Digite a quantidade de dias ...";
+
+  // TEXT CONTROLLERS
+  MaskedTextController dateController = MaskedTextController(
+    mask: '000',
+  );
+
+  // VALIDATION FUNCTIONS
+
+  String? validateDate(String? value) {
+    return null;
+  }
 }

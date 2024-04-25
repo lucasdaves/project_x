@@ -56,8 +56,9 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      UserController
-                          .instance.stream.value.user!.personal!.model!.name,
+                      UserController.instance.stream.value.user?.personal?.model
+                              ?.name ??
+                          "",
                       style: AppTextStyle.size24(),
                     ),
                     SizedBox(

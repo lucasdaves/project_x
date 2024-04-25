@@ -1,5 +1,8 @@
 import 'dart:developer';
+import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/model/system_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/system_model.dart';
@@ -53,12 +56,12 @@ class SystemController {
         throw "Sistema não criado";
       }
 
-      await readSystem();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readSystem();
     }
   }
 
@@ -112,12 +115,15 @@ class SystemController {
             map: model.model!.toMap(), args: argsA);
       }
 
-      await readSystem();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readSystem();
+      await WorkflowController.instance.readWorkflow();
+      await ProjectController.instance.readProject();
+      await FinanceController.instance.readFinance();
     }
   }
 

@@ -64,12 +64,12 @@ class ProjectController {
 
       if (projectId == null) throw "Projeto não criado";
 
-      await readProject();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readProject();
     }
   }
 
@@ -134,12 +134,12 @@ class ProjectController {
             map: projectModel.model!.toMap(), args: argsA);
       }
 
-      await readProject();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await readProject();
     }
   }
 

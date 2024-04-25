@@ -70,6 +70,7 @@ class _LoginViewState extends State<LoginView> {
         controller: passwordController,
         headerText: "Senha",
         hintText: "Digite sua senha ...",
+        isObscure: true,
         validator: (value) {
           if ((value == null || value == "")) {
             return "Preencha uma senha valida ...";

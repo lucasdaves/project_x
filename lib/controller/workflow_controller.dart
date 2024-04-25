@@ -164,6 +164,7 @@ class WorkflowController {
 
       model.model!.userId = userId;
 
+      //* WORKFLOW *//
       Map<String, dynamic> argsA = {'atr_id': model.model!.id};
 
       if (model.model!.id == null) {
@@ -174,6 +175,7 @@ class WorkflowController {
             map: model.model!.toMap(), args: argsA);
       }
 
+      //* STEPS *//
       for (StepLogicalModel? step in model.steps ?? []) {
         if (step?.model != null) {
           Map<String, dynamic> argsB = {'atr_id': step!.model!.id};
@@ -189,6 +191,7 @@ class WorkflowController {
                 map: step.model!.toMap(), args: argsB);
           }
 
+          //* SUBSTEPS *//
           for (SubstepLogicalModel? substep in step.substeps ?? []) {
             if (substep?.model != null) {
               Map<String, dynamic> argsC = {'atr_id': substep!.model!.id};

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
+import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_enum.dart';
@@ -46,6 +47,11 @@ class FormsController {
     bool result = false;
     try {
       switch (stream.value.type!) {
+        case EntityType.System:
+          result = await SystemController.instance.createSystem(
+            model: stream.value.model,
+          );
+          break;
         case EntityType.User:
           result = await UserController.instance.createUser(
             model: stream.value.model,
@@ -69,9 +75,8 @@ class FormsController {
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.createWorkflow(
-                model: stream.value.model,
-              ) !=
-              -1;
+            model: stream.value.model,
+          );
           break;
         default:
           break;
@@ -87,6 +92,11 @@ class FormsController {
     bool result = false;
     try {
       switch (stream.value.type!) {
+        case EntityType.System:
+          result = await SystemController.instance.updateSystem(
+            model: stream.value.model,
+          );
+          break;
         case EntityType.User:
           result = await UserController.instance.updateUser(
             model: stream.value.model,

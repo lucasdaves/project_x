@@ -97,9 +97,10 @@ class UserController {
       //* ADDRESS *//
       int? addressId;
       if (model.personal?.address != null) {
+        AddressDatabaseModel addressModel = model.personal!.address!.model!;
         addressId = await methods.create(
           consts.address,
-          map: model.personal!.address!.model!.toMap(),
+          map: addressModel.toMap(),
         );
       }
 
@@ -219,9 +220,9 @@ class UserController {
       }
 
       //* RECOVER *//
-      if (model.user?.recover?.model?.id != null) {
+      if (model.user?.model?.recoverId != null) {
         Map<String, dynamic> argsD = {};
-        argsD['atr_id'] = model.user?.recover?.model?.id;
+        argsD['atr_id'] = model.user?.model?.recoverId;
 
         List<Map<String, Object?>>? mapD =
             await methods.read(consts.recover, args: argsD);
@@ -307,6 +308,11 @@ class UserController {
 
         await methods.update(consts.user,
             map: model.model!.toMap(), args: argsD);
+
+        await setLogin(
+          login: model.model!.login,
+          password: model.model!.password,
+        );
       }
 
       return true;
@@ -334,12 +340,12 @@ class UserController {
 
       stream.sink.add(UserStreamModel());
 
-      await setLogout();
-
       return true;
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await setLogout();
     }
   }
 
@@ -354,7 +360,14 @@ class UserController {
       personal: PersonalLogicalModel(
         model: PersonalDatabaseModel(
           name: "Lucas Daves",
-          document: "AA",
+          document: "44763245848",
+        ),
+      ),
+      recover: RecoverLogicalModel(
+        model: RecoverDatabaseModel(
+          question: "Qual seu gatinho preferido ?",
+          response: "Negão",
+          code: "102030",
         ),
       ),
     );

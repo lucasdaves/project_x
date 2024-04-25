@@ -1,7 +1,7 @@
 class SystemDatabaseModel {
   int? id;
   int? language;
-  DateTime? reminderDate;
+  String? reminderDate;
 
   int? userId;
 
@@ -16,9 +16,7 @@ class SystemDatabaseModel {
     return SystemDatabaseModel(
       id: map['atr_id'],
       language: map['atr_language'],
-      reminderDate: map['atr_reminder_date'] != null
-          ? DateTime.parse(map['atr_reminder_date'])
-          : null,
+      reminderDate: map['atr_reminder_date'],
       userId: map['tb_user_atr_id'],
     );
   }
@@ -27,7 +25,7 @@ class SystemDatabaseModel {
     return {
       'atr_id': id,
       'atr_language': language,
-      'atr_reminder_date': reminderDate?.toIso8601String(),
+      'atr_reminder_date': reminderDate,
       'tb_user_atr_id': userId,
     };
   }

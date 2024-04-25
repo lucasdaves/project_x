@@ -109,36 +109,43 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                 itemCount: (snapshot.projects ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return WidgetListEntityCard(
-                      value1: "Nome",
-                      value2: "Andamento",
-                      value3: widget.isResume ? null : "Status",
-                      isHeader: true,
-                    );
+                    return widget.isResume
+                        ? WidgetListEntityCard(
+                            value1: "Nome",
+                            value2: "Situação",
+                            isHeader: true,
+                          )
+                        : WidgetListEntityCard(
+                            value1: "Nome",
+                            value2: "Andamento",
+                            value3: "Situação",
+                            isHeader: true,
+                          );
                   }
                   ProjectLogicalModel model = snapshot.projects![index - 1]!;
                   WorkflowLogicalModel wkModel = WorkflowController
                       .instance.stream.value
                       .getOne(id: model.model?.workflowId)!;
-                  return WidgetListEntityCard(
-                    value1: model.model?.name ?? "",
-                    value2:
-                        "${wkModel.getRelation()[3]}/${wkModel.getRelation()[0]} tarefas concluídas",
-                    value3: widget.isResume
-                        ? null
-                        : wkModel.isLate()
-                            ? "Atrasado"
-                            : "Em dia",
-                    color2: AppColor.colorNeutralStatus,
-                    color3: widget.isResume
-                        ? null
-                        : wkModel.isLate()
-                            ? AppColor.colorNegativeStatus
-                            : AppColor.colorPositiveStatus,
-                    function: () {
-                      function(model.model!.id!);
-                    },
-                  );
+                  return widget.isResume
+                      ? WidgetListEntityCard(
+                          value1: model.model?.name ?? "",
+                          value2: wkModel.getStatus().entries.first.key,
+                          color2: wkModel.getStatus().entries.first.value,
+                          function: () {
+                            function(model.model!.id!);
+                          },
+                        )
+                      : WidgetListEntityCard(
+                          value1: model.model?.name ?? "",
+                          value2:
+                              "${wkModel.getRelation()[3]}/${wkModel.getRelation()[0]} tarefas concluídas",
+                          value3: wkModel.getStatus().entries.first.key,
+                          color2: AppColor.colorNeutralStatus,
+                          color3: wkModel.getStatus().entries.first.value,
+                          function: () {
+                            function(model.model!.id!);
+                          },
+                        );
                 },
               );
       case EntityType.Finance:
@@ -151,36 +158,54 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                 itemCount: (snapshot.finances ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return WidgetListEntityCard(
-                      value1: "Nome",
-                      value2: "Valor",
-                      value3: widget.isResume ? null : "Situação",
-                      value4: widget.isResume ? null : "Status",
-                      isHeader: true,
-                    );
+                    return widget.isResume
+                        ? WidgetListEntityCard(
+                            value1: "Nome",
+                            value2: "Situação",
+                            isHeader: true,
+                          )
+                        : WidgetListEntityCard(
+                            value1: "Nome",
+                            value2: "Andamento",
+                            value3: "Situação",
+                            isHeader: true,
+                          );
                   }
                   FinanceLogicalModel model = snapshot.finances![index - 1]!;
-                  return WidgetListEntityCard(
-                    value1: model.model?.name ?? "",
-                    value2: model.getInitialAmount().toString(),
-                    value3: widget.isResume
-                        ? null
-                        : "${model.getRelationPaid()} parcelas pagas",
-                    value4: widget.isResume
-                        ? null
-                        : model.getRelationAmount(type: 1, isLate: true) > 0
-                            ? "Atrasado"
-                            : "Em dia",
-                    color3: AppColor.colorNeutralStatus,
-                    color4: widget.isResume
-                        ? null
-                        : model.getRelationAmount(type: 1, isLate: true) > 0
-                            ? AppColor.colorNegativeStatus
-                            : AppColor.colorPositiveStatus,
-                    function: () {
-                      function(model.model!.id!);
-                    },
-                  );
+
+                  return widget.isResume
+                      ? WidgetListEntityCard(
+                          value1: model.model?.name ?? "",
+                          value2:
+                              model.getRelationAmount(type: 1, isLate: true) > 0
+                                  ? "Atrasado"
+                                  : "Em dia",
+                          color2:
+                              model.getRelationAmount(type: 1, isLate: true) > 0
+                                  ? AppColor.colorNegativeStatus
+                                  : AppColor.colorPositiveStatus,
+                          function: () {
+                            function(model.model!.id!);
+                          },
+                        )
+                      : WidgetListEntityCard(
+                          value1: model.model?.name ?? "",
+                          value2: "${model.getRelationPaid()} parcelas pagas",
+                          value3:
+                              model.getRelationAmount(type: 1, isLate: true) > 0
+                                  ? "Atrasado"
+                                  : "Em dia",
+                          color2: AppColor.colorNeutralStatus,
+                          color3: widget.isResume
+                              ? null
+                              : model.getRelationAmount(type: 1, isLate: true) >
+                                      0
+                                  ? AppColor.colorNegativeStatus
+                                  : AppColor.colorPositiveStatus,
+                          function: () {
+                            function(model.model!.id!);
+                          },
+                        );
                 },
               );
       case EntityType.Workflow:

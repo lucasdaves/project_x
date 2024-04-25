@@ -71,7 +71,7 @@ class DatabaseScripts {
           atr_document text NOT NULL,
           atr_email text,
           atr_phone text,
-          atr_gender smallint,
+          atr_gender text,
           atr_birth date,
           atr_annotation text,
           atr_profession text,
@@ -175,7 +175,7 @@ class DatabaseScripts {
       CREATE TABLE tb_system (
           atr_id integer NOT NULL CONSTRAINT tb_system_pk PRIMARY KEY,
           atr_language smallint,
-          atr_reminder_date datetime,
+          atr_reminder_date text,
           atr_created_at datetime,
           atr_updated_at datetime,
           tb_user_atr_id integer,

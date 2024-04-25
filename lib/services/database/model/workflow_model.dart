@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/services/database/model/step_model.dart';
 import 'package:project_x/services/database/model/substep_model.dart';
+import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_extension.dart';
 
 class WorkflowDatabaseModel {
   int? id;
@@ -101,23 +105,34 @@ class WorkflowLogicalModel {
     return list;
   }
 
-  bool isLate() {
-    bool result = false;
+  Map<String, Color> getStatus() {
+    Map<String, Color> map = {};
     for (StepLogicalModel? step in steps ?? []) {
       for (SubstepLogicalModel? substep in step?.substeps ?? []) {
-        String status = substep?.model?.status ?? "";
         DateTime? expiration = substep?.model?.expiresAt;
+        int? reminderDate = int.tryParse(SystemController
+                .instance.stream.value.system?.model?.reminderDate ??
+            "");
 
-        if (expiration != null &&
-            DateTime.now().isAfter(expiration) &&
-            SubstepDatabaseModel.statusMap.values
-                    .toList()
-                    .indexWhere((e) => e == status) !=
-                2) {
-          result = true;
+        if (expiration != null) {
+          if (DateTime.now().isAfter(expiration)) {
+            map["Atrasado (${expiration.formatString()})"] =
+                AppColor.colorNegativeStatus;
+            break;
+          } else if (reminderDate != null) {
+            Duration difference = expiration.difference(DateTime.now());
+            int daysDifference = difference.inDays;
+            if (daysDifference <= reminderDate) {
+              map["Em alerta (${expiration.formatString()})"] =
+                  AppColor.colorAlertStatus;
+              break;
+            }
+          }
+        } else {
+          map["Em dia"] = AppColor.colorPositiveStatus;
         }
       }
     }
-    return result;
+    return map;
   }
 }

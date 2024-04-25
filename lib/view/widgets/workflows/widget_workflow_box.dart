@@ -247,6 +247,13 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
               substep.model!.expiresAt =
                   section.dateController.text.formatDatetime();
               substep.model!.status = section.statusController.text;
+
+              if (SubstepDatabaseModel.statusMap.values
+                      .toList()
+                      .indexWhere((e) => e == substep.model!.status!) ==
+                  2) {
+                substep.model!.expiresAt = null;
+              }
             } else {
               if (type == WorkflowType.Step) {
                 widget.model.steps!.add(

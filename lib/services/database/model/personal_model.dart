@@ -6,7 +6,7 @@ class PersonalDatabaseModel {
   String document;
   String? email;
   String? phone;
-  int? gender;
+  String? gender;
   DateTime? birth;
   String? annotation;
   String? profession;
