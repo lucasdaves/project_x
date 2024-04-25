@@ -321,13 +321,14 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       );
     }
 
-    Widget buildStatusField() {
+    Widget buildStatusField(Function() function) {
       WidgetSelectorFieldModel model = WidgetSelectorFieldModel(
         controller: section.statusController,
         headerText: section.statusLabel,
         hintText: section.statusHint,
         validator: section.validateStatus,
         options: SubstepDatabaseModel.statusMap.values.toList(),
+        function: function,
       );
       return WidgetSelectorField(
         model: model,
@@ -351,7 +352,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, state) {
             return Dialog(
               backgroundColor: Colors.transparent,
               child: Container(
@@ -400,10 +401,16 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                               widget.model.model!.isCopy) ...[
                             SizedBox(
                                 height: AppResponsive.instance.getHeight(24)),
-                            buildStatusField(),
-                            SizedBox(
-                                height: AppResponsive.instance.getHeight(24)),
-                            buildDateField(),
+                            buildStatusField(() => state(() {})),
+                            if (SubstepDatabaseModel.statusMap.values
+                                    .toList()
+                                    .indexWhere((e) =>
+                                        e == section.statusController.text) !=
+                                2) ...[
+                              SizedBox(
+                                  height: AppResponsive.instance.getHeight(24)),
+                              buildDateField(),
+                            ],
                           ],
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),

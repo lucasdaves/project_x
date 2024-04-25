@@ -172,18 +172,11 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                           );
                   }
                   FinanceLogicalModel model = snapshot.finances![index - 1]!;
-
                   return widget.isResume
                       ? WidgetListEntityCard(
                           value1: model.model?.name ?? "",
-                          value2:
-                              model.getRelationAmount(type: 1, isLate: true) > 0
-                                  ? "Atrasado"
-                                  : "Em dia",
-                          color2:
-                              model.getRelationAmount(type: 1, isLate: true) > 0
-                                  ? AppColor.colorNegativeStatus
-                                  : AppColor.colorPositiveStatus,
+                          value2: model.getStatus().entries.first.key,
+                          color2: model.getStatus().entries.first.value,
                           function: () {
                             function(model.model!.id!);
                           },
@@ -191,17 +184,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       : WidgetListEntityCard(
                           value1: model.model?.name ?? "",
                           value2: "${model.getRelationPaid()} parcelas pagas",
-                          value3:
-                              model.getRelationAmount(type: 1, isLate: true) > 0
-                                  ? "Atrasado"
-                                  : "Em dia",
+                          value3: model.getStatus().entries.first.key,
                           color2: AppColor.colorNeutralStatus,
-                          color3: widget.isResume
-                              ? null
-                              : model.getRelationAmount(type: 1, isLate: true) >
-                                      0
-                                  ? AppColor.colorNegativeStatus
-                                  : AppColor.colorPositiveStatus,
+                          color3: model.getStatus().entries.first.value,
                           function: () {
                             function(model.model!.id!);
                           },

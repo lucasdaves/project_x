@@ -109,7 +109,14 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     String description = finance?.model?.description ?? addOperationText;
     String amount = finance?.model?.amount ?? "";
     String date = finance?.model?.expiresAt?.formatString() ??
-        (finance != null ? "Não Informado" : "");
+        ((finance != null)
+            ? FinanceOperationDatabaseModel.statusMap.values
+                        .toList()
+                        .indexWhere((e) => e == finance.model?.status) ==
+                    1
+                ? "Pago"
+                : "Não Informado"
+            : "");
     String typeText = _getTypeText(typeIndex);
     Color typeColor = _getTypeColor(typeIndex);
 
@@ -314,60 +321,78 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     FinanceOperationLogicalModel? financeOperation,
     required int typeIndex,
   }) {
-    return Form(
-      key: formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildDialogHeader(context, financeOperation),
-          SizedBox(height: AppResponsive.instance.getHeight(24)),
-          if (typeIndex == 1) ...[
-            _buildSelectorField(
-              controller: operationSection.statusController,
-              headerText: operationSection.statusLabel,
-              hintText: operationSection.statusHint,
-              validator: operationSection.validateStatus,
-              options: FinanceOperationDatabaseModel.statusMap.values.toList(),
-            ),
-            SizedBox(height: AppResponsive.instance.getHeight(24)),
-            _buildTextField(
-              controller: operationSection.dateController,
-              headerText: operationSection.dateLabel,
-              hintText: operationSection.dateHint,
-              validator: operationSection.validateDate,
-            ),
-            SizedBox(height: AppResponsive.instance.getHeight(24)),
-          ],
-          _buildTextField(
-            controller: operationSection.descriptionController,
-            headerText: operationSection.descriptionLabel,
-            hintText: operationSection.descriptionLabel,
-            validator: operationSection.validateDescription,
+    return StatefulBuilder(
+      builder: (context, state) {
+        return Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDialogHeader(context, financeOperation),
+              SizedBox(height: AppResponsive.instance.getHeight(24)),
+              if (typeIndex == 1) ...[
+                _buildSelectorField(
+                    controller: operationSection.statusController,
+                    headerText: operationSection.statusLabel,
+                    hintText: operationSection.statusHint,
+                    validator: operationSection.validateStatus,
+                    options:
+                        FinanceOperationDatabaseModel.statusMap.values.toList(),
+                    function: () {
+                      state(
+                        () {
+                          print("oi");
+                        },
+                      );
+                    }),
+                SizedBox(height: AppResponsive.instance.getHeight(24)),
+                if (FinanceOperationDatabaseModel.statusMap.values
+                        .toList()
+                        .indexWhere((e) =>
+                            e == operationSection.statusController.text) ==
+                    0) ...[
+                  _buildTextField(
+                    controller: operationSection.dateController,
+                    headerText: operationSection.dateLabel,
+                    hintText: operationSection.dateHint,
+                    validator: operationSection.validateDate,
+                  ),
+                  SizedBox(height: AppResponsive.instance.getHeight(24)),
+                ],
+              ],
+              _buildTextField(
+                controller: operationSection.descriptionController,
+                headerText: operationSection.descriptionLabel,
+                hintText: operationSection.descriptionLabel,
+                validator: operationSection.validateDescription,
+              ),
+              SizedBox(height: AppResponsive.instance.getHeight(24)),
+              if ((typeIndex == 0 &&
+                      widget.operation != EntityOperation.Update) ||
+                  typeIndex != 0) ...[
+                _buildTextField(
+                  controller: operationSection.amountController,
+                  headerText: operationSection.amountLabel,
+                  hintText: operationSection.amountHint,
+                  validator: operationSection.validateAmount,
+                ),
+                SizedBox(height: AppResponsive.instance.getHeight(24)),
+              ],
+              if (typeIndex == 0 &&
+                  widget.operation != EntityOperation.Update &&
+                  financeOperation != null) ...[
+                _buildWarningText(),
+                SizedBox(
+                  height: AppResponsive.instance.getHeight(24),
+                ),
+              ],
+              _buildSaveButton(saveOperation, financeOperation),
+            ],
           ),
-          SizedBox(height: AppResponsive.instance.getHeight(24)),
-          if ((typeIndex == 0 && widget.operation != EntityOperation.Update) ||
-              typeIndex != 0) ...[
-            _buildTextField(
-              controller: operationSection.amountController,
-              headerText: operationSection.amountLabel,
-              hintText: operationSection.amountHint,
-              validator: operationSection.validateAmount,
-            ),
-            SizedBox(height: AppResponsive.instance.getHeight(24)),
-          ],
-          if (typeIndex == 0 &&
-              widget.operation != EntityOperation.Update &&
-              financeOperation != null) ...[
-            _buildWarningText(),
-            SizedBox(
-              height: AppResponsive.instance.getHeight(24),
-            ),
-          ],
-          _buildSaveButton(saveOperation, financeOperation),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -411,6 +436,7 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     required String hintText,
     required String? Function(String?) validator,
     required List<String> options,
+    required Function() function,
   }) {
     return WidgetSelectorField(
       model: WidgetSelectorFieldModel(
@@ -419,6 +445,7 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
         hintText: hintText,
         validator: validator,
         options: options,
+        function: function,
       ),
     );
   }

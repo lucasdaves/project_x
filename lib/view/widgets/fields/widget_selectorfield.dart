@@ -123,7 +123,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(text, style: style),
+        Flexible(child: Text(text, style: style)),
         if (!widget.model.isDisabled) ...[
           Icon(
             Icons.arrow_drop_down_rounded,

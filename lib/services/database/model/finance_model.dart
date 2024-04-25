@@ -1,4 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/services/database/model/finance_operation_model.dart';
+import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_extension.dart';
 
 class FinanceDatabaseModel {
   int? id;
@@ -108,42 +112,33 @@ class FinanceLogicalModel {
     return getInitialAmount() + getAditiveAmount() - getCostAmount();
   }
 
-  double getRelationAmount({required int type, bool? isPaid, bool? isLate}) {
-    List<FinanceOperationLogicalModel?> list = getType(type: type);
-    double sum = list.fold(0.0, (previousValue, element) {
-      double amount = 0.0;
-      if (isLate != null) {
-        bool condition = isLate
-            ? (element?.model?.expiresAt != null &&
-                element?.model?.expiresAt != "")
-            : (element?.model?.expiresAt == null &&
-                element?.model?.expiresAt == "");
-        if (condition) {
-          DateTime now = DateTime.now();
-          DateTime expiresAt = element?.model?.expiresAt ?? now;
-          if (expiresAt.isBefore(now)) {
-            amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
+  Map<String, Color> getStatus() {
+    Map<String, Color> map = {};
+    List<FinanceOperationLogicalModel?> list = getType(type: 1);
+    for (FinanceOperationLogicalModel? step in list) {
+      DateTime? expiration = step?.model?.expiresAt;
+      int? reminderDate = int.tryParse(
+          SystemController.instance.stream.value.system?.model?.reminderDate ??
+              "");
+
+      if (expiration != null) {
+        if (DateTime.now().isAfter(expiration)) {
+          map["Atrasado (${expiration.formatString()})"] =
+              AppColor.colorNegativeStatus;
+          return map;
+        } else if (reminderDate != null) {
+          Duration difference = expiration.difference(DateTime.now());
+          int daysDifference = difference.inDays;
+          if (daysDifference <= reminderDate) {
+            map["Em alerta (${expiration.formatString()})"] =
+                AppColor.colorAlertStatus;
+            return map;
           }
         }
-      } else if (isPaid != null) {
-        bool condition = isPaid
-            ? (element?.model?.status != null &&
-                FinanceOperationDatabaseModel.statusMap.values
-                        .toList()
-                        .indexWhere((e) => e == element?.model?.status!) ==
-                    1)
-            : (element?.model?.status == null &&
-                FinanceOperationDatabaseModel.statusMap.values
-                        .toList()
-                        .indexWhere((e) => e == element?.model?.status!) !=
-                    1);
-        if (condition) {
-          amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
-        }
       }
-      return previousValue + amount;
-    });
-    return sum;
+    }
+    map["Em dia"] = AppColor.colorPositiveStatus;
+    return map;
   }
 
   String getRelationPaid() {

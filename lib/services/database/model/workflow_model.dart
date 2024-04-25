@@ -118,21 +118,20 @@ class WorkflowLogicalModel {
           if (DateTime.now().isAfter(expiration)) {
             map["Atrasado (${expiration.formatString()})"] =
                 AppColor.colorNegativeStatus;
-            break;
+            return map;
           } else if (reminderDate != null) {
             Duration difference = expiration.difference(DateTime.now());
             int daysDifference = difference.inDays;
             if (daysDifference <= reminderDate) {
               map["Em alerta (${expiration.formatString()})"] =
                   AppColor.colorAlertStatus;
-              break;
+              return map;
             }
           }
-        } else {
-          map["Em dia"] = AppColor.colorPositiveStatus;
         }
       }
     }
+    map["Em dia"] = AppColor.colorPositiveStatus;
     return map;
   }
 }

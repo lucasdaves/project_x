@@ -374,6 +374,9 @@ class OperationSection {
   }
 
   String? validateStatus(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a descrição';
+    }
     return null;
   }
 }
