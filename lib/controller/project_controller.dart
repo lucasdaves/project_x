@@ -44,6 +44,7 @@ class ProjectController {
       if (projectModel.model?.workflowId != null) {
         workflowModel.model?.name =
             "${workflowModel.model?.name} - ${projectModel.model?.name}";
+        workflowModel.model?.isCopy = true;
         await WorkflowController.instance.createWorkflow(
           model: workflowModel,
         );

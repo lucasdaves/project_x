@@ -16,9 +16,15 @@ class WorkflowStreamModel {
     );
   }
 
-  List<WorkflowLogicalModel?> getAll() {
+  List<WorkflowLogicalModel?> getAll({bool removeCopy = false}) {
     WorkflowStreamModel aux = copy();
-    return aux.workflows ?? [];
+    if (removeCopy) {
+      return (aux.workflows ?? [])
+          .where((element) => element?.model?.isCopy != true)
+          .toList();
+    } else {
+      return aux.workflows ?? [];
+    }
   }
 
   WorkflowLogicalModel? getOne({int? id, String? name}) {

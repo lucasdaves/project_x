@@ -4,7 +4,7 @@ class FinanceDatabaseModel {
   int? id;
   String? name;
   String? description;
-  int? status;
+  String? status;
   int? userId;
 
   FinanceDatabaseModel({
@@ -15,12 +15,17 @@ class FinanceDatabaseModel {
     this.userId,
   });
 
+  static Map<int, String> statusMap = {
+    0: "A pagar",
+    1: "Pago",
+  };
+
   factory FinanceDatabaseModel.fromMap(Map<String, dynamic> map) {
     return FinanceDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
-      status: map['atr_status'],
+      status: statusMap[map['atr_status']],
       userId: map['tb_user_atr_id'],
     );
   }
@@ -30,7 +35,7 @@ class FinanceDatabaseModel {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
-      'atr_status': status,
+      'atr_status': statusMap.values.toList().indexWhere((e) => e == status),
       'tb_user_atr_id': userId,
     };
   }
@@ -122,8 +127,16 @@ class FinanceLogicalModel {
         }
       } else if (isPaid != null) {
         bool condition = isPaid
-            ? (element?.model?.paidAt != null && element?.model?.paidAt != "")
-            : (element?.model?.paidAt == null || element?.model?.paidAt == "");
+            ? (element?.model?.status != null &&
+                FinanceOperationDatabaseModel.statusMap.values
+                        .toList()
+                        .indexWhere((e) => e == element?.model?.status!) ==
+                    1)
+            : (element?.model?.status == null &&
+                FinanceOperationDatabaseModel.statusMap.values
+                        .toList()
+                        .indexWhere((e) => e == element?.model?.status!) !=
+                    1);
         if (condition) {
           amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
         }
@@ -136,8 +149,11 @@ class FinanceLogicalModel {
   String getRelationPaid() {
     List<FinanceOperationLogicalModel?> list = getType(type: 1);
     int sum = list.fold(0, (previousValue, element) {
-      bool isPaid =
-          element?.model?.paidAt != null && element?.model?.paidAt != "";
+      bool isPaid = (element?.model?.status != null &&
+          FinanceOperationDatabaseModel.statusMap.values
+                  .toList()
+                  .indexWhere((e) => e == element?.model?.status!) ==
+              1);
       int amount = isPaid ? 1 : 0;
       return previousValue + amount;
     });

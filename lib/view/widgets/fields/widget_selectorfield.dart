@@ -66,6 +66,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
                       option,
                       style: AppTextStyle.size14(
                         color: AppColor.colorFieldBackground,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   );

@@ -66,6 +66,7 @@ class WorkflowController {
             if (substep?.model != null) {
               substep!.model!.id = null;
               substep.model!.stepId = stepId;
+              substep.model!.status = SubstepDatabaseModel.statusMap[0];
               await methods.create(
                 consts.substep,
                 map: substep.model!.toMap(),
@@ -116,6 +117,7 @@ class WorkflowController {
           List<Map<String, Object?>>? mapB =
               await methods.read(consts.step, args: argsB);
 
+          workflow.steps = [];
           if (mapB != null && mapB.isNotEmpty) {
             workflow.steps = mapB.map((b) {
               return StepLogicalModel(model: StepDatabaseModel.fromMap(b));
@@ -130,6 +132,7 @@ class WorkflowController {
                 List<Map<String, Object?>>? mapC =
                     await methods.read(consts.substep, args: argsC);
 
+                step.substeps = [];
                 if (mapC != null && mapC.isNotEmpty) {
                   step.substeps = mapC.map((c) {
                     return SubstepLogicalModel(

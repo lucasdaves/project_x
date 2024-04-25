@@ -4,11 +4,12 @@ import 'package:project_x/services/database/model/substep_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_extension.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
-import 'package:project_x/view/widgets/fields/widget_checkbox.dart';
+import 'package:project_x/view/widgets/fields/widget_selectorfield.dart';
 import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
 class WidgetWorkflowBox extends StatefulWidget {
@@ -122,6 +123,13 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     bool isFirst = false,
     bool isLast = false,
   }) {
+    String status = "";
+    Color color = AppColor.colorNeutralStatus;
+
+    if (substep != null) {
+      status = "(${substep.model?.status}) ";
+    }
+
     return GestureDetector(
       onTap: () {
         _showDialog(
@@ -140,8 +148,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
           borderRadius: BorderRadius.only(
             topLeft: isFirst ? Radius.circular(8) : Radius.zero,
             topRight: isFirst ? Radius.circular(8) : Radius.zero,
-            // bottomLeft: isLast ? Radius.circular(8) : Radius.zero,
-            // bottomRight: isLast ? Radius.circular(8) : Radius.zero,
           ),
           border: Border(
             top: isLast
@@ -180,16 +186,16 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                 Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(
-                        text: (step?.model?.mandatory == true ||
-                                substep?.model?.mandatory == true)
-                            ? ""
-                            : "(Opcional) ",
-                        style: AppTextStyle.size12(
-                          color: AppColor.colorOpcionalStatus,
-                          fontWeight: FontWeight.w300,
+                      if (widget.operation == EntityOperation.Update &&
+                          widget.model.model!.isCopy == true) ...[
+                        TextSpan(
+                          text: status,
+                          style: AppTextStyle.size12(
+                            color: color,
+                            fontWeight: FontWeight.w300,
+                          ),
                         ),
-                      ),
+                      ],
                       TextSpan(
                         text: step?.model?.name ?? substep?.model?.name ?? "",
                         style: AppTextStyle.size12(),
@@ -219,11 +225,12 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     if (step != null) {
       section.titleController.text = step.model!.name;
       section.descriptionController.text = step.model!.description ?? "";
-      section.mandatoryController = step.model!.mandatory;
     } else if (substep != null) {
       section.titleController.text = substep.model!.name;
       section.descriptionController.text = substep.model!.description ?? "";
-      section.mandatoryController = substep.model!.mandatory;
+      section.dateController.text =
+          substep.model!.expiresAt?.formatString() ?? "";
+      section.statusController.text = substep.model!.status ?? "";
     }
 
     Future<void> buildFunction() async {
@@ -234,11 +241,12 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
             if (step != null) {
               step.model!.name = section.titleController.text;
               step.model!.description = section.descriptionController.text;
-              step.model!.mandatory = section.mandatoryController;
             } else if (substep != null) {
               substep.model!.name = section.titleController.text;
               substep.model!.description = section.descriptionController.text;
-              substep.model!.mandatory = section.mandatoryController;
+              substep.model!.expiresAt =
+                  section.dateController.text.formatDatetime();
+              substep.model!.status = section.statusController.text;
             } else {
               if (type == WorkflowType.Step) {
                 widget.model.steps!.add(
@@ -246,8 +254,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                     model: StepDatabaseModel(
                       name: section.titleController.text,
                       description: section.descriptionController.text,
-                      mandatory: section.mandatoryController,
-                      status: 0,
                     ),
                     substeps: [],
                   ),
@@ -258,8 +264,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                     model: SubstepDatabaseModel(
                       name: section.titleController.text,
                       description: section.descriptionController.text,
-                      mandatory: section.mandatoryController,
-                      status: 0,
+                      status: SubstepDatabaseModel.statusMap[0],
                     ),
                   ),
                 );
@@ -305,6 +310,19 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
         validator: (value) => section.validateDate(value),
       );
       return WidgetTextField(
+        model: model,
+      );
+    }
+
+    Widget buildStatusField() {
+      WidgetSelectorFieldModel model = WidgetSelectorFieldModel(
+        controller: section.statusController,
+        headerText: section.statusLabel,
+        hintText: section.statusHint,
+        validator: section.validateStatus,
+        options: SubstepDatabaseModel.statusMap.values.toList(),
+      );
+      return WidgetSelectorField(
         model: model,
       );
     }
@@ -370,46 +388,22 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                               ),
                             ],
                           ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          WidgetCheckBox(
-                            model: WidgetCheckBoxModel(
-                              title: section.mandatoryLabel,
-                              checked: section.mandatoryController,
-                              function: () {
-                                setState(() {
-                                  section.mandatoryController =
-                                      !section.mandatoryController;
-                                });
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          WidgetCheckBox(
-                            model: WidgetCheckBoxModel(
-                              title: section.statusLabel,
-                              checked: section.statusController,
-                              color: AppColor.colorPositiveStatus,
-                              function: () {
-                                setState(() {
-                                  section.statusController =
-                                      !section.statusController;
-                                });
-                              },
-                            ),
-                          ),
+                          if (widget.operation == EntityOperation.Update &&
+                              substep != null &&
+                              widget.model.model!.isCopy) ...[
+                            SizedBox(
+                                height: AppResponsive.instance.getHeight(24)),
+                            buildStatusField(),
+                            SizedBox(
+                                height: AppResponsive.instance.getHeight(24)),
+                            buildDateField(),
+                          ],
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
                           buildTitleField(),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
                           buildDescriptionField(),
-                          if (widget.operation == EntityOperation.Update) ...[
-                            SizedBox(
-                                height: AppResponsive.instance.getHeight(24)),
-                            buildDateField(),
-                          ],
                           SizedBox(
                               height: AppResponsive.instance.getHeight(36)),
                           buildWorkflowButton(false),

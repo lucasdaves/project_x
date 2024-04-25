@@ -2,7 +2,7 @@ class ProjectDatabaseModel {
   int? id;
   String? name;
   String? description;
-  int? status;
+  String? status;
   int? userId;
   int? addressId;
   int? workflowId;
@@ -17,12 +17,18 @@ class ProjectDatabaseModel {
     this.workflowId,
   });
 
+  static Map<int, String> statusMap = {
+    0: "A iniciar",
+    1: "Em andamento",
+    2: "Concluido",
+  };
+
   factory ProjectDatabaseModel.fromMap(Map<String, dynamic> map) {
     return ProjectDatabaseModel(
       id: map['atr_id'],
       name: map['atr_name'],
       description: map['atr_description'],
-      status: map['atr_status'],
+      status: statusMap[map['atr_status']],
       userId: map['tb_user_atr_id'],
       addressId: map['tb_address_atr_id'],
       workflowId: map['tb_workflow_atr_id'],
@@ -34,7 +40,7 @@ class ProjectDatabaseModel {
       'atr_id': id,
       'atr_name': name,
       'atr_description': description,
-      'atr_status': status,
+      'atr_status': statusMap.values.toList().indexWhere((e) => e == status),
       'tb_user_atr_id': userId,
       'tb_address_atr_id': addressId,
       'tb_workflow_atr_id': workflowId,

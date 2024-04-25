@@ -320,15 +320,18 @@ class _EntityFormViewState extends State<EntityFormView> {
           existingProjectModel.model?.workflowId != "")) {
         existingWorkflowModel = WorkflowController.instance.stream.value
             .getOne(id: existingProjectModel.model?.workflowId)!;
+        existingWorkflowModel.model?.isCopy = true;
       } else {
         existingWorkflowModel = WorkflowLogicalModel(
           model: WorkflowDatabaseModel(
             name: descriptionSection.titleController.text,
             description: descriptionSection.descriptionController.text,
+            isCopy: true,
           ),
           steps: [],
         );
       }
+
       projectSection.workflowController.text =
           existingWorkflowModel.model?.name ?? "";
       projectSection.titleController.text =
@@ -342,16 +345,19 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: ProjectDatabaseModel(
           name: projectSection.titleController.text,
           description: projectSection.descriptionController.text,
-          status: 0,
+          status: ProjectDatabaseModel.statusMap[0],
         ),
       );
+
       WorkflowLogicalModel newWorkflowModel = WorkflowLogicalModel(
         model: WorkflowDatabaseModel(
           name: descriptionSection.titleController.text,
           description: descriptionSection.descriptionController.text,
+          isCopy: true,
         ),
         steps: [],
       );
+
       controller.setModel([newProjectModel, newWorkflowModel]);
     }
   }
@@ -370,6 +376,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: WorkflowDatabaseModel(
           name: descriptionSection.titleController.text,
           description: descriptionSection.descriptionController.text,
+          isCopy: false,
         ),
         steps: [],
       );
@@ -391,7 +398,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: FinanceDatabaseModel(
           name: descriptionSection.titleController.text,
           description: descriptionSection.descriptionController.text,
-          status: 0,
+          status: FinanceDatabaseModel.statusMap[0],
         ),
         operations: [],
       );
@@ -929,10 +936,13 @@ class _EntityFormViewState extends State<EntityFormView> {
                       hintText: projectSection.workflowHint,
                       validator: (value) =>
                           projectSection.validateWorkflow(value),
-                      options: WorkflowController.instance.stream.value
-                          .getAll()
-                          .map((e) => e!.model!.name!)
-                          .toList(),
+                      options: (projectSection.workflowController.text != "" &&
+                              widget.operation == EntityOperation.Update)
+                          ? [projectSection.workflowController.text]
+                          : WorkflowController.instance.stream.value
+                              .getAll(removeCopy: true)
+                              .map((e) => e!.model!.name!)
+                              .toList(),
                       function: () {
                         setState(() {
                           ProjectLogicalModel projectModel =
@@ -946,10 +956,11 @@ class _EntityFormViewState extends State<EntityFormView> {
                           controller.setModel([projectModel, workflowModel]);
                         });
                       },
-                      isDisabled: (projectSection.workflowController != "" &&
-                              widget.operation == EntityOperation.Update)
-                          ? true
-                          : false,
+                      isDisabled:
+                          (projectSection.workflowController.text != "" &&
+                                  widget.operation == EntityOperation.Update)
+                              ? true
+                              : false,
                     ),
                   ),
                 ],
@@ -1053,7 +1064,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                   Flexible(
                     child: WidgetWorkflowBox(
                       model: controller.getModel(),
-                      operation: EntityOperation.Create,
+                      operation: widget.operation,
                     ),
                   ),
                 ],
@@ -1131,6 +1142,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                   Flexible(
                     child: WidgetFinanceBox(
                       model: controller.getModel(),
+                      operation: widget.operation,
                     ),
                   ),
                 ],

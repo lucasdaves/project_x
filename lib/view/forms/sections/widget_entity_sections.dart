@@ -108,7 +108,6 @@ class AddressSection {
   String streetLabel = "Rua";
   String numberLabel = "Número";
   String complementLabel = "Complemento (Opcional)";
-  String referenceLabel = "Referência (Opcional)";
 
   // HINT TEXTS
   String countryHint = "Digite o país ...";
@@ -118,7 +117,6 @@ class AddressSection {
   String streetHint = "Digite a rua ...";
   String numberHint = "Digite o número ...";
   String complementHint = "Digite o complemento ...";
-  String referenceHint = "Digite a referência ...";
 
   // TEXT CONTROLLERS
   TextEditingController countryController = TextEditingController();
@@ -130,7 +128,6 @@ class AddressSection {
   TextEditingController streetController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   TextEditingController complementController = TextEditingController();
-  TextEditingController referenceController = TextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateCountry(String? value) {
@@ -178,10 +175,6 @@ class AddressSection {
   String? validateComplement(String? value) {
     return null;
   }
-
-  String? validateReference(String? value) {
-    return null;
-  }
 }
 
 class ContactSection {
@@ -202,16 +195,10 @@ class ContactSection {
 
   // VALIDATION FUNCTIONS
   String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o telefone';
-    }
     return null;
   }
 
   String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o e-mail';
-    }
     return null;
   }
 
@@ -261,24 +248,24 @@ class WorkflowOperationSection {
   final String titleLabel = "Titulo";
   final String descriptionLabel = "Descrição";
   final String mandatoryLabel = "Entrega obrigatória ?";
-  final String statusLabel = "Concluir ?";
+  final String statusLabel = "Situação da entrega";
   final String dateLabel = "Data de entrega";
 
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
   final String mandatoryHint = "";
-  final String statusHint = "";
+  final String statusHint = "Escolha uma situação";
   final String dateHint = "Digite a data de entrega ...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   bool mandatoryController = false;
-  bool statusController = false;
   MaskedTextController dateController = MaskedTextController(
     mask: '00/00/0000',
   );
+  TextEditingController statusController = TextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateTitle(String? value) {
@@ -293,6 +280,14 @@ class WorkflowOperationSection {
   }
 
   String? validateDate(String? value) {
+    return null;
+  }
+
+  String? validateMandatory(String? value) {
+    return null;
+  }
+
+  String? validateStatus(String? value) {
     return null;
   }
 }
@@ -337,12 +332,14 @@ class OperationSection {
   // LABELS
   final String amountLabel = "Quantia";
   final String descriptionLabel = "Descrição";
-  final String dateLabel = "Data (Opcional)";
+  final String dateLabel = "Data de pagamento (Opcional)";
+  final String statusLabel = "Situação";
 
   // HINT TEXTS
   final String amountHint = "Digite a quantia...";
   final String descriptionHint = "Digite a descrição...";
   final String dateHint = "Digite a data de pagamento ...";
+  final String statusHint = "Escolha uma situação ...";
 
   // TEXT CONTROLLERS
   MoneyMaskedTextController amountController = MoneyMaskedTextController(
@@ -355,6 +352,7 @@ class OperationSection {
   MaskedTextController dateController = MaskedTextController(
     mask: '00/00/0000',
   );
+  TextEditingController statusController = TextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateAmount(String? value) {
@@ -372,6 +370,10 @@ class OperationSection {
   }
 
   String? validateDate(String? value) {
+    return null;
+  }
+
+  String? validateStatus(String? value) {
     return null;
   }
 }

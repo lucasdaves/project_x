@@ -111,15 +111,30 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                   if (index == 0) {
                     return WidgetListEntityCard(
                       value1: "Nome",
-                      value2: "Telefone",
-                      value3: widget.isResume ? null : "Documento",
+                      value2: "Andamento",
+                      value3: widget.isResume ? null : "Status",
                       isHeader: true,
                     );
                   }
                   ProjectLogicalModel model = snapshot.projects![index - 1]!;
+                  WorkflowLogicalModel wkModel = WorkflowController
+                      .instance.stream.value
+                      .getOne(id: model.model?.workflowId)!;
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "",
-                    value2: model.model?.name ?? "Não informado",
+                    value2:
+                        "${wkModel.getRelation()[3]}/${wkModel.getRelation()[0]} tarefas concluídas",
+                    value3: widget.isResume
+                        ? null
+                        : wkModel.isLate()
+                            ? "Atrasado"
+                            : "Em dia",
+                    color2: AppColor.colorNeutralStatus,
+                    color3: widget.isResume
+                        ? null
+                        : wkModel.isLate()
+                            ? AppColor.colorNegativeStatus
+                            : AppColor.colorPositiveStatus,
                     function: () {
                       function(model.model!.id!);
                     },
@@ -153,13 +168,13 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                         : "${model.getRelationPaid()} parcelas pagas",
                     value4: widget.isResume
                         ? null
-                        : model.getRelationAmount(type: 1, isPaid: false) > 0
+                        : model.getRelationAmount(type: 1, isLate: true) > 0
                             ? "Atrasado"
                             : "Em dia",
                     color3: AppColor.colorNeutralStatus,
                     color4: widget.isResume
                         ? null
-                        : model.getRelationAmount(type: 1, isPaid: false) > 0
+                        : model.getRelationAmount(type: 1, isLate: true) > 0
                             ? AppColor.colorNegativeStatus
                             : AppColor.colorPositiveStatus,
                     function: () {
@@ -170,12 +185,12 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               );
       case EntityType.Workflow:
         snapshot as WorkflowStreamModel;
-        return (snapshot.workflows ?? []).isEmpty
+        return (snapshot.getAll(removeCopy: true)).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (snapshot.workflows ?? []).length + 1,
+                itemCount: (snapshot.getAll(removeCopy: true)).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return WidgetListEntityCard(
@@ -184,7 +199,8 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       isHeader: true,
                     );
                   }
-                  WorkflowLogicalModel model = snapshot.workflows![index - 1]!;
+                  WorkflowLogicalModel model =
+                      snapshot.getAll(removeCopy: true)[index - 1]!;
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "Não informado",
                     value2: model.model?.description ?? "Não informado",

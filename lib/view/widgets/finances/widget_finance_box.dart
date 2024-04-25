@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_extension.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
+import 'package:project_x/view/widgets/fields/widget_selectorfield.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
 import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
 class WidgetFinanceBox extends StatefulWidget {
   final FinanceLogicalModel model;
+  final EntityOperation operation;
 
-  WidgetFinanceBox({super.key, required this.model});
+  WidgetFinanceBox({
+    super.key,
+    required this.model,
+    required this.operation,
+  });
 
   @override
   _WidgetFinanceBoxState createState() => _WidgetFinanceBoxState();
@@ -194,6 +201,8 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
           financeOperation.model?.amount ?? "";
       operationSection.dateController.text =
           financeOperation.model?.expiresAt?.formatString() ?? "";
+      operationSection.statusController.text =
+          financeOperation.model?.status ?? "";
     }
   }
 
@@ -227,12 +236,21 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
           type: typeIndex,
           description: operationSection.descriptionController.text,
           amount: operationSection.amountController.text,
+          status: operationSection.statusController.text,
           expiresAt: operationSection.dateController.text.formatDatetime(),
         ),
       );
 
       if (financeOperation != null) {
-        if (typeIndex == 0) {
+        operation.model?.financeId = financeOperation.model?.financeId;
+        operation.model?.id = financeOperation.model?.id;
+        if (FinanceOperationDatabaseModel.statusMap.values
+                .toList()
+                .indexWhere((e) => e == operation.model?.status!) ==
+            1) {
+          operation.model?.expiresAt = null;
+        }
+        if (typeIndex == 0 && widget.operation == EntityOperation.Create) {
           widget.model.operations?.removeWhere(
             (operation) => operation?.model?.type != 0,
           );
@@ -305,6 +323,23 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
         children: [
           _buildDialogHeader(context, financeOperation),
           SizedBox(height: AppResponsive.instance.getHeight(24)),
+          if (typeIndex == 1) ...[
+            _buildSelectorField(
+              controller: operationSection.statusController,
+              headerText: operationSection.statusLabel,
+              hintText: operationSection.statusHint,
+              validator: operationSection.validateStatus,
+              options: FinanceOperationDatabaseModel.statusMap.values.toList(),
+            ),
+            SizedBox(height: AppResponsive.instance.getHeight(24)),
+            _buildTextField(
+              controller: operationSection.dateController,
+              headerText: operationSection.dateLabel,
+              hintText: operationSection.dateHint,
+              validator: operationSection.validateDate,
+            ),
+            SizedBox(height: AppResponsive.instance.getHeight(24)),
+          ],
           _buildTextField(
             controller: operationSection.descriptionController,
             headerText: operationSection.descriptionLabel,
@@ -312,22 +347,24 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
             validator: operationSection.validateDescription,
           ),
           SizedBox(height: AppResponsive.instance.getHeight(24)),
-          _buildTextField(
-            controller: operationSection.amountController,
-            headerText: operationSection.amountLabel,
-            hintText: operationSection.amountHint,
-            validator: operationSection.validateAmount,
-          ),
-          SizedBox(height: AppResponsive.instance.getHeight(24)),
-          if (typeIndex != 0)
+          if ((typeIndex == 0 && widget.operation != EntityOperation.Update) ||
+              typeIndex != 0) ...[
             _buildTextField(
-              controller: operationSection.dateController,
-              headerText: operationSection.dateLabel,
-              hintText: operationSection.dateHint,
-              validator: operationSection.validateDate,
+              controller: operationSection.amountController,
+              headerText: operationSection.amountLabel,
+              hintText: operationSection.amountHint,
+              validator: operationSection.validateAmount,
             ),
-          if (typeIndex == 0 && financeOperation != null) _buildWarningText(),
-          SizedBox(height: AppResponsive.instance.getHeight(36)),
+            SizedBox(height: AppResponsive.instance.getHeight(24)),
+          ],
+          if (typeIndex == 0 &&
+              widget.operation != EntityOperation.Update &&
+              financeOperation != null) ...[
+            _buildWarningText(),
+            SizedBox(
+              height: AppResponsive.instance.getHeight(24),
+            ),
+          ],
           _buildSaveButton(saveOperation, financeOperation),
         ],
       ),
@@ -364,6 +401,24 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
         headerText: headerText,
         hintText: hintText,
         validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildSelectorField({
+    required TextEditingController controller,
+    required String headerText,
+    required String hintText,
+    required String? Function(String?) validator,
+    required List<String> options,
+  }) {
+    return WidgetSelectorField(
+      model: WidgetSelectorFieldModel(
+        controller: controller,
+        headerText: headerText,
+        hintText: hintText,
+        validator: validator,
+        options: options,
       ),
     );
   }
