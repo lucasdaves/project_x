@@ -41,77 +41,82 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       },
       itemBuilder: (context, stpIndex) {
         bool isFinalStep = (stpIndex == widget.model.steps!.length);
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Container(
-                width: AppResponsive.instance.getWidth(150),
-                padding: EdgeInsets.only(
-                  bottom: AppResponsive.instance.getHeight(24),
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.colorPrimary,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppColor.colorPrimary,
-                    width: AppResponsive.instance.getWidth(4),
-                  ),
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: isFinalStep
-                    ? button(
-                        type: WorkflowType.Step,
-                        isFirst: true,
-                        isLast: false,
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          button(
-                            type: WorkflowType.Step,
-                            step: widget.model.steps![stpIndex]!,
-                            isFirst: true,
-                            isLast: false,
-                          ),
-                          Flexible(
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              itemCount: (widget.model.steps?[stpIndex]
-                                      ?.substeps?.length ??
-                                  0),
-                              padding: EdgeInsets.symmetric(
-                                vertical: AppResponsive.instance.getHeight(12),
-                              ),
-                              separatorBuilder: (context, subIndex) {
-                                return SizedBox(
-                                  height: AppResponsive.instance.getHeight(12),
-                                );
-                              },
-                              itemBuilder: (context, subIndex) {
-                                return button(
-                                  type: WorkflowType.Substep,
-                                  substep: widget.model.steps![stpIndex]!
-                                      .substeps![subIndex],
-                                  isFirst: false,
-                                  isLast: false,
-                                );
-                              },
-                            ),
-                          ),
-                          button(
-                            type: WorkflowType.Substep,
-                            index: stpIndex,
-                            isFirst: false,
-                            isLast: true,
-                          ),
-                        ],
+        return (isFinalStep && widget.operation == EntityOperation.Read)
+            ? SizedBox.shrink()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Container(
+                      width: AppResponsive.instance.getWidth(150),
+                      padding: EdgeInsets.only(
+                        bottom: AppResponsive.instance.getHeight(24),
                       ),
-              ),
-            ),
-          ],
-        );
+                      decoration: BoxDecoration(
+                        color: AppColor.colorPrimary,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppColor.colorPrimary,
+                          width: AppResponsive.instance.getWidth(4),
+                        ),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: (isFinalStep)
+                          ? button(
+                              type: WorkflowType.Step,
+                              isFirst: true,
+                              isLast: false,
+                            )
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                button(
+                                  type: WorkflowType.Step,
+                                  step: widget.model.steps![stpIndex]!,
+                                  isFirst: true,
+                                  isLast: false,
+                                ),
+                                Flexible(
+                                  child: ListView.separated(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: (widget.model.steps?[stpIndex]
+                                            ?.substeps?.length ??
+                                        0),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          AppResponsive.instance.getHeight(12),
+                                    ),
+                                    separatorBuilder: (context, subIndex) {
+                                      return SizedBox(
+                                        height: AppResponsive.instance
+                                            .getHeight(12),
+                                      );
+                                    },
+                                    itemBuilder: (context, subIndex) {
+                                      return button(
+                                        type: WorkflowType.Substep,
+                                        substep: widget.model.steps![stpIndex]!
+                                            .substeps![subIndex],
+                                        isFirst: false,
+                                        isLast: false,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                if (widget.operation != EntityOperation.Read)
+                                  button(
+                                    type: WorkflowType.Substep,
+                                    index: stpIndex,
+                                    isFirst: false,
+                                    isLast: true,
+                                  ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ],
+              );
       },
     );
   }
@@ -126,13 +131,15 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
   }) {
     return GestureDetector(
       onTap: () {
-        _showDialog(
-          context,
-          type: type,
-          index: index,
-          step: step,
-          substep: substep,
-        );
+        if (widget.operation != EntityOperation.Read) {
+          _showDialog(
+            context,
+            type: type,
+            index: index,
+            step: step,
+            substep: substep,
+          );
+        }
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -178,7 +185,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   Text.rich(
                     TextSpan(
                       children: [
-                        if (widget.operation == EntityOperation.Update &&
+                        if ((widget.operation == EntityOperation.Read ||
+                                widget.operation == EntityOperation.Update) &&
                             widget.model.model!.isCopy == true &&
                             substep != null) ...[
                           TextSpan(

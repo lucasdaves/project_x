@@ -3,12 +3,12 @@ import 'package:project_x/services/database/model/personal_model.dart';
 class ClientDatabaseModel {
   int? id;
   int? personalId;
-  int userId;
+  int? userId;
 
   ClientDatabaseModel({
     this.id,
     this.personalId,
-    required this.userId,
+    this.userId,
   });
 
   factory ClientDatabaseModel.fromMap(Map<String, dynamic> map) {

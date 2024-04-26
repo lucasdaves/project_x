@@ -68,6 +68,7 @@ class _EntityFormViewState extends State<EntityFormView> {
   final workflowOperationSection = WorkflowOperationSection();
   final descriptionSection = DescriptionSection();
   final operationSection = OperationSection();
+  final associationSection = AssociationSection();
 
   @override
   void dispose() {
@@ -187,16 +188,19 @@ class _EntityFormViewState extends State<EntityFormView> {
     if (widget.entityIndex != null) {
       SystemLogicalModel existingModel = SystemController.instance.stream.value
           .getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
-      systemSection.dateController.text =
-          existingModel.model?.reminderDate ?? "";
+      controller.setModel([existingModel]);
+      systemSection.fianceDateController.text =
+          existingModel.model?.financeReminderDate ?? "";
+      systemSection.workflowDateController.text =
+          existingModel.model?.workflowReminderDate ?? "";
     } else {
       SystemLogicalModel newModel = SystemLogicalModel(
         model: SystemDatabaseModel(
-          reminderDate: systemSection.dateController.text,
+          financeReminderDate: systemSection.fianceDateController.text,
+          workflowReminderDate: systemSection.workflowDateController.text,
         ),
       );
-      controller.setModel(newModel);
+      controller.setModel([newModel]);
     }
   }
 
@@ -204,7 +208,7 @@ class _EntityFormViewState extends State<EntityFormView> {
     if (widget.entityIndex != null) {
       UserLogicalModel existingModel =
           UserController.instance.stream.value.getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
+      controller.setModel([existingModel]);
       userSection.loginController.text = existingModel.model?.login ?? '';
       userSection.passwordController.text = existingModel.model?.password ?? '';
       userSection.recoverController.text =
@@ -273,7 +277,7 @@ class _EntityFormViewState extends State<EntityFormView> {
           ),
         ),
       );
-      controller.setModel(newModel);
+      controller.setModel([newModel]);
     }
   }
 
@@ -281,7 +285,7 @@ class _EntityFormViewState extends State<EntityFormView> {
     if (widget.entityIndex != null) {
       ClientLogicalModel existingModel = ClientController.instance.stream.value
           .getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
+      controller.setModel([existingModel]);
       personalDataSection.nameController.text =
           existingModel.personal?.model?.name ?? '';
       personalDataSection.documentController.text =
@@ -337,7 +341,7 @@ class _EntityFormViewState extends State<EntityFormView> {
           ),
         ),
       );
-      controller.setModel(newModel);
+      controller.setModel([newModel]);
     }
   }
 
@@ -346,6 +350,7 @@ class _EntityFormViewState extends State<EntityFormView> {
       ProjectLogicalModel existingProjectModel = ProjectController
           .instance.stream.value
           .getOne(id: widget.entityIndex)!;
+
       WorkflowLogicalModel existingWorkflowModel;
       if ((existingProjectModel.model?.workflowId != null &&
           existingProjectModel.model?.workflowId != "")) {
@@ -369,6 +374,18 @@ class _EntityFormViewState extends State<EntityFormView> {
           existingProjectModel.model?.name ?? '';
       projectSection.descriptionController.text =
           existingProjectModel.model?.description ?? '';
+
+      FinanceLogicalModel? existingFinanceModel = FinanceController
+          .instance.stream.value
+          .getOne(id: existingProjectModel.model?.financeId);
+      ClientLogicalModel? existingClientModel = ClientController
+          .instance.stream.value
+          .getOne(id: existingProjectModel.model?.clientId);
+
+      associationSection.financeController.text =
+          existingFinanceModel?.model?.name ?? "";
+      associationSection.clientController.text =
+          existingClientModel?.personal?.model?.name ?? "";
 
       controller.setModel([existingProjectModel, existingWorkflowModel]);
     } else {
@@ -398,7 +415,7 @@ class _EntityFormViewState extends State<EntityFormView> {
       WorkflowLogicalModel existingModel = WorkflowController
           .instance.stream.value
           .getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
+      controller.setModel([existingModel]);
       descriptionSection.titleController.text = existingModel.model?.name ?? '';
       descriptionSection.descriptionController.text =
           existingModel.model?.description ?? '';
@@ -411,7 +428,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         ),
         steps: [],
       );
-      controller.setModel(newModel);
+      controller.setModel([newModel]);
     }
   }
 
@@ -420,10 +437,26 @@ class _EntityFormViewState extends State<EntityFormView> {
       FinanceLogicalModel existingModel = FinanceController
           .instance.stream.value
           .getOne(id: widget.entityIndex)!;
-      controller.setModel(existingModel);
+      controller.setModel([existingModel]);
       descriptionSection.titleController.text = existingModel.model?.name ?? '';
       descriptionSection.descriptionController.text =
           existingModel.model?.description ?? '';
+
+      ProjectLogicalModel? existingProjectModel = ProjectController
+          .instance.stream.value
+          .getAll()
+          .where(
+              (element) => element?.model?.financeId == existingModel.model?.id)
+          .firstOrNull;
+      ClientLogicalModel? existingClientModel =
+          ClientController.instance.stream.value.getOne(
+              id: existingModel.model?.clientId ??
+                  existingProjectModel?.model?.clientId);
+
+      associationSection.projectController.text =
+          existingProjectModel?.model?.name ?? "";
+      associationSection.clientController.text =
+          existingClientModel?.personal?.model?.name ?? "";
     } else {
       FinanceLogicalModel newModel = FinanceLogicalModel(
         model: FinanceDatabaseModel(
@@ -433,7 +466,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         ),
         operations: [],
       );
-      controller.setModel(newModel);
+      controller.setModel([newModel]);
     }
   }
 
@@ -480,14 +513,29 @@ class _EntityFormViewState extends State<EntityFormView> {
                   children: [
                     WidgetTextField(
                       model: WidgetTextFieldModel(
-                        controller: systemSection.dateController,
-                        headerText: systemSection.dateLabel,
-                        hintText: systemSection.dateHint,
-                        validator: (value) => systemSection.validateDate(value),
+                        controller: systemSection.fianceDateController,
+                        headerText: systemSection.financeDateLabel,
+                        hintText: systemSection.financeDateHint,
+                        validator: (value) =>
+                            systemSection.validateFinanceDate(value),
                         changed: (value) =>
-                            (controller.getModel() as SystemLogicalModel)
+                            (controller.getModel()[0] as SystemLogicalModel)
                                 .model
-                                ?.reminderDate = value!,
+                                ?.financeReminderDate = value!,
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetTextField(
+                      model: WidgetTextFieldModel(
+                        controller: systemSection.workflowDateController,
+                        headerText: systemSection.workflowDateLabel,
+                        hintText: systemSection.workflowDateHint,
+                        validator: (value) =>
+                            systemSection.validateWorkflowDate(value),
+                        changed: (value) =>
+                            (controller.getModel()[0] as SystemLogicalModel)
+                                .model
+                                ?.workflowReminderDate = value!,
                       ),
                     ),
                   ],
@@ -527,7 +575,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         hintText: userSection.loginHint,
                         validator: (value) => userSection.validateLogin(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .model
                                 ?.login = value!,
                       ),
@@ -541,7 +589,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             userSection.validatePassword(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .model
                                 ?.password = value!,
                       ),
@@ -555,7 +603,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             userSection.validateRecover(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .recover
                                 ?.model
                                 ?.question = value,
@@ -570,7 +618,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             userSection.validateRecoverResp(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .recover
                                 ?.model
                                 ?.response = value,
@@ -601,7 +649,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateName(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.name = value!,
@@ -616,7 +664,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateDocument(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.document = value!,
@@ -631,7 +679,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateDob(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.birth = value?.formatDatetime(),
@@ -646,7 +694,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateGender(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.gender = value,
@@ -677,7 +725,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             contactSection.validateEmail(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.email = value,
@@ -692,7 +740,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             contactSection.validatePhone(value),
                         changed: (value) =>
-                            (controller.getModel() as UserLogicalModel)
+                            (controller.getModel()[0] as UserLogicalModel)
                                 .personal
                                 ?.model
                                 ?.phone = value,
@@ -732,7 +780,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateName(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.name = value!,
@@ -747,7 +795,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateDocument(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.document = value!,
@@ -762,7 +810,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateDob(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.birth = value?.formatDatetime(),
@@ -777,7 +825,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             personalDataSection.validateGender(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.gender = value,
@@ -808,7 +856,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateCountry(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -823,7 +871,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         hintText: addressSection.cepHint,
                         validator: (value) => addressSection.validateCep(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -839,7 +887,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateState(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -855,7 +903,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateCity(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -871,7 +919,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateStreet(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -887,7 +935,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateNumber(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -903,7 +951,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             addressSection.validateComplement(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.address
                                 ?.model
@@ -935,7 +983,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             contactSection.validateEmail(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.email = value,
@@ -950,7 +998,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             contactSection.validatePhone(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.phone = value,
@@ -965,7 +1013,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             contactSection.validateNote(value),
                         changed: (value) =>
-                            (controller.getModel() as ClientLogicalModel)
+                            (controller.getModel()[0] as ClientLogicalModel)
                                 .personal
                                 ?.model
                                 ?.annotation = value,
@@ -1046,13 +1094,31 @@ class _EntityFormViewState extends State<EntityFormView> {
                           setState(() {
                             ProjectLogicalModel projectModel = (controller
                                 .getModel()[0] as ProjectLogicalModel);
-                            WorkflowLogicalModel workflowModel =
+
+                            WorkflowLogicalModel? workflowModel =
                                 WorkflowController.instance.stream.value.getOne(
                               name: projectSection.workflowController.text,
-                            )!;
+                            );
+                            ClientLogicalModel? clientModel =
+                                ClientController.instance.stream.value.getOne(
+                              name: associationSection.clientController.text,
+                            );
+                            FinanceLogicalModel? financeModel =
+                                FinanceController.instance.stream.value.getOne(
+                              name: associationSection.financeController.text,
+                            );
+
                             projectModel.model?.workflowId =
-                                workflowModel.model?.id;
-                            controller.setModel([projectModel, workflowModel]);
+                                workflowModel?.model?.id;
+                            projectModel.model?.clientId =
+                                clientModel?.model?.id;
+                            projectModel.model?.financeId =
+                                financeModel?.model?.id;
+
+                            controller.setModel([
+                              projectModel,
+                              workflowModel,
+                            ]);
                           });
                         },
                         isDisabled:
@@ -1060,6 +1126,104 @@ class _EntityFormViewState extends State<EntityFormView> {
                                     widget.operation == EntityOperation.Update)
                                 ? true
                                 : false,
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.clientController,
+                        headerText: associationSection.clientLabel,
+                        hintText: associationSection.clientHint,
+                        validator: (value) =>
+                            associationSection.validateClient(value),
+                        options:
+                            (associationSection.clientController.text != "" &&
+                                    widget.operation == EntityOperation.Update)
+                                ? [associationSection.clientController.text]
+                                : ClientController.instance.stream.value
+                                    .getAll()
+                                    .map((e) => e!.personal!.model!.name)
+                                    .toList(),
+                        function: () {
+                          setState(() {
+                            ProjectLogicalModel projectModel = (controller
+                                .getModel()[0] as ProjectLogicalModel);
+
+                            WorkflowLogicalModel? workflowModel =
+                                WorkflowController.instance.stream.value.getOne(
+                              name: projectSection.workflowController.text,
+                            );
+                            ClientLogicalModel? clientModel =
+                                ClientController.instance.stream.value.getOne(
+                              name: associationSection.clientController.text,
+                            );
+                            FinanceLogicalModel? financeModel =
+                                FinanceController.instance.stream.value.getOne(
+                              name: associationSection.financeController.text,
+                            );
+
+                            projectModel.model?.workflowId =
+                                workflowModel?.model?.id;
+                            projectModel.model?.clientId =
+                                clientModel?.model?.id;
+                            projectModel.model?.financeId =
+                                financeModel?.model?.id;
+
+                            controller.setModel([
+                              projectModel,
+                              workflowModel,
+                            ]);
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.financeController,
+                        headerText: associationSection.financeLabel,
+                        hintText: associationSection.financeHint,
+                        validator: (value) =>
+                            associationSection.validateFinance(value),
+                        options:
+                            (associationSection.financeController.text != "" &&
+                                    widget.operation == EntityOperation.Update)
+                                ? [associationSection.financeController.text]
+                                : FinanceController.instance.stream.value
+                                    .getAll()
+                                    .map((e) => e!.model!.name!)
+                                    .toList(),
+                        function: () {
+                          setState(() {
+                            ProjectLogicalModel projectModel = (controller
+                                .getModel()[0] as ProjectLogicalModel);
+
+                            WorkflowLogicalModel? workflowModel =
+                                WorkflowController.instance.stream.value.getOne(
+                              name: projectSection.workflowController.text,
+                            );
+                            ClientLogicalModel? clientModel =
+                                ClientController.instance.stream.value.getOne(
+                              name: associationSection.clientController.text,
+                            );
+                            FinanceLogicalModel? financeModel =
+                                FinanceController.instance.stream.value.getOne(
+                              name: associationSection.financeController.text,
+                            );
+
+                            projectModel.model?.workflowId =
+                                workflowModel?.model?.id;
+                            projectModel.model?.clientId =
+                                clientModel?.model?.id;
+                            projectModel.model?.financeId =
+                                financeModel?.model?.id;
+
+                            controller.setModel([
+                              projectModel,
+                              workflowModel,
+                            ]);
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -1097,9 +1261,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                           ? "Selecione uma workflow"
                           : "Crie uma Workflow para prosseguir",
                       textAlign: TextAlign.center,
-                      style: AppTextStyle.size16(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: AppTextStyle.size16(fontWeight: FontWeight.w300),
                     ),
                   ],
                 ],
@@ -1136,7 +1298,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                       validator: (value) =>
                           descriptionSection.validateTitle(value),
                       changed: (value) =>
-                          (controller.getModel() as WorkflowLogicalModel)
+                          (controller.getModel()[0] as WorkflowLogicalModel)
                               .model
                               ?.name = value,
                     ),
@@ -1150,7 +1312,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                       validator: (value) =>
                           descriptionSection.validateDescription(value),
                       changed: (value) =>
-                          (controller.getModel() as WorkflowLogicalModel)
+                          (controller.getModel()[0] as WorkflowLogicalModel)
                               .model
                               ?.description = value,
                     ),
@@ -1176,7 +1338,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                 children: [
                   Flexible(
                     child: WidgetWorkflowBox(
-                      model: controller.getModel(),
+                      model: controller.getModel()[0],
                       operation: widget.operation,
                     ),
                   ),
@@ -1215,7 +1377,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             descriptionSection.validateTitle(value),
                         changed: (value) =>
-                            (controller.getModel() as FinanceLogicalModel)
+                            (controller.getModel()[0] as FinanceLogicalModel)
                                 .model
                                 ?.name = value,
                       ),
@@ -1229,9 +1391,45 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             descriptionSection.validateDescription(value),
                         changed: (value) =>
-                            (controller.getModel() as FinanceLogicalModel)
+                            (controller.getModel()[0] as FinanceLogicalModel)
                                 .model
                                 ?.description = value,
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.clientController,
+                        headerText: associationSection.clientLabel,
+                        hintText: associationSection.clientHint,
+                        validator: (value) =>
+                            associationSection.validateClient(value),
+                        options: ClientController.instance.stream.value
+                            .getAll()
+                            .map((e) => e!.personal!.model!.name)
+                            .toList(),
+                        function: () {
+                          setState(() {
+                            FinanceLogicalModel financeModel = (controller
+                                .getModel()[0] as FinanceLogicalModel);
+
+                            ClientLogicalModel? clientModel =
+                                ClientController.instance.stream.value.getOne(
+                              name: associationSection.clientController.text,
+                            );
+                            ProjectLogicalModel? projectModel =
+                                ProjectController.instance.stream.value.getOne(
+                              name: associationSection.financeController.text,
+                            );
+
+                            financeModel.model?.clientId =
+                                clientModel?.model?.id;
+                            projectModel?.model?.financeId =
+                                financeModel.model?.id;
+
+                            controller.setModel([financeModel]);
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -1256,7 +1454,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                 children: [
                   Flexible(
                     child: WidgetFinanceBox(
-                      model: controller.getModel(),
+                      model: controller.getModel()[0],
                       operation: widget.operation,
                     ),
                   ),
@@ -1339,15 +1537,18 @@ class _EntityFormViewState extends State<EntityFormView> {
               },
             ),
           ),
-          WidgetActionIcon(
-            model: WidgetActionIconModel(
-              icon: getActionIcon(operation: EntityOperation.Delete),
-              label: getActionText(operation: EntityOperation.Delete),
-              function: () async {
-                await handleAction(operation: EntityOperation.Delete);
-              },
+          if (widget.type != EntityType.User &&
+              widget.type != EntityType.System) ...[
+            WidgetActionIcon(
+              model: WidgetActionIconModel(
+                icon: getActionIcon(operation: EntityOperation.Delete),
+                label: getActionText(operation: EntityOperation.Delete),
+                function: () async {
+                  await handleAction(operation: EntityOperation.Delete);
+                },
+              ),
             ),
-          ),
+          ],
         ];
       case EntityOperation.Delete:
         break;

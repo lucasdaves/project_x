@@ -15,6 +15,7 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
+import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/resume/resume_view.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
 import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
@@ -22,11 +23,13 @@ import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
 class WidgetListEntity extends StatefulWidget {
   final bool isResume;
   final EntityType type;
+  final int? clientId;
 
   const WidgetListEntity({
     super.key,
     required this.isResume,
     required this.type,
+    this.clientId,
   });
 
   @override
@@ -69,12 +72,13 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
     switch (widget.type) {
       case EntityType.Client:
         snapshot as ClientStreamModel;
-        return (snapshot.clients ?? []).isEmpty
+        ClientStreamModel copy = snapshot.copy();
+        return (copy.clients ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (snapshot.clients ?? []).length + 1,
+                itemCount: (copy.clients ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return WidgetListEntityCard(
@@ -85,7 +89,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       isHeader: true,
                     );
                   }
-                  ClientLogicalModel model = snapshot.clients![index - 1]!;
+                  ClientLogicalModel model = copy.clients![index - 1]!;
                   return WidgetListEntityCard(
                     value1: model.personal?.model?.name ?? "Não informado",
                     value2: model.personal?.model?.phone ?? "Não informado",
@@ -101,12 +105,17 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               );
       case EntityType.Project:
         snapshot as ProjectStreamModel;
-        return (snapshot.projects ?? []).isEmpty
+        ProjectStreamModel copy = snapshot.copy();
+        if (widget.clientId != null) {
+          copy.projects?.removeWhere(
+              (element) => element?.model?.clientId != widget.clientId);
+        }
+        return (copy.projects ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (snapshot.projects ?? []).length + 1,
+                itemCount: (copy.projects ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return widget.isResume
@@ -122,7 +131,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                             isHeader: true,
                           );
                   }
-                  ProjectLogicalModel model = snapshot.projects![index - 1]!;
+                  ProjectLogicalModel model = copy.projects![index - 1]!;
                   WorkflowLogicalModel wkModel = WorkflowController
                       .instance.stream.value
                       .getOne(id: model.model?.workflowId)!;
@@ -150,12 +159,17 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               );
       case EntityType.Finance:
         snapshot as FinanceStreamModel;
-        return (snapshot.finances ?? []).isEmpty
+        FinanceStreamModel copy = snapshot.copy();
+        if (widget.clientId != null) {
+          copy.finances?.removeWhere(
+              (element) => element?.model?.clientId != widget.clientId);
+        }
+        return (copy.finances ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (snapshot.finances ?? []).length + 1,
+                itemCount: (copy.finances ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return widget.isResume
@@ -171,7 +185,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                             isHeader: true,
                           );
                   }
-                  FinanceLogicalModel model = snapshot.finances![index - 1]!;
+                  FinanceLogicalModel model = copy.finances![index - 1]!;
                   return widget.isResume
                       ? WidgetListEntityCard(
                           value1: model.model?.name ?? "",
@@ -195,12 +209,13 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               );
       case EntityType.Workflow:
         snapshot as WorkflowStreamModel;
-        return (snapshot.getAll(removeCopy: true)).isEmpty
+        WorkflowStreamModel copy = snapshot.copy();
+        return (copy.getAll(removeCopy: true)).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (snapshot.getAll(removeCopy: true)).length + 1,
+                itemCount: (copy.getAll(removeCopy: true)).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return WidgetListEntityCard(
@@ -210,7 +225,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                     );
                   }
                   WorkflowLogicalModel model =
-                      snapshot.getAll(removeCopy: true)[index - 1]!;
+                      copy.getAll(removeCopy: true)[index - 1]!;
                   return WidgetListEntityCard(
                     value1: model.model?.name ?? "Não informado",
                     value2: model.model?.description ?? "Não informado",
@@ -234,12 +249,23 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
   }
 
   function(int entityIndex) {
-    AppRoute(
-      tag: EntityResumeView.tag,
-      screen: EntityResumeView(
-        type: widget.type,
-        entityIndex: entityIndex,
-      ),
-    ).navigate(context);
+    if (widget.type == EntityType.Workflow) {
+      AppRoute(
+        tag: EntityFormView.tag,
+        screen: EntityFormView(
+          type: widget.type,
+          entityIndex: entityIndex,
+          operation: EntityOperation.Update,
+        ),
+      ).navigate(context);
+    } else {
+      AppRoute(
+        tag: EntityResumeView.tag,
+        screen: EntityResumeView(
+          type: widget.type,
+          entityIndex: entityIndex,
+        ),
+      ).navigate(context);
+    }
   }
 }

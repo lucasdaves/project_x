@@ -1,22 +1,21 @@
 class SystemDatabaseModel {
   int? id;
-  int? language;
-  String? reminderDate;
-
+  String? financeReminderDate;
+  String? workflowReminderDate;
   int? userId;
 
   SystemDatabaseModel({
     this.id,
-    this.language,
-    this.reminderDate,
+    this.financeReminderDate,
+    this.workflowReminderDate,
     this.userId,
   });
 
   factory SystemDatabaseModel.fromMap(Map<String, dynamic> map) {
     return SystemDatabaseModel(
       id: map['atr_id'],
-      language: map['atr_language'],
-      reminderDate: map['atr_reminder_date'],
+      financeReminderDate: map['atr_finance_reminder_date'],
+      workflowReminderDate: map['atr_workflow_reminder_date'],
       userId: map['tb_user_atr_id'],
     );
   }
@@ -24,8 +23,8 @@ class SystemDatabaseModel {
   Map<String, dynamic> toMap() {
     return {
       'atr_id': id,
-      'atr_language': language,
-      'atr_reminder_date': reminderDate,
+      'atr_finance_reminder_date': financeReminderDate,
+      'atr_workflow_reminder_date': workflowReminderDate,
       'tb_user_atr_id': userId,
     };
   }
@@ -33,8 +32,8 @@ class SystemDatabaseModel {
   SystemDatabaseModel copy() {
     return SystemDatabaseModel(
       id: this.id,
-      language: this.language,
-      reminderDate: this.reminderDate,
+      financeReminderDate: this.financeReminderDate,
+      workflowReminderDate: this.workflowReminderDate,
       userId: this.userId,
     );
   }

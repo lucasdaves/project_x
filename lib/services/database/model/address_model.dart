@@ -68,4 +68,14 @@ class AddressLogicalModel {
       model: this.model?.copy(),
     );
   }
+
+  String getAddress() {
+    String addressString = '${model?.street ?? ''}, ${model?.number ?? ''}';
+    if (model?.complement != null && model!.complement!.isNotEmpty) {
+      addressString += ' - ${model?.complement}';
+    }
+    addressString +=
+        ', ${model?.city ?? ''} - ${model?.state ?? ''}, ${model?.postalCode ?? ''}';
+    return addressString;
+  }
 }

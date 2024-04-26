@@ -131,7 +131,8 @@ class SystemController {
   Future<void> mockSystem() async {
     SystemLogicalModel model = SystemLogicalModel(
       model: SystemDatabaseModel(
-        language: 1,
+        financeReminderDate: "30",
+        workflowReminderDate: "15",
       ),
     );
     await createSystem(model: model);

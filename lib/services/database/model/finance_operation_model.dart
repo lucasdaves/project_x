@@ -81,9 +81,9 @@ class FinanceOperationLogicalModel {
     Map<String, Color> map = {};
 
     DateTime? expiration = model?.expiresAt;
-    int? reminderDate = int.tryParse(
-        SystemController.instance.stream.value.system?.model?.reminderDate ??
-            "");
+    int? reminderDate = int.tryParse(SystemController
+            .instance.stream.value.system?.model?.financeReminderDate ??
+        "");
 
     if (FinanceOperationDatabaseModel.statusMap[1] == model?.status) {
       map["Pago"] = AppColor.colorPositiveStatus;

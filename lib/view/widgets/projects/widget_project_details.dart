@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_x/controller/client_controller.dart';
-import 'package:project_x/controller/project_controller.dart';
+import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
@@ -8,16 +8,16 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 
-class WidgetFinanceDetails extends StatefulWidget {
-  final FinanceLogicalModel model;
+class WidgetProjectDetails extends StatefulWidget {
+  final ProjectLogicalModel model;
 
-  const WidgetFinanceDetails({super.key, required this.model});
+  const WidgetProjectDetails({super.key, required this.model});
 
   @override
-  State<WidgetFinanceDetails> createState() => _WidgetFinanceDetailsState();
+  State<WidgetProjectDetails> createState() => _WidgetProjectDetailsState();
 }
 
-class _WidgetFinanceDetailsState extends State<WidgetFinanceDetails> {
+class _WidgetProjectDetailsState extends State<WidgetProjectDetails> {
   Map<String, String> map = {};
 
   @override
@@ -31,16 +31,16 @@ class _WidgetFinanceDetailsState extends State<WidgetFinanceDetails> {
         ClientController.instance.stream.value.getOne(
       id: widget.model.model?.clientId,
     );
-    ProjectLogicalModel? projectModel = ProjectController.instance.stream.value
-        .getAll()
-        .where((element) => element?.model?.financeId == widget.model.model?.id)
-        .firstOrNull;
+    FinanceLogicalModel? financeModel =
+        FinanceController.instance.stream.value.getOne(
+      id: widget.model.model?.financeId,
+    );
 
     map.addAll({
       "Nome": widget.model.model?.name ?? "Não informado",
       "Descrição": widget.model.model?.description ?? "Não informado",
       "Cliente": clientModel?.personal?.model?.name ?? "Não informado",
-      "Projeto": projectModel?.model?.name ?? "Não informado",
+      "Financeiro": financeModel?.model?.name ?? "Não informado",
     });
   }
 

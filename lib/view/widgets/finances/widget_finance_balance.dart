@@ -183,7 +183,7 @@ class _WidgetFinanceBalanceState extends State<WidgetFinanceBalance> {
                           text: "$amount R\$",
                           style: AppTextStyle.size12(
                             color: AppColor.text_1,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

@@ -189,7 +189,9 @@ class ContactSection {
   final String noteHint = "Digite uma anotação...";
 
   // TEXT CONTROLLERS
-  TextEditingController phoneController = TextEditingController();
+  MaskedTextController phoneController = MaskedTextController(
+    mask: '(00) 0 0000-0000',
+  );
   TextEditingController emailController = TextEditingController();
   TextEditingController noteController = TextEditingController();
 
@@ -383,19 +385,57 @@ class OperationSection {
 
 class SystemSection {
   // LABELS
-  final String dateLabel = "Limite de aviso de atraso";
+  final String financeDateLabel = "Financeiros - Aviso de atraso";
+  final String workflowDateLabel = "Workflows - Aviso de atraso";
 
   // HINT TEXTS
-  final String dateHint = "Digite a quantidade de dias ...";
+  final String financeDateHint = "Digite a quantidade de dias ...";
+  final String workflowDateHint = "Digite a quantidade de dias ...";
 
   // TEXT CONTROLLERS
-  MaskedTextController dateController = MaskedTextController(
+  MaskedTextController fianceDateController = MaskedTextController(
+    mask: '000',
+  );
+  MaskedTextController workflowDateController = MaskedTextController(
     mask: '000',
   );
 
   // VALIDATION FUNCTIONS
+  String? validateFinanceDate(String? value) {
+    return null;
+  }
 
-  String? validateDate(String? value) {
+  String? validateWorkflowDate(String? value) {
+    return null;
+  }
+}
+
+class AssociationSection {
+  // LABELS
+  final String clientLabel = "Cliente associado";
+  final String projectLabel = "Projeto associado";
+  final String financeLabel = "Financeiro associado";
+
+  // HINT TEXTS
+  final String clientHint = "Escolha um cliente ...";
+  final String projectHint = "Escolha um projeto ...";
+  final String financeHint = "Escolha uma finança ...";
+
+  // TEXT CONTROLLERS
+  TextEditingController clientController = TextEditingController();
+  TextEditingController projectController = TextEditingController();
+  TextEditingController financeController = TextEditingController();
+
+  // VALIDATION FUNCTIONS
+  String? validateClient(String? value) {
+    return null;
+  }
+
+  String? validateProject(String? value) {
+    return null;
+  }
+
+  String? validateFinance(String? value) {
     return null;
   }
 }

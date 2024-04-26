@@ -6,6 +6,8 @@ class ProjectDatabaseModel {
   int? userId;
   int? addressId;
   int? workflowId;
+  int? financeId;
+  int? clientId;
 
   ProjectDatabaseModel({
     this.id,
@@ -15,6 +17,8 @@ class ProjectDatabaseModel {
     this.userId,
     this.addressId,
     this.workflowId,
+    this.financeId,
+    this.clientId,
   });
 
   static Map<int, String> statusMap = {
@@ -32,6 +36,8 @@ class ProjectDatabaseModel {
       userId: map['tb_user_atr_id'],
       addressId: map['tb_address_atr_id'],
       workflowId: map['tb_workflow_atr_id'],
+      financeId: map['tb_finance_atr_id'],
+      clientId: map['tb_client_atr_id'],
     );
   }
 
@@ -44,6 +50,8 @@ class ProjectDatabaseModel {
       'tb_user_atr_id': userId,
       'tb_address_atr_id': addressId,
       'tb_workflow_atr_id': workflowId,
+      'tb_finance_atr_id': financeId,
+      'tb_client_atr_id': clientId,
     };
   }
 
@@ -56,6 +64,8 @@ class ProjectDatabaseModel {
       userId: this.userId,
       addressId: this.addressId,
       workflowId: this.workflowId,
+      financeId: this.financeId,
+      clientId: this.clientId,
     );
   }
 }

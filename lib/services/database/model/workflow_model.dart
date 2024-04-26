@@ -113,7 +113,7 @@ class WorkflowLogicalModel {
       for (SubstepLogicalModel? substep in step?.substeps ?? []) {
         DateTime? expiration = substep?.model?.expiresAt;
         int? reminderDate = int.tryParse(SystemController
-                .instance.stream.value.system?.model?.reminderDate ??
+                .instance.stream.value.system?.model?.workflowReminderDate ??
             "");
 
         if (expiration != null) {

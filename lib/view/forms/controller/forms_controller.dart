@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -49,17 +48,17 @@ class FormsController {
       switch (stream.value.type!) {
         case EntityType.System:
           result = await SystemController.instance.createSystem(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.User:
           result = await UserController.instance.createUser(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Client:
           result = await ClientController.instance.createClient(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Project:
@@ -70,12 +69,12 @@ class FormsController {
           break;
         case EntityType.Finance:
           result = await FinanceController.instance.createFinance(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.createWorkflow(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         default:
@@ -94,17 +93,17 @@ class FormsController {
       switch (stream.value.type!) {
         case EntityType.System:
           result = await SystemController.instance.updateSystem(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.User:
           result = await UserController.instance.updateUser(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Client:
           result = await ClientController.instance.updateClient(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Project:
@@ -115,12 +114,12 @@ class FormsController {
           break;
         case EntityType.Finance:
           result = await FinanceController.instance.updateFinance(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.updateWorkflow(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         default:
@@ -139,12 +138,12 @@ class FormsController {
       switch (stream.value.type!) {
         case EntityType.User:
           result = await UserController.instance.deleteUser(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Client:
           result = await ClientController.instance.deleteClient(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Project:
@@ -155,12 +154,12 @@ class FormsController {
           break;
         case EntityType.Finance:
           result = await FinanceController.instance.deleteFinance(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.deleteWorkflow(
-            model: stream.value.model,
+            model: stream.value.model[0],
           );
           break;
         default:

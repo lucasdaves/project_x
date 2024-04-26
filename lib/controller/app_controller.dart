@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -25,7 +24,6 @@ class AppController {
 
   void dispose() {
     WidgetsFlutterBinding.ensureInitialized();
-    AssociationController.instance.dispose();
     ClientController.instance.dispose();
     FinanceController.instance.dispose();
     ProjectController.instance.dispose();

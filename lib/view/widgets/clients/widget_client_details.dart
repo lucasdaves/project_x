@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:project_x/controller/client_controller.dart';
-import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/services/database/model/client_model.dart';
-import 'package:project_x/services/database/model/finance_model.dart';
-import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 
-class WidgetFinanceDetails extends StatefulWidget {
-  final FinanceLogicalModel model;
+class WidgetClientDetails extends StatefulWidget {
+  final ClientLogicalModel model;
 
-  const WidgetFinanceDetails({super.key, required this.model});
+  const WidgetClientDetails({super.key, required this.model});
 
   @override
-  State<WidgetFinanceDetails> createState() => _WidgetFinanceDetailsState();
+  State<WidgetClientDetails> createState() => _WidgetClientDetailsState();
 }
 
-class _WidgetFinanceDetailsState extends State<WidgetFinanceDetails> {
+class _WidgetClientDetailsState extends State<WidgetClientDetails> {
   Map<String, String> map = {};
 
   @override
@@ -27,20 +23,14 @@ class _WidgetFinanceDetailsState extends State<WidgetFinanceDetails> {
   }
 
   void _buildValues() {
-    ClientLogicalModel? clientModel =
-        ClientController.instance.stream.value.getOne(
-      id: widget.model.model?.clientId,
-    );
-    ProjectLogicalModel? projectModel = ProjectController.instance.stream.value
-        .getAll()
-        .where((element) => element?.model?.financeId == widget.model.model?.id)
-        .firstOrNull;
-
     map.addAll({
-      "Nome": widget.model.model?.name ?? "Não informado",
-      "Descrição": widget.model.model?.description ?? "Não informado",
-      "Cliente": clientModel?.personal?.model?.name ?? "Não informado",
-      "Projeto": projectModel?.model?.name ?? "Não informado",
+      "Nome": widget.model.personal?.model?.name ?? "Não Informado",
+      "Documento": widget.model.personal?.model?.document ?? "Não Informado",
+      "Telefone": widget.model.personal?.model?.phone ?? "Não Informado",
+      "Email": widget.model.personal?.model?.email ?? "Não Informado",
+      "Endereço":
+          widget.model.personal?.address?.getAddress() ?? "Não Informado",
+      "Anotação": widget.model.personal?.model?.annotation ?? "Não Informado",
     });
   }
 

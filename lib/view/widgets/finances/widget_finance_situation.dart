@@ -41,18 +41,18 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Situação de pagamentos",
+            "Andamento Geral",
             style: AppTextStyle.size14(),
           ),
           SizedBox(height: AppResponsive.instance.getHeight(12)),
           Container(
-            // padding: EdgeInsets.symmetric(
-            //   horizontal: AppResponsive.instance.getWidth(16),
-            // ),
-            // decoration: BoxDecoration(
-            //   color: AppColor.colorPrimary,
-            //   borderRadius: BorderRadius.circular(8),
-            // ),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppResponsive.instance.getWidth(16),
+            ),
+            decoration: BoxDecoration(
+              color: AppColor.colorPrimary,
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +128,7 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
                             text: " ${status}",
                             style: AppTextStyle.size12(
                               color: color,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],

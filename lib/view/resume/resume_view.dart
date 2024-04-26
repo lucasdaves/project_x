@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
@@ -14,6 +15,7 @@ import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
+import 'package:project_x/view/widgets/clients/widget_client_details.dart';
 import 'package:project_x/view/widgets/divider/widget_divider.dart';
 import 'package:project_x/view/widgets/drawer/widget_flow_drawer.dart';
 import 'package:project_x/view/widgets/drawer/widget_user_drawer.dart';
@@ -24,6 +26,9 @@ import 'package:project_x/view/widgets/finances/widget_finance_payment.dart';
 import 'package:project_x/view/widgets/finances/widget_finance_situation.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
+import 'package:project_x/view/widgets/list/widget_list_box.dart';
+import 'package:project_x/view/widgets/projects/widget_project_details.dart';
+import 'package:project_x/view/widgets/workflows/widget_workflow_box.dart';
 
 class EntityResumeView extends StatefulWidget {
   static const String tag = "/resume_view";
@@ -232,10 +237,167 @@ class _EntityResumeViewState extends State<EntityResumeView> {
 
     switch (widget.type) {
       case EntityType.Client:
-        widgets = [];
+        widgets = [
+          Expanded(
+            child: WidgetFloatingBox(
+              model: WidgetFloatingBoxModel(
+                label: "Dados do Cliente",
+                widget: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      WidgetClientDetails(
+                        key: UniqueKey(),
+                        model: ClientController.instance.stream.value
+                            .getOne(id: widget.entityIndex)!,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: AppResponsive.instance.getWidth(20),
+          ),
+          Expanded(
+            child: WidgetFloatingBox(
+              model: WidgetFloatingBoxModel(
+                label: "Projetos",
+                widget: WidgetListEntity(
+                  isResume: false,
+                  type: EntityType.Project,
+                  clientId: ClientController.instance.stream.value
+                      .getOne(id: widget.entityIndex)
+                      ?.model
+                      ?.id,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: AppResponsive.instance.getWidth(20),
+          ),
+          Expanded(
+            child: WidgetFloatingBox(
+              model: WidgetFloatingBoxModel(
+                label: "Financeiros",
+                widget: WidgetListEntity(
+                  isResume: false,
+                  type: EntityType.Finance,
+                  clientId: ClientController.instance.stream.value
+                      .getOne(id: widget.entityIndex)
+                      ?.model
+                      ?.id,
+                ),
+              ),
+            ),
+          ),
+        ];
         break;
       case EntityType.Project:
-        widgets = [];
+        widgets = [
+          Expanded(
+            flex: 3,
+            child: WidgetFloatingBox(
+              model: WidgetFloatingBoxModel(
+                label: "Dados do Projeto",
+                widget: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      WidgetProjectDetails(
+                        key: UniqueKey(),
+                        model: ProjectController.instance.stream.value
+                            .getOne(id: widget.entityIndex)!,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: AppResponsive.instance.getWidth(20),
+          ),
+          if (WorkflowController.instance.stream.value.getOne(
+                id: ProjectController.instance.stream.value
+                    .getOne(id: widget.entityIndex)
+                    ?.model
+                    ?.workflowId,
+              ) !=
+              null) ...[
+            Expanded(
+              flex: 4,
+              child: WidgetFloatingBox(
+                model: WidgetFloatingBoxModel(
+                  label: "Fluxo de trabalho",
+                  padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+                  widget: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: WidgetWorkflowBox(
+                          model: WorkflowController.instance.stream.value
+                              .getOne(
+                                  id: ProjectController.instance.stream.value
+                                      .getOne(id: widget.entityIndex)!
+                                      .model!
+                                      .id!)!,
+                          operation: EntityOperation.Read,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+          SizedBox(
+            width: AppResponsive.instance.getWidth(20),
+          ),
+          if (FinanceController.instance.stream.value
+                  .getOne(id: widget.entityIndex) !=
+              null) ...[
+            Expanded(
+              flex: 3,
+              child: WidgetFloatingBox(
+                model: WidgetFloatingBoxModel(
+                  label: "Financeiro",
+                  widget: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        WidgetFinanceSituation(
+                          key: UniqueKey(),
+                          model: FinanceController.instance.stream.value
+                              .getOne(id: widget.entityIndex)!,
+                        ),
+                        WidgetDivider(space: 12),
+                        WidgetFinancePayment(
+                          key: UniqueKey(),
+                          model: FinanceController.instance.stream.value
+                              .getOne(id: widget.entityIndex)!,
+                        ),
+                        WidgetDivider(space: 12),
+                        WidgetFinanceBalance(
+                          key: UniqueKey(),
+                          model: FinanceController.instance.stream.value
+                              .getOne(id: widget.entityIndex)!,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ];
         break;
       case EntityType.Finance:
         widgets = [
@@ -243,7 +405,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
             flex: 3,
             child: WidgetFloatingBox(
               model: WidgetFloatingBoxModel(
-                label: "Resumo do Financeiro",
+                label: "Dados do Financeiro",
                 widget: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -267,7 +429,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
             flex: 4,
             child: WidgetFloatingBox(
               model: WidgetFloatingBoxModel(
-                label: "Dados Financeiros",
+                label: "Histórico de Pagamentos",
                 padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
                 widget: Column(
                   mainAxisSize: MainAxisSize.min,

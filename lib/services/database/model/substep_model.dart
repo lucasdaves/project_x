@@ -86,9 +86,9 @@ class SubstepLogicalModel {
     bool isConcluded = true;
 
     DateTime? expiration = model?.expiresAt;
-    int? reminderDate = int.tryParse(
-        SystemController.instance.stream.value.system?.model?.reminderDate ??
-            "");
+    int? reminderDate = int.tryParse(SystemController
+            .instance.stream.value.system?.model?.workflowReminderDate ??
+        "");
 
     if (expiration != null) {
       if (DateTime.now().isAfter(expiration)) {
