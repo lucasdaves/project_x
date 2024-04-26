@@ -114,9 +114,10 @@ class FinanceLogicalModel {
 
   Map<String, Color> getStatus() {
     Map<String, Color> map = {};
-    List<FinanceOperationLogicalModel?> list = getType(type: 1);
-    for (FinanceOperationLogicalModel? step in list) {
-      DateTime? expiration = step?.model?.expiresAt;
+    bool isConcluded = true;
+
+    for (FinanceOperationLogicalModel? operation in getType(type: 1)) {
+      DateTime? expiration = operation?.model?.expiresAt;
       int? reminderDate = int.tryParse(
           SystemController.instance.stream.value.system?.model?.reminderDate ??
               "");
@@ -136,19 +137,28 @@ class FinanceLogicalModel {
           }
         }
       }
+
+      if (FinanceOperationDatabaseModel.statusMap[1] !=
+          operation?.model?.status!) {
+        isConcluded = false;
+      }
     }
-    map["Em dia"] = AppColor.colorPositiveStatus;
-    return map;
+
+    if (isConcluded) {
+      map["Concluído"] = AppColor.colorPositiveStatus;
+      return map;
+    } else {
+      map["Andamento"] = AppColor.colorNeutralStatus;
+      return map;
+    }
   }
 
   String getRelationPaid() {
     List<FinanceOperationLogicalModel?> list = getType(type: 1);
     int sum = list.fold(0, (previousValue, element) {
       bool isPaid = (element?.model?.status != null &&
-          FinanceOperationDatabaseModel.statusMap.values
-                  .toList()
-                  .indexWhere((e) => e == element?.model?.status!) ==
-              1);
+          FinanceOperationDatabaseModel.statusMap[1] ==
+              element?.model?.status!);
       int amount = isPaid ? 1 : 0;
       return previousValue + amount;
     });

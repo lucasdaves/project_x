@@ -123,13 +123,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
     bool isFirst = false,
     bool isLast = false,
   }) {
-    String status = "";
-    Color color = AppColor.colorNeutralStatus;
-
-    if (substep != null) {
-      status = "(${substep.model?.status}) ";
-    }
-
     return GestureDetector(
       onTap: () {
         _showDialog(
@@ -187,11 +180,12 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   TextSpan(
                     children: [
                       if (widget.operation == EntityOperation.Update &&
-                          widget.model.model!.isCopy == true) ...[
+                          widget.model.model!.isCopy == true &&
+                          substep != null) ...[
                         TextSpan(
-                          text: status,
+                          text: "(${substep.getStatus().entries.first.key}) ",
                           style: AppTextStyle.size12(
-                            color: color,
+                            color: substep.getStatus().entries.first.value,
                             fontWeight: FontWeight.w300,
                           ),
                         ),
@@ -248,10 +242,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   section.dateController.text.formatDatetime();
               substep.model!.status = section.statusController.text;
 
-              if (SubstepDatabaseModel.statusMap.values
-                      .toList()
-                      .indexWhere((e) => e == substep.model!.status!) ==
-                  2) {
+              if (SubstepDatabaseModel.statusMap[2] == substep.model!.status!) {
                 substep.model!.expiresAt = null;
               }
             } else {
@@ -402,11 +393,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                             SizedBox(
                                 height: AppResponsive.instance.getHeight(24)),
                             buildStatusField(() => state(() {})),
-                            if (SubstepDatabaseModel.statusMap.values
-                                    .toList()
-                                    .indexWhere((e) =>
-                                        e == section.statusController.text) !=
-                                2) ...[
+                            if (SubstepDatabaseModel.statusMap[2] !=
+                                section.statusController.text) ...[
                               SizedBox(
                                   height: AppResponsive.instance.getHeight(24)),
                               buildDateField(),

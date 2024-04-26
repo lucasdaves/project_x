@@ -107,6 +107,8 @@ class WorkflowLogicalModel {
 
   Map<String, Color> getStatus() {
     Map<String, Color> map = {};
+    bool isConcluded = true;
+
     for (StepLogicalModel? step in steps ?? []) {
       for (SubstepLogicalModel? substep in step?.substeps ?? []) {
         DateTime? expiration = substep?.model?.expiresAt;
@@ -129,9 +131,19 @@ class WorkflowLogicalModel {
             }
           }
         }
+
+        if (SubstepDatabaseModel.statusMap[2] != substep?.model?.status) {
+          isConcluded = false;
+        }
       }
     }
-    map["Em dia"] = AppColor.colorPositiveStatus;
-    return map;
+
+    if (isConcluded) {
+      map["Concluído"] = AppColor.colorPositiveStatus;
+      return map;
+    } else {
+      map["Andamento"] = AppColor.colorNeutralStatus;
+      return map;
+    }
   }
 }

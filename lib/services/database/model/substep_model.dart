@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
+import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_extension.dart';
+
 class SubstepDatabaseModel {
   int? id;
   String name;
@@ -74,5 +79,43 @@ class SubstepLogicalModel {
     return SubstepLogicalModel(
       model: this.model?.copy(),
     );
+  }
+
+  Map<String, Color> getStatus() {
+    Map<String, Color> map = {};
+    bool isConcluded = true;
+
+    DateTime? expiration = model?.expiresAt;
+    int? reminderDate = int.tryParse(
+        SystemController.instance.stream.value.system?.model?.reminderDate ??
+            "");
+
+    if (expiration != null) {
+      if (DateTime.now().isAfter(expiration)) {
+        map["Atrasado (${expiration.formatString()})"] =
+            AppColor.colorNegativeStatus;
+        return map;
+      } else if (reminderDate != null) {
+        Duration difference = expiration.difference(DateTime.now());
+        int daysDifference = difference.inDays;
+        if (daysDifference <= reminderDate) {
+          map["Em alerta (${expiration.formatString()})"] =
+              AppColor.colorAlertStatus;
+          return map;
+        }
+      }
+    }
+
+    if (SubstepDatabaseModel.statusMap[2] != model?.status) {
+      isConcluded = false;
+    }
+
+    if (isConcluded) {
+      map["Concluído"] = AppColor.colorPositiveStatus;
+      return map;
+    } else {
+      map["Andamento"] = AppColor.colorNeutralStatus;
+      return map;
+    }
   }
 }

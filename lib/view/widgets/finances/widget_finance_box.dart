@@ -110,10 +110,8 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     String amount = finance?.model?.amount ?? "";
     String date = finance?.model?.expiresAt?.formatString() ??
         ((finance != null)
-            ? FinanceOperationDatabaseModel.statusMap.values
-                        .toList()
-                        .indexWhere((e) => e == finance.model?.status) ==
-                    1
+            ? (FinanceOperationDatabaseModel.statusMap[1] ==
+                    finance.model?.status)
                 ? "Pago"
                 : "Não Informado"
             : "");
@@ -251,10 +249,8 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       if (financeOperation != null) {
         operation.model?.financeId = financeOperation.model?.financeId;
         operation.model?.id = financeOperation.model?.id;
-        if (FinanceOperationDatabaseModel.statusMap.values
-                .toList()
-                .indexWhere((e) => e == operation.model?.status!) ==
-            1) {
+        if (FinanceOperationDatabaseModel.statusMap[1] ==
+            operation.model?.status!) {
           operation.model?.expiresAt = null;
         }
         if (typeIndex == 0 && widget.operation == EntityOperation.Create) {
@@ -268,8 +264,18 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       }
 
       if (typeIndex != 0) {
-        widget.model.getType(type: 0).first?.model?.expiresAt =
-            widget.model.getParcelDate(isLast: true);
+        if (widget.model.getType(type: 1).every((element) =>
+            FinanceOperationDatabaseModel.statusMap[1] ==
+            element?.model?.status)) {
+          widget.model.getType(type: 0).first?.model?.expiresAt = null;
+          widget.model.getType(type: 0).first?.model?.status =
+              FinanceOperationDatabaseModel.statusMap[1];
+        } else {
+          widget.model.getType(type: 0).first?.model?.expiresAt =
+              widget.model.getParcelDate(isLast: true);
+          widget.model.getType(type: 0).first?.model?.status =
+              FinanceOperationDatabaseModel.statusMap[0];
+        }
       }
     });
   }
@@ -334,25 +340,17 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
               SizedBox(height: AppResponsive.instance.getHeight(24)),
               if (typeIndex == 1) ...[
                 _buildSelectorField(
-                    controller: operationSection.statusController,
-                    headerText: operationSection.statusLabel,
-                    hintText: operationSection.statusHint,
-                    validator: operationSection.validateStatus,
-                    options:
-                        FinanceOperationDatabaseModel.statusMap.values.toList(),
-                    function: () {
-                      state(
-                        () {
-                          print("oi");
-                        },
-                      );
-                    }),
+                  controller: operationSection.statusController,
+                  headerText: operationSection.statusLabel,
+                  hintText: operationSection.statusHint,
+                  validator: operationSection.validateStatus,
+                  options:
+                      FinanceOperationDatabaseModel.statusMap.values.toList(),
+                  function: () => state(() {}),
+                ),
                 SizedBox(height: AppResponsive.instance.getHeight(24)),
-                if (FinanceOperationDatabaseModel.statusMap.values
-                        .toList()
-                        .indexWhere((e) =>
-                            e == operationSection.statusController.text) ==
-                    0) ...[
+                if (FinanceOperationDatabaseModel.statusMap[0] ==
+                    operationSection.statusController.text) ...[
                   _buildTextField(
                     controller: operationSection.dateController,
                     headerText: operationSection.dateLabel,
