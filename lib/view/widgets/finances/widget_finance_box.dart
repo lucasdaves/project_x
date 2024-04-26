@@ -57,7 +57,8 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       value2: "Valor",
       value3: "Data de Pagamento",
       value4: "Tipo",
-      isHeader: true,
+      isHeader: widget.operation != EntityOperation.Read,
+      isRead: widget.operation == EntityOperation.Read,
     );
   }
 
@@ -106,28 +107,34 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     required int typeIndex,
     FinanceOperationLogicalModel? finance,
   }) {
+    if (finance == null && widget.operation == EntityOperation.Read) {
+      return SizedBox.shrink();
+    }
+
     String description = finance?.model?.description ?? addOperationText;
     String amount = finance?.model?.amount ?? "";
-    String date = finance?.model?.expiresAt?.formatString() ??
-        ((finance != null)
-            ? (FinanceOperationDatabaseModel.statusMap[1] ==
-                    finance.model?.status)
-                ? "Pago"
-                : "Não Informado"
-            : "");
+
+    String date = finance?.getStatus().entries.first.key ?? "";
+    Color dateColor =
+        finance?.getStatus().entries.first.value ?? AppColor.text_1;
+
     String typeText = _getTypeText(typeIndex);
     Color typeColor = _getTypeColor(typeIndex);
 
     return GestureDetector(
-      onTap: () =>
-          _showDialog(context, typeIndex: typeIndex, financeOperation: finance),
+      onTap: () => widget.operation == EntityOperation.Read
+          ? null
+          : _showDialog(context,
+              typeIndex: typeIndex, financeOperation: finance),
       child: WidgetListEntityCard(
         value1: description,
-        value2: amount,
+        value2: "$amount R\$",
         value3: date,
         value4: typeText,
         color1: finance != null ? AppColor.text_1 : typeColor,
+        color3: dateColor,
         color4: typeColor,
+        isRead: widget.operation == EntityOperation.Read,
       ),
     );
   }
@@ -272,7 +279,7 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
               FinanceOperationDatabaseModel.statusMap[1];
         } else {
           widget.model.getType(type: 0).first?.model?.expiresAt =
-              widget.model.getParcelDate(isLast: true);
+              widget.model.getParcelDate();
           widget.model.getType(type: 0).first?.model?.status =
               FinanceOperationDatabaseModel.statusMap[0];
         }

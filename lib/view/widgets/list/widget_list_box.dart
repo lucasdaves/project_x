@@ -15,7 +15,7 @@ import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
-import 'package:project_x/view/forms/form_view.dart';
+import 'package:project_x/view/resume/resume_view.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
 import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
 
@@ -235,11 +235,10 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
 
   function(int entityIndex) {
     AppRoute(
-      tag: EntityFormView.tag,
-      screen: EntityFormView(
+      tag: EntityResumeView.tag,
+      screen: EntityResumeView(
         type: widget.type,
         entityIndex: entityIndex,
-        operation: EntityOperation.Update,
       ),
     ).navigate(context);
   }

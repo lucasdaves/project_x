@@ -13,6 +13,7 @@ class WidgetListEntityCard extends StatelessWidget {
   final Color? color3;
   final Color? color4;
   final bool isHeader;
+  final bool isRead;
   final Function()? function;
 
   const WidgetListEntityCard({
@@ -26,6 +27,7 @@ class WidgetListEntityCard extends StatelessWidget {
     this.color3 = AppColor.text_1,
     this.color4 = AppColor.text_1,
     this.isHeader = false,
+    this.isRead = false,
     this.function,
   });
 
@@ -79,13 +81,15 @@ class WidgetListEntityCard extends StatelessWidget {
                 ),
               ),
             ],
-            Icon(
-              Icons.chevron_right_rounded,
-              color: (!isHeader || function != null)
-                  ? AppColor.colorSecondary
-                  : Colors.transparent,
-              size: AppResponsive.instance.getWidth(24),
-            ),
+            if (!isRead) ...[
+              Icon(
+                Icons.chevron_right_rounded,
+                color: (!isHeader || function != null)
+                    ? AppColor.colorSecondary
+                    : Colors.transparent,
+                size: AppResponsive.instance.getWidth(24),
+              ),
+            ],
           ],
         ),
       ),

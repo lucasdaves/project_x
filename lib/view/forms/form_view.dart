@@ -1411,7 +1411,14 @@ class _EntityFormViewState extends State<EntityFormView> {
           text: "Sucesso ao ${getActionHeaderText()}",
           color: AppColor.colorPositiveStatus,
         ).showSnackbar(context);
-        Navigator.pop(context);
+
+        if (operation == EntityOperation.Delete) {
+          Navigator.of(context).popUntil(
+            ModalRoute.withName("/home_view"),
+          );
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         AppFeedback(
           text: "Erro ao ${getActionHeaderText()}",

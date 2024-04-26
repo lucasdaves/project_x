@@ -9,6 +9,7 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
+import 'package:project_x/view/widgets/divider/widget_divider.dart';
 import 'package:project_x/view/widgets/fields/widget_selectorfield.dart';
 import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
@@ -133,75 +134,77 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
           substep: substep,
         );
       },
-      child: Container(
-        width: AppResponsive.instance.getWidth(150),
-        height: AppResponsive.instance.getHeight(60),
-        decoration: BoxDecoration(
-          color: AppColor.colorWorkflowBackground,
-          borderRadius: BorderRadius.only(
-            topLeft: isFirst ? Radius.circular(8) : Radius.zero,
-            topRight: isFirst ? Radius.circular(8) : Radius.zero,
-          ),
-          border: Border(
-            top: isLast
-                ? BorderSide(width: 2, color: AppColor.colorDivider)
-                : BorderSide.none,
-            bottom: isFirst
-                ? BorderSide(width: 2, color: AppColor.colorDivider)
-                : BorderSide.none,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppResponsive.instance.getWidth(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if ((isLast || isFirst) && (step == null && substep == null)) ...[
-                Text(
-                  "Adicionar ${type == WorkflowType.Step ? "Etapa" : "Subetapa"}",
-                  textAlign: TextAlign.center,
-                  style: AppTextStyle.size12(),
-                ),
-                SizedBox(
-                  height: AppResponsive.instance.getHeight(4),
-                ),
-                Icon(
-                  Icons.add,
-                  size: AppResponsive.instance.getWidth(20),
-                  color: AppColor.colorSecondary,
-                ),
-              ] else ...[
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      if (widget.operation == EntityOperation.Update &&
-                          widget.model.model!.isCopy == true &&
-                          substep != null) ...[
-                        TextSpan(
-                          text: "(${substep.getStatus().entries.first.key}) ",
-                          style: AppTextStyle.size12(
-                            color: substep.getStatus().entries.first.value,
-                            fontWeight: FontWeight.w300,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isLast) ...[
+            WidgetDivider(space: 2),
+          ],
+          Container(
+            width: AppResponsive.instance.getWidth(150),
+            height: AppResponsive.instance.getHeight(60),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppResponsive.instance.getWidth(12),
+            ),
+            decoration: BoxDecoration(
+              color: AppColor.colorWorkflowBackground,
+              borderRadius: BorderRadius.only(
+                topLeft: isFirst ? Radius.circular(8) : Radius.zero,
+                topRight: isFirst ? Radius.circular(8) : Radius.zero,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if ((isLast || isFirst) &&
+                    (step == null && substep == null)) ...[
+                  Text(
+                    "Adicionar ${type == WorkflowType.Step ? "Etapa" : "Subetapa"}",
+                    textAlign: TextAlign.center,
+                    style: AppTextStyle.size12(),
+                  ),
+                  SizedBox(
+                    height: AppResponsive.instance.getHeight(4),
+                  ),
+                  Icon(
+                    Icons.add,
+                    size: AppResponsive.instance.getWidth(20),
+                    color: AppColor.colorSecondary,
+                  ),
+                ] else ...[
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        if (widget.operation == EntityOperation.Update &&
+                            widget.model.model!.isCopy == true &&
+                            substep != null) ...[
+                          TextSpan(
+                            text: "(${substep.getStatus().entries.first.key}) ",
+                            style: AppTextStyle.size12(
+                              color: substep.getStatus().entries.first.value,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
+                        ],
+                        TextSpan(
+                          text: step?.model?.name ?? substep?.model?.name ?? "",
+                          style: AppTextStyle.size12(),
                         ),
                       ],
-                      TextSpan(
-                        text: step?.model?.name ?? substep?.model?.name ?? "",
-                        style: AppTextStyle.size12(),
-                      ),
-                    ],
+                    ),
+                    style: AppTextStyle.size48(),
                   ),
-                  style: AppTextStyle.size48(),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
+          if (isFirst) ...[
+            WidgetDivider(space: 2),
+          ],
+        ],
       ),
     );
   }

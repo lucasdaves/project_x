@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:project_x/controller/system_controller.dart';
+import 'package:project_x/utils/app_color.dart';
+import 'package:project_x/utils/app_extension.dart';
+
 class FinanceOperationDatabaseModel {
   int? id;
   int? type;
@@ -70,5 +75,41 @@ class FinanceOperationLogicalModel {
     return FinanceOperationLogicalModel(
       model: this.model?.copy(),
     );
+  }
+
+  Map<String, Color> getStatus() {
+    Map<String, Color> map = {};
+
+    DateTime? expiration = model?.expiresAt;
+    int? reminderDate = int.tryParse(
+        SystemController.instance.stream.value.system?.model?.reminderDate ??
+            "");
+
+    if (FinanceOperationDatabaseModel.statusMap[1] == model?.status) {
+      map["Pago"] = AppColor.colorPositiveStatus;
+      return map;
+    }
+
+    if (expiration != null) {
+      Duration difference = expiration.difference(DateTime.now());
+      int daysDifference = difference.inDays;
+
+      if (DateTime.now().isAfter(expiration)) {
+        map["Atrasado (${expiration.formatString()})"] =
+            AppColor.colorNegativeStatus;
+        return map;
+      } else if (reminderDate != null && (daysDifference <= reminderDate)) {
+        map["Em alerta (${expiration.formatString()})"] =
+            AppColor.colorAlertStatus;
+        return map;
+      } else {
+        map["Andamento (${expiration.formatString()})"] =
+            AppColor.colorNeutralStatus;
+        return map;
+      }
+    }
+
+    map["Não informado"] = AppColor.text_1;
+    return map;
   }
 }

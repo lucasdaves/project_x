@@ -76,40 +76,94 @@ class FinanceLogicalModel {
         [];
   }
 
-  double getInitialAmount() {
+  Map<String, double> getInitialAmount() {
+    Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 0);
-    return double.tryParse(list.first?.model?.amount ?? "0.0") ?? 0.0;
+    map["Inicial"] = double.tryParse(list.first?.model?.amount ?? "0.0") ?? 0.0;
+    return map;
   }
 
-  double getParcelsAmount() {
+  Map<String, double> getParcelsAmount() {
+    Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 1);
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    return sum;
+    map["Parcelas"] = sum;
+    return map;
   }
 
-  double getAditiveAmount() {
+  Map<String, double> getAditiveAmount() {
+    Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 2);
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    return sum;
+    map["Adicionais"] = sum;
+    return map;
   }
 
-  double getCostAmount() {
+  Map<String, double> getCostAmount() {
+    Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 3);
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    return sum;
+    map["Custos"] = sum;
+    return map;
   }
 
-  double getTotalAmount() {
-    return getInitialAmount() + getAditiveAmount() - getCostAmount();
+  Map<String, double> getTotalAmount() {
+    Map<String, double> map = {};
+    map["Total"] = (getInitialAmount().entries.first.value +
+        getAditiveAmount().entries.first.value -
+        getCostAmount().entries.first.value);
+    return map;
+  }
+
+  Map<String, double> getToPayAmount() {
+    Map<String, double> map = {};
+    double sum = getInitialAmount().entries.first.value -
+        getPaidAmount().entries.first.value -
+        getLateAmount().entries.first.value;
+    map[FinanceDatabaseModel.statusMap[0]!] = sum;
+    return map;
+  }
+
+  Map<String, double> getLateAmount() {
+    Map<String, double> map = {};
+    List<FinanceOperationLogicalModel?> list = getType(type: 1);
+    double sum = list.fold(0.0, (previousValue, element) {
+      double amount = 0;
+      DateTime? expiration = element?.model?.expiresAt;
+
+      if (expiration != null) {
+        if (DateTime.now().isAfter(expiration)) {
+          amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
+        }
+      }
+
+      return previousValue + amount;
+    });
+    map["Atrasado"] = sum;
+    return map;
+  }
+
+  Map<String, double> getPaidAmount() {
+    Map<String, double> map = {};
+    List<FinanceOperationLogicalModel?> list = getType(type: 1);
+    double sum = list.fold(0.0, (previousValue, element) {
+      double amount = 0;
+      if (FinanceDatabaseModel.statusMap[1] == element?.model?.status) {
+        amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
+      }
+      return previousValue + amount;
+    });
+    map[FinanceDatabaseModel.statusMap[1]!] = sum;
+    return map;
   }
 
   Map<String, Color> getStatus() {
@@ -165,28 +219,41 @@ class FinanceLogicalModel {
     return "$sum/${list.length}";
   }
 
-  DateTime? getParcelDate({required bool isLast}) {
+  DateTime? getParcelDate() {
     List<FinanceOperationLogicalModel?> list = getType(type: 1);
-    list.sort((a, b) {
-      return (isLast)
-          ? b?.model?.expiresAt
-                  ?.compareTo(a?.model?.expiresAt ?? DateTime.now()) ??
-              0
-          : a?.model?.expiresAt
-                  ?.compareTo(b?.model?.expiresAt ?? DateTime.now()) ??
-              0;
-    });
-    return list.first?.model?.expiresAt;
-  }
 
-  int getParcelQuantity() {
-    List<FinanceOperationLogicalModel?> list = getType(type: 1);
-    return list.length;
+    list.sort((a, b) {
+      return a?.model?.expiresAt
+              ?.compareTo(b?.model?.expiresAt ?? DateTime.now()) ??
+          0;
+    });
+
+    for (FinanceOperationLogicalModel? operation in list) {
+      DateTime? expiration = operation?.model?.expiresAt;
+      int? reminderDate = int.tryParse(
+          SystemController.instance.stream.value.system?.model?.reminderDate ??
+              "");
+
+      if (expiration != null) {
+        Duration difference = expiration.difference(DateTime.now());
+        int daysDifference = difference.inDays;
+
+        if (DateTime.now().isAfter(expiration)) {
+          return expiration;
+        } else if (reminderDate != null && (daysDifference <= reminderDate)) {
+          return expiration;
+        } else {
+          return expiration;
+        }
+      }
+    }
+
+    return null;
   }
 
   bool canIncreaseParcel({required double plus, double minus = 0.0}) {
-    double initialValue = getInitialAmount();
-    double parcelsValue = getParcelsAmount() + plus - minus;
+    double initialValue = getInitialAmount().entries.first.value;
+    double parcelsValue = getParcelsAmount().entries.first.value + plus - minus;
     return parcelsValue <= initialValue;
   }
 }
