@@ -393,7 +393,6 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: ProjectDatabaseModel(
           name: projectSection.titleController.text,
           description: projectSection.descriptionController.text,
-          status: ProjectDatabaseModel.statusMap[0],
         ),
       );
 

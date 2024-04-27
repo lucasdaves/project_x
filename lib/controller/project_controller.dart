@@ -120,6 +120,7 @@ class ProjectController {
 
       //* WORKFLOW *//
       if (workflowModel.model != null) {
+        workflowModel.model?.isCopy = true;
         await WorkflowController.instance.updateWorkflow(
           model: workflowModel,
         );

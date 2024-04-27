@@ -26,7 +26,6 @@ class SubstepDatabaseModel {
     0: "A iniciar",
     1: "Em andamento",
     2: "Concluido",
-    3: "Opcional",
   };
 
   factory SubstepDatabaseModel.fromMap(Map<String, dynamic> map) {
@@ -83,39 +82,34 @@ class SubstepLogicalModel {
 
   Map<String, Color> getStatus() {
     Map<String, Color> map = {};
-    bool isConcluded = true;
 
     DateTime? expiration = model?.expiresAt;
-    int? reminderDate = int.tryParse(SystemController
-            .instance.stream.value.system?.model?.workflowReminderDate ??
-        "");
+    String? workflowReminderDate = SystemController
+        .instance.stream.value.system?.model?.workflowReminderDate;
+    int? reminderDate = workflowReminderDate != null
+        ? int.tryParse(workflowReminderDate)
+        : null;
 
-    if (expiration != null) {
-      if (DateTime.now().isAfter(expiration)) {
-        map["Atrasado (${expiration.formatString()})"] =
-            AppColor.colorNegativeStatus;
-        return map;
-      } else if (reminderDate != null) {
-        Duration difference = expiration.difference(DateTime.now());
-        int daysDifference = difference.inDays;
-        if (daysDifference <= reminderDate) {
-          map["Em alerta (${expiration.formatString()})"] =
-              AppColor.colorAlertStatus;
-          return map;
-        }
+    if (expiration != null && DateTime.now().isAfter(expiration)) {
+      map["Atrasado ${expiration.formatString()}"] =
+          AppColor.colorNegativeStatus;
+    } else if (expiration != null &&
+        reminderDate != null &&
+        expiration.difference(DateTime.now()).inDays <= reminderDate) {
+      map["Em alerta ${expiration.formatString()}"] = AppColor.colorAlertStatus;
+    } else if (SubstepDatabaseModel.statusMap[2] == model?.status) {
+      map[SubstepDatabaseModel.statusMap[2]!] = AppColor.colorPositiveStatus;
+    } else if (SubstepDatabaseModel.statusMap[1] == model?.status) {
+      if (expiration != null) {
+        map["${SubstepDatabaseModel.statusMap[1]!} ${expiration.formatString()}"] =
+            AppColor.colorNeutralStatus;
+      } else {
+        map[SubstepDatabaseModel.statusMap[1]!] = AppColor.colorNeutralStatus;
       }
-    }
-
-    if (SubstepDatabaseModel.statusMap[2] != model?.status) {
-      isConcluded = false;
-    }
-
-    if (isConcluded) {
-      map["Concluído"] = AppColor.colorPositiveStatus;
-      return map;
     } else {
-      map["Andamento"] = AppColor.colorNeutralStatus;
-      return map;
+      map[SubstepDatabaseModel.statusMap[0]!] = AppColor.colorOpcionalStatus;
     }
+
+    return map;
   }
 }

@@ -27,7 +27,9 @@ import 'package:project_x/view/widgets/finances/widget_finance_situation.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
 import 'package:project_x/view/widgets/list/widget_list_box.dart';
+import 'package:project_x/view/widgets/projects/widget_project_balance.dart';
 import 'package:project_x/view/widgets/projects/widget_project_details.dart';
+import 'package:project_x/view/widgets/projects/widget_project_situation.dart';
 import 'package:project_x/view/widgets/workflows/widget_workflow_box.dart';
 
 class EntityResumeView extends StatefulWidget {
@@ -313,14 +315,29 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                         model: ProjectController.instance.stream.value
                             .getOne(id: widget.entityIndex)!,
                       ),
+                      WidgetDivider(space: 12),
+                      WidgetProjectSituation(
+                        key: UniqueKey(),
+                        model: WorkflowController.instance.stream.value.getOne(
+                            id: ProjectController.instance.stream.value
+                                .getOne(id: widget.entityIndex)!
+                                .model!
+                                .workflowId!)!,
+                      ),
+                      WidgetDivider(space: 12),
+                      WidgetProjectBalance(
+                        key: UniqueKey(),
+                        model: WorkflowController.instance.stream.value.getOne(
+                            id: ProjectController.instance.stream.value
+                                .getOne(id: widget.entityIndex)!
+                                .model!
+                                .workflowId!)!,
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            width: AppResponsive.instance.getWidth(20),
           ),
           if (WorkflowController.instance.stream.value.getOne(
                 id: ProjectController.instance.stream.value
@@ -329,6 +346,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                     ?.workflowId,
               ) !=
               null) ...[
+            SizedBox(width: AppResponsive.instance.getWidth(20)),
             Expanded(
               flex: 4,
               child: WidgetFloatingBox(
@@ -347,7 +365,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                                   id: ProjectController.instance.stream.value
                                       .getOne(id: widget.entityIndex)!
                                       .model!
-                                      .id!)!,
+                                      .workflowId!)!,
                           operation: EntityOperation.Read,
                         ),
                       ),
@@ -357,12 +375,10 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               ),
             ),
           ],
-          SizedBox(
-            width: AppResponsive.instance.getWidth(20),
-          ),
           if (FinanceController.instance.stream.value
                   .getOne(id: widget.entityIndex) !=
               null) ...[
+            SizedBox(width: AppResponsive.instance.getWidth(20)),
             Expanded(
               flex: 3,
               child: WidgetFloatingBox(

@@ -147,7 +147,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       : WidgetListEntityCard(
                           value1: model.model?.name ?? "",
                           value2:
-                              "${wkModel.getRelation()[3]}/${wkModel.getRelation()[0]} tarefas concluídas",
+                              "${wkModel.getRelationConcluded()} tarefas concluídas",
                           value3: wkModel.getStatus().entries.first.key,
                           color2: AppColor.colorNeutralStatus,
                           color3: wkModel.getStatus().entries.first.value,

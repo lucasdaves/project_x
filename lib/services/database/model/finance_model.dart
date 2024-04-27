@@ -203,7 +203,10 @@ class FinanceLogicalModel {
       }
     }
 
-    if (isConcluded) {
+    if (getType(type: 1).isEmpty) {
+      map["A iniciar"] = AppColor.colorOpcionalStatus;
+      return map;
+    } else if (isConcluded) {
       map["Concluído"] = AppColor.colorPositiveStatus;
       return map;
     } else {

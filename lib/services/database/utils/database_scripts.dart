@@ -93,7 +93,6 @@ class DatabaseScripts {
           atr_id integer NOT NULL CONSTRAINT tb_project_pk PRIMARY KEY,
           atr_name text NOT NULL,
           atr_description text,
-          atr_status integer NOT NULL,
           atr_created_at datetime,
           atr_updated_at datetime,
           tb_user_atr_id integer NOT NULL,

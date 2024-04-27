@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:project_x/services/database/model/finance_model.dart';
+import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 
-class WidgetFinanceSituation extends StatefulWidget {
-  final FinanceLogicalModel model;
+class WidgetProjectSituation extends StatefulWidget {
+  final WorkflowLogicalModel model;
 
-  const WidgetFinanceSituation({super.key, required this.model});
+  const WidgetProjectSituation({super.key, required this.model});
 
   @override
-  State<WidgetFinanceSituation> createState() => _WidgetFinanceSituationState();
+  State<WidgetProjectSituation> createState() => _WidgetProjectSituationState();
 }
 
-class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
+class _WidgetProjectSituationState extends State<WidgetProjectSituation> {
   Map<Map<String, Color>, String> map = {};
 
   @override
@@ -24,7 +24,7 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
 
   void _buildValues() {
     map.addAll({
-      widget.model.getStatus(): widget.model.getRelationPaid(),
+      widget.model.getStatus(): widget.model.getRelationConcluded(),
     });
   }
 
@@ -96,14 +96,14 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: "Pagamentos:",
+                            text: "Andamento:",
                             style: AppTextStyle.size12(
                               color: AppColor.text_1,
                               fontWeight: FontWeight.w300,
                             ),
                           ),
                           TextSpan(
-                            text: " ${relation} parcelas pagas",
+                            text: " ${relation} tarefas concluídas",
                             style: AppTextStyle.size12(
                               color: AppColor.colorNeutralStatus,
                               fontWeight: FontWeight.w600,
@@ -118,7 +118,7 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: "Situação:",
+                            text: "Situação: ",
                             style: AppTextStyle.size12(
                               color: AppColor.text_1,
                               fontWeight: FontWeight.w300,

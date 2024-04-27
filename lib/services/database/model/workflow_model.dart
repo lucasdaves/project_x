@@ -72,7 +72,6 @@ class WorkflowLogicalModel {
     int delivered = 0;
     int started = 0;
     int idle = 0;
-    int optional = 0;
 
     for (StepLogicalModel? step in steps ?? []) {
       for (SubstepLogicalModel? substep in step?.substeps ?? []) {
@@ -93,16 +92,46 @@ class WorkflowLogicalModel {
             delivered++;
             total++;
             break;
-          case 3:
-            optional++;
-            break;
         }
       }
     }
 
-    list = [total, idle, started, delivered, optional];
+    list = [total, idle, started, delivered];
 
     return list;
+  }
+
+  Map<String, double> getConcludedAmount() {
+    Map<String, double> map = {};
+    List<int> list = getRelation();
+    map[SubstepDatabaseModel.statusMap[2]!] = list[3].toDouble();
+    return map;
+  }
+
+  Map<String, double> getDoingAmount() {
+    Map<String, double> map = {};
+    List<int> list = getRelation();
+    map[SubstepDatabaseModel.statusMap[1]!] = list[2].toDouble();
+    return map;
+  }
+
+  Map<String, double> getToDoAmount() {
+    Map<String, double> map = {};
+    List<int> list = getRelation();
+    map[SubstepDatabaseModel.statusMap[0]!] = list[1].toDouble();
+    return map;
+  }
+
+  Map<String, double> getTotalAmount() {
+    Map<String, double> map = {};
+    List<int> list = getRelation();
+    map["Total"] = list[0].toDouble();
+    return map;
+  }
+
+  String getRelationConcluded() {
+    List<int> list = getRelation();
+    return "${list[3]}/${list[0]}";
   }
 
   Map<String, Color> getStatus() {
