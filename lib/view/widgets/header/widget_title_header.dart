@@ -27,51 +27,58 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () {
-                  Scaffold.of(context).openDrawer();
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.dehaze_rounded,
-                      color: AppColor.colorSecondary,
-                      size: AppResponsive.instance.getWidth(32),
-                    ),
-                    SizedBox(width: AppResponsive.instance.getWidth(24)),
-                    Text(
-                      widget.model.title,
-                      style: AppTextStyle.size24(),
-                    ),
-                  ],
+              if (widget.model.hasHeader) ...[
+                GestureDetector(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.dehaze_rounded,
+                        color: AppColor.colorSecondary,
+                        size: AppResponsive.instance.getWidth(32),
+                      ),
+                      SizedBox(width: AppResponsive.instance.getWidth(24)),
+                      Text(
+                        widget.model.title,
+                        style: AppTextStyle.size24(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      UserController.instance.stream.value.user?.personal?.model
-                              ?.name ??
-                          "",
-                      style: AppTextStyle.size24(),
-                    ),
-                    SizedBox(
-                      width: AppResponsive.instance.getWidth(12),
-                    ),
-                    Icon(
-                      Icons.person_rounded,
-                      color: AppColor.colorSecondary,
-                      size: AppResponsive.instance.getWidth(32),
-                    )
-                  ],
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        UserController.instance.stream.value.user?.personal
+                                ?.model?.name ??
+                            "",
+                        style: AppTextStyle.size24(),
+                      ),
+                      SizedBox(
+                        width: AppResponsive.instance.getWidth(12),
+                      ),
+                      Icon(
+                        Icons.person_rounded,
+                        color: AppColor.colorSecondary,
+                        size: AppResponsive.instance.getWidth(32),
+                      )
+                    ],
+                  ),
                 ),
-              )
+              ] else ...[
+                Text(
+                  widget.model.title,
+                  style: AppTextStyle.size24(),
+                ),
+              ],
             ],
           ),
         );
@@ -82,6 +89,7 @@ class _WidgetTitleHeaderState extends State<WidgetTitleHeader> {
 
 class WidgetTitleHeaderModel {
   final String title;
+  final bool hasHeader;
 
-  WidgetTitleHeaderModel({required this.title});
+  WidgetTitleHeaderModel({required this.title, this.hasHeader = true});
 }

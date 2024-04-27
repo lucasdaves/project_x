@@ -46,10 +46,15 @@ class EntityFormView extends StatefulWidget {
   final EntityType type;
   final EntityOperation operation;
   final int? entityIndex;
+  final bool hasHeader;
 
-  const EntityFormView(
-      {Key? key, required this.type, required this.operation, this.entityIndex})
-      : super(key: key);
+  const EntityFormView({
+    Key? key,
+    required this.type,
+    required this.operation,
+    this.entityIndex,
+    this.hasHeader = true,
+  }) : super(key: key);
 
   @override
   State<EntityFormView> createState() => _EntityFormViewState();
@@ -115,7 +120,10 @@ class _EntityFormViewState extends State<EntityFormView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             WidgetTitleHeader(
-              model: WidgetTitleHeaderModel(title: getTitle()),
+              model: WidgetTitleHeaderModel(
+                title: getTitle(),
+                hasHeader: widget.hasHeader,
+              ),
             ),
             SizedBox(height: AppResponsive.instance.getHeight(24)),
             WidgetActionHeader(
@@ -594,18 +602,20 @@ class _EntityFormViewState extends State<EntityFormView> {
                       ),
                     ),
                     SizedBox(height: AppResponsive.instance.getHeight(24)),
-                    WidgetTextField(
-                      model: WidgetTextFieldModel(
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
                         controller: userSection.recoverController,
                         headerText: userSection.recoverLabel,
                         hintText: userSection.recoverHint,
                         validator: (value) =>
                             userSection.validateRecover(value),
-                        changed: (value) =>
+                        options:
+                            RecoverDatabaseModel.questionMap.values.toList(),
+                        function: () =>
                             (controller.getModel()[0] as UserLogicalModel)
                                 .recover
                                 ?.model
-                                ?.question = value,
+                                ?.question = userSection.recoverController.text,
                       ),
                     ),
                     SizedBox(height: AppResponsive.instance.getHeight(24)),

@@ -57,7 +57,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: HomeView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: HomeView(),
           ).navigate(context);
         };
@@ -67,7 +67,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityListView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: EntityListView(
               type: EntityType.Client,
             ),
@@ -79,7 +79,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityListView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: EntityListView(
               type: EntityType.Project,
             ),
@@ -91,7 +91,7 @@ class WidgetStartDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityListView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: EntityListView(
               type: EntityType.Finance,
             ),

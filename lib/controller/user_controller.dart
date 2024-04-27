@@ -70,8 +70,8 @@ class UserController {
 
   Future<bool> setLogout() async {
     try {
-      await storage.setLogout();
       stream.sink.add(UserStreamModel());
+      await storage.setLogout();
       return true;
     } catch (error) {
       log(error.toString());
@@ -121,6 +121,8 @@ class UserController {
       int? recoverId;
       if (model.recover != null) {
         RecoverDatabaseModel recoverModel = model.recover!.model!;
+        recoverModel.code =
+            model.personal?.model?.document.substring(0, 5) ?? "";
         recoverId = await methods.create(
           consts.recover,
           map: recoverModel.toMap(),
@@ -143,16 +145,10 @@ class UserController {
         );
       }
 
-      //* SYSTEM *//
-      final systemModel = SystemController.instance.stream.valueOrNull?.system;
-      final isLoggedIn = userId != null;
+      if (userId == null) throw "Erro ao criar usuário";
 
-      if (systemModel != null &&
-          isLoggedIn &&
-          systemModel.model?.userId == null) {
-        systemModel.model?.userId = userId;
-        SystemController.instance.updateSystem(model: systemModel);
-      }
+      //* SYSTEM *//
+      SystemController.instance.mockSystem(userId: userId);
 
       return true;
     } catch (error) {
@@ -249,8 +245,8 @@ class UserController {
 
   Future<bool> updateUser({required UserLogicalModel model}) async {
     try {
-      int? userId = await getUserId();
-      if (userId == null) throw "Usuário ainda não logado";
+      int? userId = model.model?.id;
+      if (userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do usuário é nulo";
 
       //* ADDRESS *//
@@ -349,25 +345,74 @@ class UserController {
     }
   }
 
+  Future<bool> recoverUser({
+    required String login,
+    required String recover,
+    required String recoverResp,
+  }) async {
+    try {
+      //* USER *//
+      Map<String, dynamic> argsA = {};
+      argsA['atr_login'] = login;
+
+      List<Map<String, Object?>>? mapA =
+          await methods.read(consts.user, args: argsA);
+
+      if (mapA == null || mapA.isEmpty) {
+        throw "Usuário não encontrado";
+      }
+
+      UserLogicalModel model = UserLogicalModel(
+        model: UserDatabaseModel.fromMap(mapA.first),
+      );
+
+      //* RECOVER *//
+      Map<String, dynamic> argsB = {};
+      argsB['atr_id'] = model.model?.recoverId;
+      argsB['atr_question'] = RecoverDatabaseModel.questionMap.values
+          .toList()
+          .indexWhere((e) => e == recover);
+      argsB['atr_response'] = recoverResp;
+
+      List<Map<String, Object?>>? mapB =
+          await methods.read(consts.recover, args: argsB);
+
+      if (mapB == null || mapB.isEmpty) {
+        throw "Recuperação está incorreta";
+      }
+
+      // model.recover = RecoverLogicalModel(
+      //   model: RecoverDatabaseModel.fromMap(mapB.first),
+      // );
+
+      model.model?.password = "1234";
+      updateUser(model: model);
+
+      return true;
+    } catch (error) {
+      log(error.toString());
+      return false;
+    }
+  }
+
   //* MOCK *//
   Future<void> mockUser() async {
     UserLogicalModel model = UserLogicalModel(
       model: UserDatabaseModel(
-        login: "lucasdaves",
-        password: "1234",
+        login: "admin",
+        password: "admin",
         type: 1,
       ),
       personal: PersonalLogicalModel(
         model: PersonalDatabaseModel(
-          name: "Lucas Daves",
-          document: "44763245848",
+          name: "Usuario Teste",
+          document: "12312312399",
         ),
       ),
       recover: RecoverLogicalModel(
         model: RecoverDatabaseModel(
-          question: "Qual seu gatinho preferido ?",
+          question: RecoverDatabaseModel.questionMap[0],
           response: "Negão",
-          code: "102030",
         ),
       ),
     );

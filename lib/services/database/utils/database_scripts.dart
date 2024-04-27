@@ -124,7 +124,7 @@ class DatabaseScripts {
 
       CREATE TABLE tb_recover (
           atr_id integer NOT NULL CONSTRAINT tb_recover_pk PRIMARY KEY,
-          atr_question text,
+          atr_question integer,
           atr_response text,
           atr_code text NOT NULL,
           atr_created_at datetime,
@@ -167,7 +167,7 @@ class DatabaseScripts {
           atr_workflow_reminder_date text,
           atr_created_at datetime,
           atr_updated_at datetime,
-          tb_user_atr_id integer,
+          tb_user_atr_id integer NOT NULL,
           CONSTRAINT tb_system_tb_user FOREIGN KEY (tb_user_atr_id)
           REFERENCES tb_user (atr_id)
           ON DELETE CASCADE 

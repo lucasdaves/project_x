@@ -56,8 +56,8 @@ class PersonalDataSection {
   // LABELS
   String nameLabel = "Nome Completo";
   String documentLabel = "Documento";
-  String dobLabel = "Data de Nascimento (Opcional)";
-  String genderLabel = "Gênero (Opcional)";
+  String dobLabel = "Data de Nascimento";
+  String genderLabel = "Gênero";
 
   // HINT TEXTS
   String nameHint = "Digite seu nome completo ...";
@@ -107,7 +107,7 @@ class AddressSection {
   String cityLabel = "Cidade";
   String streetLabel = "Rua";
   String numberLabel = "Número";
-  String complementLabel = "Complemento (Opcional)";
+  String complementLabel = "Complemento";
 
   // HINT TEXTS
   String countryHint = "Digite o país ...";
@@ -131,44 +131,26 @@ class AddressSection {
 
   // VALIDATION FUNCTIONS
   String? validateCountry(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o país';
-    }
     return null;
   }
 
   String? validateCep(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o CEP';
-    }
     return null;
   }
 
   String? validateState(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o estado';
-    }
     return null;
   }
 
   String? validateCity(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira a cidade';
-    }
     return null;
   }
 
   String? validateStreet(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira a rua';
-    }
     return null;
   }
 
   String? validateNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor, insira o número';
-    }
     return null;
   }
 
@@ -179,9 +161,9 @@ class AddressSection {
 
 class ContactSection {
   // LABELS
-  final String phoneLabel = "Telefone (Opcional)";
-  final String emailLabel = "E-mail (Opcional)";
-  final String noteLabel = "Anotação (Opcional)";
+  final String phoneLabel = "Telefone";
+  final String emailLabel = "E-mail";
+  final String noteLabel = "Anotação";
 
   // HINT TEXTS
   final String phoneHint = "Digite seu telefone...";
@@ -234,6 +216,9 @@ class ProjectSection {
   }
 
   String? validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a descrição';
+    }
     return null;
   }
 
@@ -249,21 +234,18 @@ class WorkflowOperationSection {
   // LABELS
   final String titleLabel = "Titulo";
   final String descriptionLabel = "Descrição";
-  final String mandatoryLabel = "Entrega obrigatória ?";
   final String statusLabel = "Situação da entrega";
   final String dateLabel = "Data de entrega";
 
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
-  final String mandatoryHint = "";
   final String statusHint = "Escolha uma situação";
   final String dateHint = "Digite a data de entrega ...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  bool mandatoryController = false;
   MaskedTextController dateController = MaskedTextController(
     mask: '00/00/0000',
   );
@@ -278,14 +260,13 @@ class WorkflowOperationSection {
   }
 
   String? validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a descrição';
+    }
     return null;
   }
 
   String? validateDate(String? value) {
-    return null;
-  }
-
-  String? validateMandatory(String? value) {
     return null;
   }
 
@@ -298,17 +279,14 @@ class DescriptionSection {
   // LABELS
   final String titleLabel = "Titulo";
   final String descriptionLabel = "Descrição";
-  final String mandatoryLabel = "Obrigatório ?";
 
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
-  final String mandatoryHint = "Selecione ...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController mandatoryController = TextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateTitle(String? value) {
@@ -319,12 +297,8 @@ class DescriptionSection {
   }
 
   String? validateDescription(String? value) {
-    return null;
-  }
-
-  String? validateMandatory(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Por favor, selecione uma opção';
+      return 'Por favor, insira a descrição';
     }
     return null;
   }
@@ -334,7 +308,7 @@ class OperationSection {
   // LABELS
   final String amountLabel = "Quantia";
   final String descriptionLabel = "Descrição";
-  final String dateLabel = "Data de pagamento (Opcional)";
+  final String dateLabel = "Data de pagamento";
   final String statusLabel = "Situação";
 
   // HINT TEXTS

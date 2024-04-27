@@ -1,12 +1,15 @@
 import 'package:project_x/services/database/model/system_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 
 class SystemStreamModel {
+  EntityStatus status;
   SystemLogicalModel? system;
 
-  SystemStreamModel({this.system});
+  SystemStreamModel({this.status = EntityStatus.Idle, this.system});
 
   SystemStreamModel copy() {
     return SystemStreamModel(
+      status: this.status,
       system: system != null
           ? SystemLogicalModel(
               model: system!.model?.copy(),

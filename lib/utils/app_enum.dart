@@ -6,7 +6,16 @@ enum ScreenOrientation { Portrait, Landscape }
 
 enum EntityStatus { Loading, Idle, Completed }
 
-enum EntityType { Dashboard, User, Client, Project, Finance, Workflow, System }
+enum EntityType {
+  Dashboard,
+  User,
+  Client,
+  Project,
+  Finance,
+  Workflow,
+  System,
+  Default
+}
 
 enum EntityOperation { Create, Read, Update, Delete }
 

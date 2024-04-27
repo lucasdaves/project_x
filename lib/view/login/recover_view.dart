@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:project_x/controller/user_controller.dart';
+import 'package:project_x/services/database/model/recover_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_feedback.dart';
@@ -9,23 +11,22 @@ import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/load/load_view.dart';
-import 'package:project_x/view/login/recover_view.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
-import 'package:project_x/view/widgets/buttons/widget_text_button.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
+import 'package:project_x/view/widgets/fields/widget_selectorfield.dart';
 import 'package:project_x/view/widgets/fields/widget_textfield.dart';
 
-class LoginView extends StatefulWidget {
-  static const String tag = "/login_view";
-  const LoginView({super.key});
+class RecoverView extends StatefulWidget {
+  static const String tag = "/recover_view";
+  const RecoverView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RecoverView> createState() => _RecoverViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RecoverViewState extends State<RecoverView> {
   final userSection = UserSection();
   final _formKey = GlobalKey<FormState>();
 
@@ -62,21 +63,34 @@ class _LoginViewState extends State<LoginView> {
       );
     }
 
-    Widget buildPasswordTextField() {
+    Widget buildRecoverField() {
+      WidgetSelectorFieldModel model = WidgetSelectorFieldModel(
+        controller: userSection.recoverController,
+        headerText: userSection.recoverLabel,
+        hintText: userSection.recoverHint,
+        validator: (value) => userSection.validateRecover(value),
+        options: RecoverDatabaseModel.questionMap.values.toList(),
+      );
+      return WidgetSelectorField(
+        model: model,
+      );
+    }
+
+    Widget buildRecoverRespField() {
       WidgetTextFieldModel model = WidgetTextFieldModel(
-        controller: userSection.passwordController,
-        headerText: userSection.passwordLabel,
-        hintText: userSection.passwordHint,
-        validator: (value) => userSection.validatePassword(value),
+        controller: userSection.recoverRespController,
+        headerText: userSection.recoverRespLabel,
+        hintText: userSection.recoverRespHint,
+        validator: (value) => userSection.validateRecoverResp(value),
       );
       return WidgetTextField(
         model: model,
       );
     }
 
-    Widget buildLoginButton(bool loading) {
+    Widget buildRecoverButton(bool loading) {
       WidgetSolidButtonModel model = WidgetSolidButtonModel(
-        label: "Entrar",
+        label: "Recuperar",
         loading: loading,
         function: () async {
           await functionLogin();
@@ -84,37 +98,6 @@ class _LoginViewState extends State<LoginView> {
       );
       return WidgetSolidButton(
         model: model,
-      );
-    }
-
-    Widget buildRecoverButton() {
-      WidgetTextButtonModel model = WidgetTextButtonModel(
-        label: "Recuperar a conta",
-        labelColor: AppColor.colorNeutralStatus,
-        function: () async {
-          await functionRecover();
-        },
-      );
-      return Center(
-        child: WidgetTextButton(
-          model: model,
-        ),
-      );
-    }
-
-    Widget buildRegisterButton() {
-      WidgetTextButtonModel model = WidgetTextButtonModel(
-        preLabel: "Não possuí conta ?",
-        label: "Cadastre-se",
-        labelColor: AppColor.colorSecondary,
-        function: () async {
-          await functionRegister();
-        },
-      );
-      return Center(
-        child: WidgetTextButton(
-          model: model,
-        ),
       );
     }
 
@@ -139,34 +122,47 @@ class _LoginViewState extends State<LoginView> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Login",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.text_1,
-                              fontSize: AppResponsive.instance.getWidth(16),
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Icon(
+                                  Icons.chevron_left_rounded,
+                                  color: AppColor.colorSecondary,
+                                  size: AppResponsive.instance.getWidth(32),
+                                ),
+                              ),
+                              SizedBox(
+                                  width: AppResponsive.instance.getWidth(12)),
+                              Text(
+                                "Recuperar conta",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppColor.text_1,
+                                  fontSize: AppResponsive.instance.getWidth(16),
+                                  fontWeight: FontWeight.w500,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
                           ),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
                           buildLoginTextField(),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(24)),
-                          buildPasswordTextField(),
+                          buildRecoverField(),
+                          SizedBox(
+                              height: AppResponsive.instance.getHeight(24)),
+                          buildRecoverRespField(),
                           SizedBox(
                               height: AppResponsive.instance.getHeight(36)),
-                          buildLoginButton(
+                          buildRecoverButton(
                             UserController.instance.stream.value.status ==
                                 EntityStatus.Loading,
                           ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRecoverButton(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRegisterButton(),
                         ],
                       ),
                     );
@@ -190,14 +186,15 @@ class _LoginViewState extends State<LoginView> {
     FormState? form = _formKey.currentState;
     if (form != null && form.validate()) {
       try {
-        bool success = await UserController.instance.setLogin(
+        bool success = await UserController.instance.recoverUser(
           login: userSection.loginController.text,
-          password: userSection.passwordController.text,
+          recover: userSection.recoverController.text,
+          recoverResp: userSection.recoverRespController.text,
         );
 
         if (success) {
           AppFeedback(
-            text: 'Login efetuado com sucesso',
+            text: 'Conta recuperada - Senha alterada para 1234',
             color: AppColor.colorPositiveStatus,
           ).showSnackbar(context);
           AppRoute(
@@ -206,23 +203,18 @@ class _LoginViewState extends State<LoginView> {
           ).navigate(context);
         } else {
           AppFeedback(
-            text: 'Credênciais de login erradas!',
+            text: 'Credênciais de recuperação erradas!',
             color: AppColor.colorNegativeStatus,
           ).showSnackbar(context);
         }
       } catch (error) {
-        print("Erro durante o login: $error");
+        print("Erro durante a recuperação: $error");
       }
     }
   }
 
   Future<void> functionRecover() async {
-    try {
-      AppRoute(
-        tag: RecoverView.tag,
-        screen: RecoverView(),
-      ).navigate(context);
-    } catch (error) {
+    try {} catch (error) {
       print("Erro durante o login: $error");
     }
   }

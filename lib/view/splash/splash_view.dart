@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_layout.dart';
@@ -29,7 +28,6 @@ class _SplashViewState extends State<SplashView> {
 
   Future<void> _initAppConfigs() async {
     bool hasLogin = await UserController.instance.hasLogin();
-    await SystemController.instance.mockSystem();
     await UserController.instance.mockUser();
     await Future.delayed(const Duration(milliseconds: 1000));
 

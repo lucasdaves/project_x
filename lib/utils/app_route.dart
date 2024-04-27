@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 class AppRoute {
   final String tag;
   final dynamic screen;
-  final bool reset;
+  final String? reset;
 
   AppRoute({
     required this.tag,
     required this.screen,
-    this.reset = false,
+    this.reset,
   });
 
   void navigate(BuildContext context) {
     if (context.mounted) {
-      if (reset) {
+      if (reset != null) {
         Navigator.of(context).popUntil(
-          ModalRoute.withName("/home_view"),
+          ModalRoute.withName(reset!),
         );
       }
       Navigator.push(

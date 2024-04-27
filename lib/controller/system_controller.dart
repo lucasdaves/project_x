@@ -6,6 +6,7 @@ import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/model/system_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
 import 'package:project_x/services/database/model/system_model.dart';
+import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -36,11 +37,11 @@ class SystemController {
 
   Future<bool> createSystem({required SystemLogicalModel model}) async {
     try {
-      int? userId = await UserController.instance.getUserId();
+      if (model.model?.userId == null) throw "O id do usuário é nulo";
       if (model.model == null) throw "O modelo do sistema é nulo";
 
       Map<String, dynamic> argsA = {};
-      if (userId != null) argsA['tb_user_atr_id'] = userId;
+      argsA['tb_user_atr_id'] = model.model?.userId;
 
       List<Map<String, Object?>>? mapA =
           await methods.read(consts.system, args: argsA);
@@ -67,15 +68,15 @@ class SystemController {
 
   Future<bool> readSystem() async {
     try {
+      stream.sink.add(SystemStreamModel(status: EntityStatus.Loading));
       int? userId = await UserController.instance.getUserId();
+      if (userId == null) throw "O id do usuário é nulo";
 
       SystemStreamModel model = SystemStreamModel();
 
       //* SYSTEM *//
       Map<String, dynamic> argsA = {};
-      if (userId != null) {
-        argsA['tb_user_atr_id'] = userId;
-      }
+      argsA['tb_user_atr_id'] = userId;
 
       List<Map<String, Object?>>? mapA =
           await methods.read(consts.system, args: argsA);
@@ -94,22 +95,27 @@ class SystemController {
     } catch (error) {
       log(error.toString());
       return false;
+    } finally {
+      await WorkflowController.instance.readWorkflow();
+      await ProjectController.instance.readProject();
+      await FinanceController.instance.readFinance();
+      //await UserController.instance.readUser();
     }
   }
 
   Future<bool> updateSystem({required SystemLogicalModel model}) async {
     try {
       int? userId = await UserController.instance.getUserId();
-      if (model.model == null) throw "O modelo do usuário é nulo";
+      if (userId == null) throw "O id do usuário é nulo";
+      if (model.model == null) throw "O modelo do sistema é nulo";
 
       //* SYSTEM *//
       if (model.model != null) {
         Map<String, dynamic> argsA = {};
         argsA['atr_id'] = model.model!.id;
-        if (userId != null) {
-          model.model!.userId = userId;
-          argsA['tb_user_atr_id'] = userId;
-        }
+
+        model.model!.userId = userId;
+        argsA['tb_user_atr_id'] = userId;
 
         await methods.update(consts.system,
             map: model.model!.toMap(), args: argsA);
@@ -121,16 +127,14 @@ class SystemController {
       return false;
     } finally {
       await readSystem();
-      await WorkflowController.instance.readWorkflow();
-      await ProjectController.instance.readProject();
-      await FinanceController.instance.readFinance();
     }
   }
 
   //* MOCK *//
-  Future<void> mockSystem() async {
+  Future<void> mockSystem({required int userId}) async {
     SystemLogicalModel model = SystemLogicalModel(
       model: SystemDatabaseModel(
+        userId: userId,
         financeReminderDate: "30",
         workflowReminderDate: "15",
       ),

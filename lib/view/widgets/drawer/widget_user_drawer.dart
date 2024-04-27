@@ -7,6 +7,8 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/form_view.dart';
+import 'package:project_x/view/home/home_view.dart';
+import 'package:project_x/view/splash/splash_view.dart';
 
 class WidgetEndDrawer extends StatelessWidget {
   const WidgetEndDrawer({super.key});
@@ -47,6 +49,7 @@ class WidgetEndDrawer extends StatelessWidget {
           ),
           buildCard(context, type: EntityType.User),
           buildCard(context, type: EntityType.System),
+          buildCard(context, type: EntityType.Default),
         ],
       ),
     );
@@ -64,7 +67,7 @@ class WidgetEndDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityFormView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: EntityFormView(
               type: EntityType.User,
               entityIndex: UserController.instance.stream.value.user?.model?.id,
@@ -78,7 +81,7 @@ class WidgetEndDrawer extends StatelessWidget {
         function = () {
           AppRoute(
             tag: EntityFormView.tag,
-            reset: true,
+            reset: HomeView.tag,
             screen: EntityFormView(
               type: EntityType.System,
               entityIndex:
@@ -88,10 +91,16 @@ class WidgetEndDrawer extends StatelessWidget {
           ).navigate(context);
         };
         break;
-
       default:
-        label = "";
-        function = () {};
+        label = "Logout";
+        function = () {
+          UserController.instance.setLogout();
+          AppRoute(
+            tag: EntityFormView.tag,
+            reset: SplashView.tag,
+            screen: SplashView(),
+          ).navigate(context);
+        };
         break;
     }
 
