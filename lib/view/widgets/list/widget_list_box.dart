@@ -26,13 +26,13 @@ import 'package:project_x/view/widgets/loader/widget_circular_loader.dart';
 class WidgetListEntity extends StatefulWidget {
   final bool isResume;
   final EntityType type;
-  final int? entityIndex;
+  final int? clientAssociation;
 
   const WidgetListEntity({
     super.key,
     required this.isResume,
     required this.type,
-    this.entityIndex,
+    this.clientAssociation,
   });
 
   @override
@@ -126,9 +126,14 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Project:
         snapshot as ProjectStreamModel;
         ProjectStreamModel copy = snapshot.copy();
-        if (widget.entityIndex != null) {
-          copy.projects?.removeWhere(
-              (element) => element?.model?.id != widget.entityIndex);
+        if (widget.clientAssociation != null) {
+          List<AssociationLogicalModel?> associations = AssociationController
+              .instance.stream.value
+              .getAllClient(widget.clientAssociation);
+
+          copy.projects?.removeWhere((element) => !associations
+              .map((e) => e?.model?.projectId)
+              .contains(element?.model?.id));
         }
         return (copy.projects ?? []).isEmpty
             ? emptyWidget()
@@ -180,9 +185,14 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Finance:
         snapshot as FinanceStreamModel;
         FinanceStreamModel copy = snapshot.copy();
-        if (widget.entityIndex != null) {
-          copy.finances?.removeWhere(
-              (element) => element?.model?.id != widget.entityIndex);
+        if (widget.clientAssociation != null) {
+          List<AssociationLogicalModel?> associations = AssociationController
+              .instance.stream.value
+              .getAllClient(widget.clientAssociation);
+
+          copy.finances?.removeWhere((element) => !associations
+              .map((e) => e?.model?.financeId)
+              .contains(element?.model?.id));
         }
         return (copy.finances ?? []).isEmpty
             ? emptyWidget()

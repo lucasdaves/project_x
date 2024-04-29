@@ -271,7 +271,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Project,
-                  entityIndex: ProjectController.instance.stream.value
+                  clientAssociation: ProjectController.instance.stream.value
                           .getOne(
                               id: AssociationController.instance.stream.value
                                   .getOne(clientId: widget.entityIndex)
@@ -294,7 +294,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Finance,
-                  entityIndex: FinanceController.instance.stream.value
+                  clientAssociation: FinanceController.instance.stream.value
                           .getOne(
                               id: AssociationController.instance.stream.value
                                   .getOne(clientId: widget.entityIndex)

@@ -1,3 +1,4 @@
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 
@@ -16,8 +17,15 @@ class ProjectStreamModel {
     );
   }
 
-  List<ProjectLogicalModel?> getAll() {
+  List<ProjectLogicalModel?> getAll({bool isAssociation = false}) {
     ProjectStreamModel aux = copy();
+    if (isAssociation) {
+      aux.projects?.removeWhere((element) => AssociationController
+          .instance.stream.value
+          .getAll()
+          .map((e) => e?.model?.projectId)
+          .contains(element?.model?.id));
+    }
     return aux.projects ?? [];
   }
 

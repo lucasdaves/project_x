@@ -21,6 +21,14 @@ class AssociationStreamModel {
     return aux.associations ?? [];
   }
 
+  List<AssociationLogicalModel?> getAllClient(int? index) {
+    AssociationStreamModel aux = copy();
+    return (aux.associations
+            ?.where((element) => element?.model?.clientId == index)
+            .toList() ??
+        []);
+  }
+
   AssociationLogicalModel? getOne({
     int? id,
     int? projectId,

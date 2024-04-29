@@ -1399,7 +1399,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             associationSection.validateProject(value),
                         options: ProjectController.instance.stream.value
-                            .getAll()
+                            .getAll(isAssociation: true)
                             .map((e) => e!.model!.name!)
                             .toList(),
                         function: () {
@@ -1430,7 +1430,7 @@ class _EntityFormViewState extends State<EntityFormView> {
                         validator: (value) =>
                             associationSection.validateFinance(value),
                         options: FinanceController.instance.stream.value
-                            .getAll()
+                            .getAll(isAssociation: true)
                             .map((e) => e!.model!.name!)
                             .toList(),
                         function: () {
