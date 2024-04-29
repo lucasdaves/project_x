@@ -30,10 +30,7 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
             style: AppTextStyle.size14(),
           ),
           subtitle: Container(
-            constraints: BoxConstraints(
-              minHeight: AppResponsive.instance.getHeight(50),
-              maxHeight: AppResponsive.instance.getHeight(50),
-            ),
+            height: AppResponsive.instance.getHeight(50),
             margin: EdgeInsets.only(top: AppResponsive.instance.getHeight(12)),
             decoration: BoxDecoration(
               border: Border.all(color: AppColor.colorDivider, width: 2),
@@ -47,7 +44,6 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
               minLines: null,
               maxLines: null,
               expands: true,
-              //obscureText: widget.model.isObscure,
               style: AppTextStyle.size14(),
               cursorColor: AppColor.colorSecondary,
               cursorErrorColor: AppColor.colorNegativeStatus,
@@ -84,7 +80,6 @@ class WidgetTextFieldModel {
   final TextEditingController controller;
   final String? headerText;
   final String? hintText;
-  final bool isObscure;
   final String? Function(String?)? validator;
   final Function(String?)? changed;
 
@@ -92,7 +87,6 @@ class WidgetTextFieldModel {
     required this.controller,
     this.headerText,
     this.hintText,
-    this.isObscure = false,
     this.validator,
     this.changed,
   });

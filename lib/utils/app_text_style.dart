@@ -8,7 +8,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(12),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 
@@ -17,7 +17,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(14),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 
@@ -26,7 +26,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(16),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 
@@ -35,7 +35,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(20),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 
@@ -44,7 +44,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(24),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 
@@ -53,7 +53,7 @@ class AppTextStyle {
       color: color ?? AppColor.text_1,
       fontSize: AppResponsive.instance.getWidth(48),
       fontWeight: fontWeight ?? FontWeight.w400,
-      height: 1.2,
+      height: AppResponsive.instance.getWidth(1.2),
     );
   }
 }

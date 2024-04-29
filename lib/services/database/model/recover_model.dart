@@ -13,8 +13,8 @@ class RecoverDatabaseModel {
 
   static Map<int, String> questionMap = {
     0: "Qual o nome do seu animal preferido ?",
-    1: "Qual é o nome do seu ente mais querido ?",
-    2: "Qual é o lugar mais lindo que você visitou ?",
+    1: "Qual o nome do seu parente mais querido ?",
+    2: "Qual o nome do lugar mais lindo que você visitou ?",
   };
 
   factory RecoverDatabaseModel.fromMap(Map<String, dynamic> map) {

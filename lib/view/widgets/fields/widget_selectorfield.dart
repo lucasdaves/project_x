@@ -18,11 +18,24 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
     super.initState();
   }
 
-  final _dropdownKey = GlobalKey<FormFieldState<String>>();
-  final _dropdownFocusNode = FocusNode();
+  GlobalKey? dropdownButtonKey = GlobalKey();
 
   void openDropdown() {
-    _dropdownFocusNode.requestFocus();
+    GestureDetector? detector;
+    void searchForGestureDetector(BuildContext? element) {
+      element?.visitChildElements((element) {
+        if (element.widget is GestureDetector) {
+          detector = element.widget as GestureDetector?;
+        } else {
+          searchForGestureDetector(element);
+        }
+      });
+    }
+
+    searchForGestureDetector(dropdownButtonKey?.currentContext);
+    assert(detector != null);
+
+    detector?.onTap?.call();
   }
 
   @override
@@ -52,8 +65,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
             alignment: Alignment.centerLeft,
             children: [
               DropdownButtonFormField<String>(
-                key: _dropdownKey,
-                focusNode: _dropdownFocusNode,
+                key: dropdownButtonKey,
                 value: widget.model.controller.text.isNotEmpty
                     ? widget.model.controller.text
                     : null,
@@ -66,7 +78,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
                       option,
                       style: AppTextStyle.size14(
                         color: AppColor.colorFieldBackground,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   );
@@ -81,7 +93,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
                         });
                       },
                 validator: widget.model.validator,
-                dropdownColor: AppColor.colorSecondary,
+                dropdownColor: AppColor.text_1,
                 style: TextStyle(color: Colors.transparent),
                 iconEnabledColor: Colors.transparent,
                 iconDisabledColor: Colors.transparent,

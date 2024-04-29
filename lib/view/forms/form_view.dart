@@ -443,7 +443,6 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: FinanceDatabaseModel(
           name: descriptionSection.titleController.text,
           description: descriptionSection.descriptionController.text,
-          status: FinanceDatabaseModel.statusMap[0],
         ),
         operations: [],
       );

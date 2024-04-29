@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:project_x/utils/app_extension.dart';
 
 class UserSection {
   // LABELS
@@ -18,9 +19,11 @@ class UserSection {
 
   // TEXT CONTROLLERS
   TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  ObscuringTextEditingController passwordController =
+      ObscuringTextEditingController();
   TextEditingController recoverController = TextEditingController();
-  TextEditingController recoverRespController = TextEditingController();
+  ObscuringTextEditingController recoverRespController =
+      ObscuringTextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateLogin(String? value) {

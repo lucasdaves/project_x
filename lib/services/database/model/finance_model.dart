@@ -167,12 +167,13 @@ class FinanceLogicalModel {
   }
 
   Map<String, Color> getStatus() {
-    Map<String, Color> map = {};
-    bool isConcluded = true;
+    final map = <String, Color>{};
 
-    for (FinanceOperationLogicalModel? operation in getType(type: 1)) {
-      DateTime? expiration = operation?.model?.expiresAt;
-      int? reminderDate = int.tryParse(SystemController
+    final financeOperations = getType(type: 1);
+
+    for (FinanceOperationLogicalModel? operation in financeOperations) {
+      final expiration = operation?.model?.expiresAt;
+      final reminderDate = int.tryParse(SystemController
               .instance.stream.value.system?.model?.financeReminderDate ??
           "");
 
@@ -182,8 +183,8 @@ class FinanceLogicalModel {
               AppColor.colorNegativeStatus;
           return map;
         } else if (reminderDate != null) {
-          Duration difference = expiration.difference(DateTime.now());
-          int daysDifference = difference.inDays;
+          final difference = expiration.difference(DateTime.now());
+          final daysDifference = difference.inDays;
           if (daysDifference <= reminderDate) {
             map["Em alerta (${expiration.formatString()})"] =
                 AppColor.colorAlertStatus;
@@ -191,23 +192,24 @@ class FinanceLogicalModel {
           }
         }
       }
-
-      if (FinanceOperationDatabaseModel.statusMap[1] !=
-          operation?.model?.status!) {
-        isConcluded = false;
-      }
     }
 
-    if (getType(type: 1).isEmpty) {
+    final isConcluded = financeOperations.every((element) =>
+        element?.model?.status == FinanceOperationDatabaseModel.statusMap[1]);
+    final isPaid =
+        (getInitialAmount().values.first - getPaidAmount().values.first) <= 0;
+
+    if (financeOperations.isEmpty) {
       map["A iniciar"] = AppColor.colorOpcionalStatus;
-      return map;
-    } else if (isConcluded) {
-      map["Concluído"] = AppColor.colorPositiveStatus;
-      return map;
+    } else if (isConcluded && isPaid) {
+      map["Pago"] = AppColor.colorPositiveStatus;
+    } else if (isConcluded && !isPaid) {
+      map["Parcialmente Pago"] = AppColor.colorNeutralStatus;
     } else {
       map["Andamento"] = AppColor.colorNeutralStatus;
-      return map;
     }
+
+    return map;
   }
 
   String getRelationPaid() {

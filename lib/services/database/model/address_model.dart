@@ -70,6 +70,15 @@ class AddressLogicalModel {
   }
 
   String getAddress() {
+    if ((model?.street ?? '').isEmpty &&
+        (model?.number ?? '').isEmpty &&
+        (model?.complement ?? '').isEmpty &&
+        (model?.city ?? '').isEmpty &&
+        (model?.state ?? '').isEmpty &&
+        (model?.postalCode ?? '').isEmpty) {
+      return "";
+    }
+
     String addressString = '${model?.street ?? ''}, ${model?.number ?? ''}';
     if (model?.complement != null && model!.complement!.isNotEmpty) {
       addressString += ' - ${model?.complement}';
