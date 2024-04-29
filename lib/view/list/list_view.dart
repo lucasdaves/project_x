@@ -188,6 +188,25 @@ class _EntityListViewState extends State<EntityListView> {
           ),
         ];
         break;
+      case EntityType.Association:
+        actions = [
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.add,
+              label: "+ Associação",
+              function: () async {
+                AppRoute(
+                  tag: EntityFormView.tag,
+                  screen: EntityFormView(
+                    type: EntityType.Association,
+                    operation: EntityOperation.Create,
+                  ),
+                ).navigate(context);
+              },
+            ),
+          ),
+        ];
+        break;
       default:
         throw Exception("Unsuported Type");
     }
@@ -202,6 +221,8 @@ class _EntityListViewState extends State<EntityListView> {
         entity = "Projeto";
       case EntityType.Finance:
         entity = "Financeiro";
+      case EntityType.Association:
+        entity = "Associação";
       default:
         throw Exception("Unsuported Type");
     }
@@ -266,6 +287,21 @@ class _EntityListViewState extends State<EntityListView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Finance,
+                ),
+              ),
+            ),
+          ),
+        ];
+        break;
+      case EntityType.Association:
+        widgets = [
+          Expanded(
+            child: WidgetFloatingBox(
+              model: WidgetFloatingBoxModel(
+                label: "Associações",
+                widget: WidgetListEntity(
+                  isResume: false,
+                  type: EntityType.Association,
                 ),
               ),
             ),

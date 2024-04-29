@@ -43,14 +43,9 @@ class DatabaseScripts {
           atr_created_at datetime,
           atr_updated_at datetime,
           tb_user_atr_id integer NOT NULL,
-          tb_client_atr_id integer,
           CONSTRAINT tb_finance_tb_user FOREIGN KEY (tb_user_atr_id)
           REFERENCES tb_user (atr_id)
           ON DELETE CASCADE 
-          ON UPDATE CASCADE,
-          CONSTRAINT tb_finance_tb_client FOREIGN KEY (tb_client_atr_id)
-          REFERENCES tb_client (atr_id)
-          ON DELETE SET NULL 
           ON UPDATE CASCADE
       );
 
@@ -98,8 +93,6 @@ class DatabaseScripts {
           tb_user_atr_id integer NOT NULL,
           tb_address_atr_id integer,
           tb_workflow_atr_id integer,
-          tb_client_atr_id integer,
-          tb_finance_atr_id integer,
           CONSTRAINT tb_project_tb_address FOREIGN KEY (tb_address_atr_id)
           REFERENCES tb_address (atr_id)
           ON DELETE SET NULL 
@@ -111,14 +104,6 @@ class DatabaseScripts {
           CONSTRAINT tb_project_tb_user FOREIGN KEY (tb_user_atr_id)
           REFERENCES tb_user (atr_id)
           ON DELETE CASCADE 
-          ON UPDATE CASCADE,
-          CONSTRAINT tb_project_tb_client FOREIGN KEY (tb_client_atr_id)
-          REFERENCES tb_client (atr_id)
-          ON DELETE SET NULL 
-          ON UPDATE CASCADE,
-          CONSTRAINT tb_project_tb_finance FOREIGN KEY (tb_finance_atr_id)
-          REFERENCES tb_finance (atr_id)
-          ON DELETE SET NULL 
           ON UPDATE CASCADE
       );
 
@@ -200,6 +185,32 @@ class DatabaseScripts {
           atr_updated_at datetime,
           tb_user_atr_id integer NOT NULL,
           CONSTRAINT tb_workflow_tb_user FOREIGN KEY (tb_user_atr_id)
+          REFERENCES tb_user (atr_id)
+          ON DELETE CASCADE 
+          ON UPDATE CASCADE
+      );
+
+      CREATE TABLE tb_project_finance_client (
+          atr_id integer NOT NULL CONSTRAINT tb_project_finance_client_pk PRIMARY KEY,
+          atr_created_at datetime,
+          atr_updated_at datetime,
+          tb_user_atr_id integer NOT NULL,
+          tb_client_atr_id integer,
+          tb_finance_atr_id integer,
+          tb_project_atr_id integer,
+          CONSTRAINT tb_project_finance_client_tb_client FOREIGN KEY (tb_client_atr_id)
+          REFERENCES tb_client (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_finance FOREIGN KEY (tb_finance_atr_id)
+          REFERENCES tb_finance (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_project FOREIGN KEY (tb_project_atr_id)
+          REFERENCES tb_project (atr_id)
+          ON DELETE SET NULL 
+          ON UPDATE CASCADE,
+          CONSTRAINT tb_project_finance_client_tb_user FOREIGN KEY (tb_user_atr_id)
           REFERENCES tb_user (atr_id)
           ON DELETE CASCADE 
           ON UPDATE CASCADE

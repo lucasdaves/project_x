@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -270,10 +271,15 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Project,
-                  clientId: ClientController.instance.stream.value
-                      .getOne(id: widget.entityIndex)
-                      ?.model
-                      ?.id,
+                  entityIndex: ProjectController.instance.stream.value
+                          .getOne(
+                              id: AssociationController.instance.stream.value
+                                  .getOne(clientId: widget.entityIndex)
+                                  ?.model
+                                  ?.projectId)
+                          ?.model
+                          ?.id ??
+                      -1,
                 ),
               ),
             ),
@@ -288,10 +294,15 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Finance,
-                  clientId: ClientController.instance.stream.value
-                      .getOne(id: widget.entityIndex)
-                      ?.model
-                      ?.id,
+                  entityIndex: FinanceController.instance.stream.value
+                          .getOne(
+                              id: AssociationController.instance.stream.value
+                                  .getOne(clientId: widget.entityIndex)
+                                  ?.model
+                                  ?.financeId)
+                          ?.model
+                          ?.id ??
+                      -1,
                 ),
               ),
             ),
@@ -375,8 +386,11 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               ),
             ),
           ],
-          if (FinanceController.instance.stream.value
-                  .getOne(id: widget.entityIndex) !=
+          if (FinanceController.instance.stream.value.getOne(
+                  id: AssociationController.instance.stream.value
+                      .getOne(clientId: widget.entityIndex)
+                      ?.model
+                      ?.clientId) !=
               null) ...[
             SizedBox(width: AppResponsive.instance.getWidth(20)),
             Expanded(
@@ -391,20 +405,29 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                       children: [
                         WidgetFinanceSituation(
                           key: UniqueKey(),
-                          model: FinanceController.instance.stream.value
-                              .getOne(id: widget.entityIndex)!,
+                          model: FinanceController.instance.stream.value.getOne(
+                              id: AssociationController.instance.stream.value
+                                  .getOne(clientId: widget.entityIndex)
+                                  ?.model
+                                  ?.clientId)!,
                         ),
                         WidgetDivider(space: 12),
                         WidgetFinancePayment(
                           key: UniqueKey(),
-                          model: FinanceController.instance.stream.value
-                              .getOne(id: widget.entityIndex)!,
+                          model: FinanceController.instance.stream.value.getOne(
+                              id: AssociationController.instance.stream.value
+                                  .getOne(clientId: widget.entityIndex)
+                                  ?.model
+                                  ?.clientId)!,
                         ),
                         WidgetDivider(space: 12),
                         WidgetFinanceBalance(
                           key: UniqueKey(),
-                          model: FinanceController.instance.stream.value
-                              .getOne(id: widget.entityIndex)!,
+                          model: FinanceController.instance.stream.value.getOne(
+                              id: AssociationController.instance.stream.value
+                                  .getOne(clientId: widget.entityIndex)
+                                  ?.model
+                                  ?.clientId)!,
                         ),
                       ],
                     ),

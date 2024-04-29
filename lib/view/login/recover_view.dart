@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/services/database/model/recover_model.dart';
 import 'package:project_x/utils/app_color.dart';

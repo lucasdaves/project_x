@@ -10,7 +10,6 @@ class FinanceDatabaseModel {
   String? description;
   String? status;
   int? userId;
-  int? clientId;
 
   FinanceDatabaseModel({
     this.id,
@@ -18,7 +17,6 @@ class FinanceDatabaseModel {
     this.description,
     this.status,
     this.userId,
-    this.clientId,
   });
 
   static Map<int, String> statusMap = {
@@ -33,7 +31,6 @@ class FinanceDatabaseModel {
       description: map['atr_description'],
       status: statusMap[map['atr_status']],
       userId: map['tb_user_atr_id'],
-      clientId: map['tb_client_atr_id'],
     );
   }
 
@@ -44,7 +41,6 @@ class FinanceDatabaseModel {
       'atr_description': description,
       'atr_status': statusMap.values.toList().indexWhere((e) => e == status),
       'tb_user_atr_id': userId,
-      'tb_client_atr_id': clientId,
     };
   }
 
@@ -55,7 +51,6 @@ class FinanceDatabaseModel {
       description: this.description,
       status: this.status,
       userId: this.userId,
-      clientId: this.clientId,
     );
   }
 }

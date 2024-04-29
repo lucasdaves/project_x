@@ -40,6 +40,7 @@ class WidgetStartDrawer extends StatelessWidget {
           buildCard(context, type: EntityType.Client),
           buildCard(context, type: EntityType.Project),
           buildCard(context, type: EntityType.Finance),
+          buildCard(context, type: EntityType.Association),
         ],
       ),
     );
@@ -94,6 +95,18 @@ class WidgetStartDrawer extends StatelessWidget {
             reset: HomeView.tag,
             screen: EntityListView(
               type: EntityType.Finance,
+            ),
+          ).navigate(context);
+        };
+        break;
+      case EntityType.Association:
+        label = "Associações";
+        function = () {
+          AppRoute(
+            tag: EntityListView.tag,
+            reset: HomeView.tag,
+            screen: EntityListView(
+              type: EntityType.Association,
             ),
           ).navigate(context);
         };

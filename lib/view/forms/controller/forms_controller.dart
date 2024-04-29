@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -77,6 +78,11 @@ class FormsController {
             model: stream.value.model[0],
           );
           break;
+        case EntityType.Association:
+          result = await AssociationController.instance.createAssociation(
+            model: stream.value.model[0],
+          );
+          break;
         default:
           break;
       }
@@ -122,6 +128,11 @@ class FormsController {
             model: stream.value.model[0],
           );
           break;
+        case EntityType.Association:
+          result = await AssociationController.instance.updateAssociation(
+            model: stream.value.model[0],
+          );
+          break;
         default:
           break;
       }
@@ -159,6 +170,11 @@ class FormsController {
           break;
         case EntityType.Workflow:
           result = await WorkflowController.instance.deleteWorkflow(
+            model: stream.value.model[0],
+          );
+          break;
+        case EntityType.Association:
+          result = await AssociationController.instance.deleteAssociation(
             model: stream.value.model[0],
           );
           break;

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -11,6 +12,7 @@ import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
+import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/model/recover_model.dart';
 import 'package:project_x/services/database/model/system_model.dart';
@@ -175,17 +177,17 @@ class _EntityFormViewState extends State<EntityFormView> {
       case EntityType.Client:
         _setSectionValuesForClient();
         break;
-
       case EntityType.Project:
         _setSectionValuesForProject();
         break;
-
       case EntityType.Workflow:
         _setSectionValuesForWorkflow();
         break;
-
       case EntityType.Finance:
         _setSectionValuesForFinance();
+        break;
+      case EntityType.Association:
+        _setSectionValuesForAssociation();
         break;
       default:
         throw Exception("Tipo de entidade não suportado");
@@ -383,18 +385,6 @@ class _EntityFormViewState extends State<EntityFormView> {
       projectSection.descriptionController.text =
           existingProjectModel.model?.description ?? '';
 
-      FinanceLogicalModel? existingFinanceModel = FinanceController
-          .instance.stream.value
-          .getOne(id: existingProjectModel.model?.financeId);
-      ClientLogicalModel? existingClientModel = ClientController
-          .instance.stream.value
-          .getOne(id: existingProjectModel.model?.clientId);
-
-      associationSection.financeController.text =
-          existingFinanceModel?.model?.name ?? "";
-      associationSection.clientController.text =
-          existingClientModel?.personal?.model?.name ?? "";
-
       controller.setModel([existingProjectModel, existingWorkflowModel]);
     } else {
       ProjectLogicalModel newProjectModel = ProjectLogicalModel(
@@ -448,22 +438,6 @@ class _EntityFormViewState extends State<EntityFormView> {
       descriptionSection.titleController.text = existingModel.model?.name ?? '';
       descriptionSection.descriptionController.text =
           existingModel.model?.description ?? '';
-
-      ProjectLogicalModel? existingProjectModel = ProjectController
-          .instance.stream.value
-          .getAll()
-          .where(
-              (element) => element?.model?.financeId == existingModel.model?.id)
-          .firstOrNull;
-      ClientLogicalModel? existingClientModel =
-          ClientController.instance.stream.value.getOne(
-              id: existingModel.model?.clientId ??
-                  existingProjectModel?.model?.clientId);
-
-      associationSection.projectController.text =
-          existingProjectModel?.model?.name ?? "";
-      associationSection.clientController.text =
-          existingClientModel?.personal?.model?.name ?? "";
     } else {
       FinanceLogicalModel newModel = FinanceLogicalModel(
         model: FinanceDatabaseModel(
@@ -472,6 +446,37 @@ class _EntityFormViewState extends State<EntityFormView> {
           status: FinanceDatabaseModel.statusMap[0],
         ),
         operations: [],
+      );
+      controller.setModel([newModel]);
+    }
+  }
+
+  void _setSectionValuesForAssociation() {
+    if (widget.entityIndex != null) {
+      AssociationLogicalModel existingModel = AssociationController
+          .instance.stream.value
+          .getOne(id: widget.entityIndex)!;
+      controller.setModel([existingModel]);
+
+      ClientLogicalModel? existingClientModel = ClientController
+          .instance.stream.value
+          .getOne(id: existingModel.model?.clientId);
+      ProjectLogicalModel? existingProjectModel = ProjectController
+          .instance.stream.value
+          .getOne(id: existingModel.model?.projectId);
+      FinanceLogicalModel? existingFinanceModel = FinanceController
+          .instance.stream.value
+          .getOne(id: existingModel.model?.financeId);
+
+      associationSection.clientController.text =
+          existingClientModel?.personal?.model?.name ?? "";
+      associationSection.projectController.text =
+          existingProjectModel?.model?.name ?? "";
+      associationSection.financeController.text =
+          existingFinanceModel?.model?.name ?? "";
+    } else {
+      AssociationLogicalModel newModel = AssociationLogicalModel(
+        model: AssociationDatabaseModel(),
       );
       controller.setModel([newModel]);
     }
@@ -493,6 +498,8 @@ class _EntityFormViewState extends State<EntityFormView> {
         return _buildWorkflowForm();
       case EntityType.Finance:
         return _buildFinanceForm();
+      case EntityType.Association:
+        return _buildAssociationForm();
       default:
         throw Exception("Tipo de entidade não suportado");
     }
@@ -509,6 +516,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         ),
         SizedBox(width: AppResponsive.instance.getWidth(24)),
         Expanded(
+          flex: 2,
           child: WidgetFloatingBox(
             model: WidgetFloatingBoxModel(
               label: "Configurações do Sistema",
@@ -1108,21 +1116,9 @@ class _EntityFormViewState extends State<EntityFormView> {
                                 WorkflowController.instance.stream.value.getOne(
                               name: projectSection.workflowController.text,
                             );
-                            ClientLogicalModel? clientModel =
-                                ClientController.instance.stream.value.getOne(
-                              name: associationSection.clientController.text,
-                            );
-                            FinanceLogicalModel? financeModel =
-                                FinanceController.instance.stream.value.getOne(
-                              name: associationSection.financeController.text,
-                            );
 
                             projectModel.model?.workflowId =
                                 workflowModel?.model?.id;
-                            projectModel.model?.clientId =
-                                clientModel?.model?.id;
-                            projectModel.model?.financeId =
-                                financeModel?.model?.id;
 
                             controller.setModel([
                               projectModel,
@@ -1135,104 +1131,6 @@ class _EntityFormViewState extends State<EntityFormView> {
                                     widget.operation == EntityOperation.Update)
                                 ? true
                                 : false,
-                      ),
-                    ),
-                    SizedBox(height: AppResponsive.instance.getHeight(24)),
-                    WidgetSelectorField(
-                      model: WidgetSelectorFieldModel(
-                        controller: associationSection.clientController,
-                        headerText: associationSection.clientLabel,
-                        hintText: associationSection.clientHint,
-                        validator: (value) =>
-                            associationSection.validateClient(value),
-                        options:
-                            (associationSection.clientController.text != "" &&
-                                    widget.operation == EntityOperation.Update)
-                                ? [associationSection.clientController.text]
-                                : ClientController.instance.stream.value
-                                    .getAll()
-                                    .map((e) => e!.personal!.model!.name)
-                                    .toList(),
-                        function: () {
-                          setState(() {
-                            ProjectLogicalModel projectModel = (controller
-                                .getModel()[0] as ProjectLogicalModel);
-
-                            WorkflowLogicalModel? workflowModel =
-                                WorkflowController.instance.stream.value.getOne(
-                              name: projectSection.workflowController.text,
-                            );
-                            ClientLogicalModel? clientModel =
-                                ClientController.instance.stream.value.getOne(
-                              name: associationSection.clientController.text,
-                            );
-                            FinanceLogicalModel? financeModel =
-                                FinanceController.instance.stream.value.getOne(
-                              name: associationSection.financeController.text,
-                            );
-
-                            projectModel.model?.workflowId =
-                                workflowModel?.model?.id;
-                            projectModel.model?.clientId =
-                                clientModel?.model?.id;
-                            projectModel.model?.financeId =
-                                financeModel?.model?.id;
-
-                            controller.setModel([
-                              projectModel,
-                              workflowModel,
-                            ]);
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(height: AppResponsive.instance.getHeight(24)),
-                    WidgetSelectorField(
-                      model: WidgetSelectorFieldModel(
-                        controller: associationSection.financeController,
-                        headerText: associationSection.financeLabel,
-                        hintText: associationSection.financeHint,
-                        validator: (value) =>
-                            associationSection.validateFinance(value),
-                        options:
-                            (associationSection.financeController.text != "" &&
-                                    widget.operation == EntityOperation.Update)
-                                ? [associationSection.financeController.text]
-                                : FinanceController.instance.stream.value
-                                    .getAll()
-                                    .map((e) => e!.model!.name!)
-                                    .toList(),
-                        function: () {
-                          setState(() {
-                            ProjectLogicalModel projectModel = (controller
-                                .getModel()[0] as ProjectLogicalModel);
-
-                            WorkflowLogicalModel? workflowModel =
-                                WorkflowController.instance.stream.value.getOne(
-                              name: projectSection.workflowController.text,
-                            );
-                            ClientLogicalModel? clientModel =
-                                ClientController.instance.stream.value.getOne(
-                              name: associationSection.clientController.text,
-                            );
-                            FinanceLogicalModel? financeModel =
-                                FinanceController.instance.stream.value.getOne(
-                              name: associationSection.financeController.text,
-                            );
-
-                            projectModel.model?.workflowId =
-                                workflowModel?.model?.id;
-                            projectModel.model?.clientId =
-                                clientModel?.model?.id;
-                            projectModel.model?.financeId =
-                                financeModel?.model?.id;
-
-                            controller.setModel([
-                              projectModel,
-                              workflowModel,
-                            ]);
-                          });
-                        },
                       ),
                     ),
                   ],
@@ -1405,42 +1303,6 @@ class _EntityFormViewState extends State<EntityFormView> {
                                 ?.description = value,
                       ),
                     ),
-                    SizedBox(height: AppResponsive.instance.getHeight(24)),
-                    WidgetSelectorField(
-                      model: WidgetSelectorFieldModel(
-                        controller: associationSection.clientController,
-                        headerText: associationSection.clientLabel,
-                        hintText: associationSection.clientHint,
-                        validator: (value) =>
-                            associationSection.validateClient(value),
-                        options: ClientController.instance.stream.value
-                            .getAll()
-                            .map((e) => e!.personal!.model!.name)
-                            .toList(),
-                        function: () {
-                          setState(() {
-                            FinanceLogicalModel financeModel = (controller
-                                .getModel()[0] as FinanceLogicalModel);
-
-                            ClientLogicalModel? clientModel =
-                                ClientController.instance.stream.value.getOne(
-                              name: associationSection.clientController.text,
-                            );
-                            ProjectLogicalModel? projectModel =
-                                ProjectController.instance.stream.value.getOne(
-                              name: associationSection.financeController.text,
-                            );
-
-                            financeModel.model?.clientId =
-                                clientModel?.model?.id;
-                            projectModel?.model?.financeId =
-                                financeModel.model?.id;
-
-                            controller.setModel([financeModel]);
-                          });
-                        },
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -1476,6 +1338,137 @@ class _EntityFormViewState extends State<EntityFormView> {
     );
   }
 
+  Widget _buildAssociationForm() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: SizedBox.shrink(),
+        ),
+        SizedBox(
+          width: AppResponsive.instance.getWidth(24),
+        ),
+        Expanded(
+          flex: 2,
+          child: WidgetFloatingBox(
+            model: WidgetFloatingBoxModel(
+              label: "Dados das entidades",
+              padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+              widget: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.clientController,
+                        headerText: associationSection.clientLabel,
+                        hintText: associationSection.clientHint,
+                        validator: (value) =>
+                            associationSection.validateClient(value),
+                        options: ClientController.instance.stream.value
+                            .getAll()
+                            .map((e) => e!.personal!.model!.name)
+                            .toList(),
+                        function: () {
+                          setState(() {
+                            AssociationLogicalModel associationModel =
+                                (controller.getModel()[0]
+                                    as AssociationLogicalModel);
+
+                            ClientLogicalModel? clientModel =
+                                ClientController.instance.stream.value.getOne(
+                              name: associationSection.clientController.text,
+                            );
+
+                            associationModel.model?.clientId =
+                                clientModel?.model?.id;
+
+                            controller.setModel([associationModel]);
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.projectController,
+                        headerText: associationSection.projectLabel,
+                        hintText: associationSection.projectHint,
+                        validator: (value) =>
+                            associationSection.validateProject(value),
+                        options: ProjectController.instance.stream.value
+                            .getAll()
+                            .map((e) => e!.model!.name!)
+                            .toList(),
+                        function: () {
+                          setState(() {
+                            AssociationLogicalModel associationModel =
+                                (controller.getModel()[0]
+                                    as AssociationLogicalModel);
+
+                            ProjectLogicalModel? projectModel =
+                                ProjectController.instance.stream.value.getOne(
+                              name: associationSection.projectController.text,
+                            );
+
+                            associationModel.model?.projectId =
+                                projectModel?.model?.id;
+
+                            controller.setModel([associationModel]);
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: AppResponsive.instance.getHeight(24)),
+                    WidgetSelectorField(
+                      model: WidgetSelectorFieldModel(
+                        controller: associationSection.financeController,
+                        headerText: associationSection.financeLabel,
+                        hintText: associationSection.financeHint,
+                        validator: (value) =>
+                            associationSection.validateFinance(value),
+                        options: FinanceController.instance.stream.value
+                            .getAll()
+                            .map((e) => e!.model!.name!)
+                            .toList(),
+                        function: () {
+                          setState(() {
+                            AssociationLogicalModel associationModel =
+                                (controller.getModel()[0]
+                                    as AssociationLogicalModel);
+
+                            FinanceLogicalModel? financeModel =
+                                FinanceController.instance.stream.value.getOne(
+                              name: associationSection.financeController.text,
+                            );
+
+                            associationModel.model?.financeId =
+                                financeModel?.model?.id;
+
+                            controller.setModel([associationModel]);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: AppResponsive.instance.getWidth(24),
+        ),
+        Expanded(
+          child: SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+
   //* UTILITÁRIOS *//
 
   String getTitle() {
@@ -1492,6 +1485,8 @@ class _EntityFormViewState extends State<EntityFormView> {
         return "Workflow";
       case EntityType.Finance:
         return "Finanças";
+      case EntityType.Association:
+        return "Associações";
       default:
         throw Exception("Tipo de entidade não suportado");
     }

@@ -14,7 +14,8 @@ enum EntityType {
   Finance,
   Workflow,
   System,
-  Default
+  Association,
+  Default,
 }
 
 enum EntityOperation { Create, Read, Update, Delete }

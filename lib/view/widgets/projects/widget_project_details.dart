@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/services/database/model/client_model.dart';
@@ -29,11 +30,17 @@ class _WidgetProjectDetailsState extends State<WidgetProjectDetails> {
   void _buildValues() {
     ClientLogicalModel? clientModel =
         ClientController.instance.stream.value.getOne(
-      id: widget.model.model?.clientId,
+      id: AssociationController.instance.stream.value
+          .getOne(projectId: widget.model.model?.id)
+          ?.model
+          ?.clientId,
     );
     FinanceLogicalModel? financeModel =
         FinanceController.instance.stream.value.getOne(
-      id: widget.model.model?.financeId,
+      id: AssociationController.instance.stream.value
+          .getOne(projectId: widget.model.model?.id)
+          ?.model
+          ?.financeId,
     );
 
     map.addAll({

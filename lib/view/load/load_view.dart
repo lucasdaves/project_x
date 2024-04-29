@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -88,6 +89,8 @@ class _LoadViewState extends State<LoadView> {
                 _buildFinanceStatus(),
                 SizedBox(height: AppResponsive.instance.getHeight(12)),
                 _buildWorkflowStatus(),
+                SizedBox(height: AppResponsive.instance.getHeight(12)),
+                _buildAssociationStatus(),
               ],
             ),
           ),
@@ -156,6 +159,18 @@ class _LoadViewState extends State<LoadView> {
     );
   }
 
+  Widget _buildAssociationStatus() {
+    return StreamBuilder(
+      stream: AssociationController.instance.stream,
+      builder: (context, snapshot) {
+        return _buildStatusRow(
+          title: "Carregando associações",
+          status: snapshot.data?.status,
+        );
+      },
+    );
+  }
+
   Widget _buildStatusRow({required String title, EntityStatus? status}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,6 +214,7 @@ class _LoadViewState extends State<LoadView> {
       ProjectController.instance.readProject(),
       FinanceController.instance.readFinance(),
       WorkflowController.instance.readWorkflow(),
+      AssociationController.instance.readAssociation(),
     ]).then((_) {
       _onAllStreamsLoaded();
     });

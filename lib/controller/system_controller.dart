@@ -85,6 +85,7 @@ class SystemController {
         throw "Sistema não encontrado";
       }
 
+      model.status = EntityStatus.Completed;
       model.system = SystemLogicalModel(
         model: SystemDatabaseModel.fromMap(mapA.first),
       );
@@ -99,7 +100,6 @@ class SystemController {
       await WorkflowController.instance.readWorkflow();
       await ProjectController.instance.readProject();
       await FinanceController.instance.readFinance();
-      //await UserController.instance.readUser();
     }
   }
 
