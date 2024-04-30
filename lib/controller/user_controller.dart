@@ -381,12 +381,8 @@ class UserController {
         throw "Recuperação está incorreta";
       }
 
-      // model.recover = RecoverLogicalModel(
-      //   model: RecoverDatabaseModel.fromMap(mapB.first),
-      // );
-
       model.model?.password = "1234";
-      updateUser(model: model);
+      await updateUser(model: model);
 
       return true;
     } catch (error) {

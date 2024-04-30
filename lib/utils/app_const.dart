@@ -5,4 +5,7 @@ class AppConst {
       "${imagePath}image_background_landscape.png";
   static const String imageBackgroundPortrait =
       "${imagePath}image_background_portrait.png";
+
+  //* FILES *//
+  static const String basePath = "ProjectX";
 }

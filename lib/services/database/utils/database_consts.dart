@@ -4,8 +4,9 @@ class DatabaseConsts {
 
   //* DATABASE *//
 
-  final String databaseName = "project_x.db";
+  final String databaseName = "project_x_database.db";
   final String databaseSubpath = "databases";
+
   final int databaseVersion = 1;
 
   //* TABLE TAG *//

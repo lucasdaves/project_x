@@ -4,8 +4,10 @@ import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
+import 'package:project_x/services/export/export_service.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
@@ -32,6 +34,7 @@ import 'package:project_x/view/widgets/projects/widget_project_balance.dart';
 import 'package:project_x/view/widgets/projects/widget_project_details.dart';
 import 'package:project_x/view/widgets/projects/widget_project_situation.dart';
 import 'package:project_x/view/widgets/workflows/widget_workflow_box.dart';
+import 'package:screenshot/screenshot.dart';
 
 class EntityResumeView extends StatefulWidget {
   static const String tag = "/resume_view";
@@ -52,6 +55,8 @@ class EntityResumeView extends StatefulWidget {
 class _EntityResumeViewState extends State<EntityResumeView> {
   String entity = "";
 
+  ScreenshotController controller = ExportService.instance.getController();
+
   @override
   void initState() {
     getEntityName();
@@ -60,12 +65,15 @@ class _EntityResumeViewState extends State<EntityResumeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildBar(),
-      body: _buildBody(),
-      drawer: WidgetStartDrawer(),
-      endDrawer: WidgetEndDrawer(),
-      backgroundColor: AppColor.colorPrimary,
+    return Screenshot(
+      controller: controller,
+      child: Scaffold(
+        appBar: _buildBar(),
+        body: _buildBody(),
+        drawer: WidgetStartDrawer(),
+        endDrawer: WidgetEndDrawer(),
+        backgroundColor: AppColor.colorPrimary,
+      ),
     );
   }
 
@@ -155,9 +163,26 @@ class _EntityResumeViewState extends State<EntityResumeView> {
 
   List<WidgetActionIcon> getActions() {
     List<WidgetActionIcon> actions = [];
+
     switch (widget.type) {
       case EntityType.Client:
         actions = [
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.picture_in_picture_rounded,
+              label: "Exportar",
+              function: () async {
+                ExportService.instance.print(controller).then((value) {
+                  AppFeedback(
+                    text: "${value.values.first}",
+                    color: value.keys.first
+                        ? AppColor.colorPositiveStatus
+                        : AppColor.colorNegativeStatus,
+                  ).showSnackbar(context);
+                });
+              },
+            ),
+          ),
           WidgetActionIcon(
             model: WidgetActionIconModel(
               icon: Icons.edit,
@@ -180,6 +205,22 @@ class _EntityResumeViewState extends State<EntityResumeView> {
         actions = [
           WidgetActionIcon(
             model: WidgetActionIconModel(
+              icon: Icons.picture_in_picture_rounded,
+              label: "Exportar",
+              function: () async {
+                ExportService.instance.print(controller).then((value) {
+                  AppFeedback(
+                    text: "${value.values.first}",
+                    color: value.keys.first
+                        ? AppColor.colorPositiveStatus
+                        : AppColor.colorNegativeStatus,
+                  ).showSnackbar(context);
+                });
+              },
+            ),
+          ),
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
               icon: Icons.edit,
               label: "Editar",
               function: () async {
@@ -198,6 +239,22 @@ class _EntityResumeViewState extends State<EntityResumeView> {
         break;
       case EntityType.Finance:
         actions = [
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.picture_in_picture_rounded,
+              label: "Exportar",
+              function: () async {
+                ExportService.instance.print(controller).then((value) {
+                  AppFeedback(
+                    text: "${value.values.first}",
+                    color: value.keys.first
+                        ? AppColor.colorPositiveStatus
+                        : AppColor.colorNegativeStatus,
+                  ).showSnackbar(context);
+                });
+              },
+            ),
+          ),
           WidgetActionIcon(
             model: WidgetActionIconModel(
               icon: Icons.edit,

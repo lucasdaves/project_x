@@ -93,13 +93,14 @@ class WidgetEndDrawer extends StatelessWidget {
         break;
       default:
         label = "Logout";
-        function = () {
-          UserController.instance.setLogout();
-          AppRoute(
-            tag: EntityFormView.tag,
-            reset: SplashView.tag,
-            screen: SplashView(),
-          ).navigate(context);
+        function = () async {
+          await UserController.instance.setLogout().then(
+                (value) => AppRoute(
+                  tag: EntityFormView.tag,
+                  reset: SplashView.tag,
+                  screen: SplashView(),
+                ).navigate(context),
+              );
         };
         break;
     }
