@@ -1,4 +1,5 @@
 import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 
@@ -17,15 +18,28 @@ class ProjectStreamModel {
     );
   }
 
-  List<ProjectLogicalModel?> getAll({bool isAssociation = false}) {
+  List<ProjectLogicalModel?> getAll() {
     ProjectStreamModel aux = copy();
-    if (isAssociation) {
-      aux.projects?.removeWhere((element) => AssociationController
-          .instance.stream.value
-          .getAll()
-          .map((e) => e?.model?.projectId)
-          .contains(element?.model?.id));
-    }
+    return aux.projects ?? [];
+  }
+
+  List<ProjectLogicalModel?> getAllAssociation({int? associationIndex}) {
+    ProjectStreamModel aux = copy();
+
+    aux.projects?.removeWhere((element) {
+      for (AssociationLogicalModel? association
+          in AssociationController.instance.stream.value.getAll()) {
+        if (associationIndex != null &&
+            associationIndex == element?.model?.id) {
+          return false;
+        }
+        if (association?.model?.projectId == element?.model?.id) {
+          return true;
+        }
+      }
+      return false;
+    });
+
     return aux.projects ?? [];
   }
 

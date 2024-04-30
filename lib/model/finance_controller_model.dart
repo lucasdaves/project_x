@@ -1,5 +1,6 @@
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
+import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 
 class FinanceStreamModel {
@@ -15,15 +16,28 @@ class FinanceStreamModel {
     );
   }
 
-  List<FinanceLogicalModel?> getAll({bool isAssociation = false}) {
+  List<FinanceLogicalModel?> getAll() {
     FinanceStreamModel aux = copy();
-    if (isAssociation) {
-      aux.finances?.removeWhere((element) => AssociationController
-          .instance.stream.value
-          .getAll()
-          .map((e) => e?.model?.financeId)
-          .contains(element?.model?.id));
-    }
+    return aux.finances ?? [];
+  }
+
+  List<FinanceLogicalModel?> getAllAssociation({int? associationIndex}) {
+    FinanceStreamModel aux = copy();
+
+    aux.finances?.removeWhere((element) {
+      for (AssociationLogicalModel? association
+          in AssociationController.instance.stream.value.getAll()) {
+        if (associationIndex != null &&
+            associationIndex == element?.model?.id) {
+          return false;
+        }
+        if (association?.model?.financeId == element?.model?.id) {
+          return true;
+        }
+      }
+      return false;
+    });
+
     return aux.finances ?? [];
   }
 
