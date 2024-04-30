@@ -34,7 +34,7 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      height: AppResponsive.instance.getHeight(145),
+      height: AppResponsive.instance.getHeight(130),
       margin: EdgeInsets.symmetric(
         horizontal: AppResponsive.instance.getWidth(12),
       ),
@@ -95,11 +95,6 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
                 height: AppResponsive.instance.getHeight(12),
                 decoration: BoxDecoration(
                   color: entry.value,
-                  border: Border.all(
-                    color: AppColor.colorDivider,
-                    width: 2,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                  ),
                   borderRadius: BorderRadius.only(
                     topLeft: map.entries.first.value == entry.value
                         ? Radius.circular(4)
@@ -132,7 +127,7 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...map.entries.map((entry) {

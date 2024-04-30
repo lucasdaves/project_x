@@ -145,7 +145,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isLast) ...[
-            WidgetDivider(space: 2),
+            WidgetDivider(verticalSpace: 2, horizontalSpace: 0),
           ],
           Container(
             width: AppResponsive.instance.getWidth(150),
@@ -210,7 +210,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
             ),
           ),
           if (isFirst) ...[
-            WidgetDivider(space: 2),
+            WidgetDivider(verticalSpace: 2, horizontalSpace: 0),
           ],
         ],
       ),

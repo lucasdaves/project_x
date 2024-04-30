@@ -11,6 +11,7 @@ import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
+import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
@@ -383,7 +384,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                         model: ProjectController.instance.stream.value
                             .getOne(id: widget.entityIndex)!,
                       ),
-                      WidgetDivider(space: 12),
+                      WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                       WidgetProjectSituation(
                         key: UniqueKey(),
                         model: WorkflowController.instance.stream.value.getOne(
@@ -392,7 +393,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                                 .model!
                                 .workflowId!)!,
                       ),
-                      WidgetDivider(space: 12),
+                      WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                       WidgetProjectBalance(
                         key: UniqueKey(),
                         model: WorkflowController.instance.stream.value.getOne(
@@ -447,7 +448,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                   id: AssociationController.instance.stream.value
                       .getOne(clientId: widget.entityIndex)
                       ?.model
-                      ?.clientId) !=
+                      ?.financeId) !=
               null) ...[
             SizedBox(width: AppResponsive.instance.getWidth(20)),
             Expanded(
@@ -455,6 +456,26 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               child: WidgetFloatingBox(
                 model: WidgetFloatingBoxModel(
                   label: "Financeiro",
+                  actionWidget: GestureDetector(
+                    onTap: () {
+                      AppRoute(
+                        tag: EntityResumeView.tag,
+                        screen: EntityResumeView(
+                          type: EntityType.Finance,
+                          entityIndex: AssociationController
+                              .instance.stream.value
+                              .getOne(clientId: widget.entityIndex)!
+                              .model!
+                              .financeId!,
+                        ),
+                      ).navigate(context);
+                    },
+                    child: Text(
+                      "Ver mais",
+                      style:
+                          AppTextStyle.size20(color: AppColor.colorSecondary),
+                    ),
+                  ),
                   widget: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -468,7 +489,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                                   ?.model
                                   ?.clientId)!,
                         ),
-                        WidgetDivider(space: 12),
+                        WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                         WidgetFinancePayment(
                           key: UniqueKey(),
                           model: FinanceController.instance.stream.value.getOne(
@@ -477,7 +498,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                                   ?.model
                                   ?.clientId)!,
                         ),
-                        WidgetDivider(space: 12),
+                        WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                         WidgetFinanceBalance(
                           key: UniqueKey(),
                           model: FinanceController.instance.stream.value.getOne(
@@ -562,13 +583,13 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                         model: FinanceController.instance.stream.value
                             .getOne(id: widget.entityIndex)!,
                       ),
-                      WidgetDivider(space: 12),
+                      WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                       WidgetFinancePayment(
                         key: UniqueKey(),
                         model: FinanceController.instance.stream.value
                             .getOne(id: widget.entityIndex)!,
                       ),
-                      WidgetDivider(space: 12),
+                      WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                       WidgetFinanceBalance(
                         key: UniqueKey(),
                         model: FinanceController.instance.stream.value

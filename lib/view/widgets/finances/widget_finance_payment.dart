@@ -88,12 +88,7 @@ class _WidgetFinancePaymentState extends State<WidgetFinancePayment> {
               return PieChartSectionData(
                 color: entry.value,
                 value: entry.key.values.first,
-                borderSide: BorderSide(
-                  color: AppColor.colorDivider,
-                  width: AppResponsive.instance.getWidth(2),
-                  strokeAlign: BorderSide.strokeAlignOutside,
-                ),
-                radius: AppResponsive.instance.getWidth(12),
+                radius: AppResponsive.instance.getWidth(10),
                 showTitle: false,
               );
             }).toList(),
