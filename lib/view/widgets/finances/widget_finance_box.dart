@@ -212,7 +212,9 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       operationSection.amountController.text =
           financeOperation.model?.amount ?? "";
       operationSection.dateController.text =
-          financeOperation.model?.expiresAt?.formatString() ?? "";
+          financeOperation.model?.expiresAt?.formatString() ??
+              financeOperation.model?.concludedAt?.formatString() ??
+              "";
       operationSection.statusController.text =
           financeOperation.model?.status ?? "";
     }
@@ -276,20 +278,20 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
         widget.model.operations!.add(operation);
       }
 
-      // if (typeIndex != 0) {
-      //   if (widget.model.getType(type: 1).every((element) =>
-      //       FinanceOperationDatabaseModel.statusMap[1] ==
-      //       element?.model?.status)) {
-      //     widget.model.getType(type: 0).first?.model?.expiresAt = null;
-      //     widget.model.getType(type: 0).first?.model?.status =
-      //         FinanceOperationDatabaseModel.statusMap[1];
-      //   } else {
-      //     widget.model.getType(type: 0).first?.model?.expiresAt =
-      //         widget.model.getParcelDate();
-      //     widget.model.getType(type: 0).first?.model?.status =
-      //         FinanceOperationDatabaseModel.statusMap[0];
-      //   }
-      // }
+      if (typeIndex != 0) {
+        if (widget.model.getType(type: 1).every((element) =>
+            FinanceOperationDatabaseModel.statusMap[1] ==
+            element?.model?.status)) {
+          widget.model.getType(type: 0).first?.model?.expiresAt = null;
+          widget.model.getType(type: 0).first?.model?.status =
+              FinanceOperationDatabaseModel.statusMap[1];
+        } else {
+          widget.model.getType(type: 0).first?.model?.expiresAt =
+              widget.model.getParcelDate();
+          widget.model.getType(type: 0).first?.model?.status =
+              FinanceOperationDatabaseModel.statusMap[0];
+        }
+      }
     });
   }
 

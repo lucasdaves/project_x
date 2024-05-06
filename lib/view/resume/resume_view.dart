@@ -329,15 +329,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Project,
-                  clientAssociation: ProjectController.instance.stream.value
-                          .getOne(
-                              id: AssociationController.instance.stream.value
-                                  .getOne(clientId: widget.entityIndex)
-                                  ?.model
-                                  ?.projectId)
-                          ?.model
-                          ?.id ??
-                      -1,
+                  clientAssociation: widget.entityIndex,
                 ),
               ),
             ),
@@ -352,15 +344,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 widget: WidgetListEntity(
                   isResume: false,
                   type: EntityType.Finance,
-                  clientAssociation: FinanceController.instance.stream.value
-                          .getOne(
-                              id: AssociationController.instance.stream.value
-                                  .getOne(clientId: widget.entityIndex)
-                                  ?.model
-                                  ?.financeId)
-                          ?.model
-                          ?.id ??
-                      -1,
+                  clientAssociation: widget.entityIndex,
                 ),
               ),
             ),
@@ -446,72 +430,85 @@ class _EntityResumeViewState extends State<EntityResumeView> {
           ],
           if (FinanceController.instance.stream.value.getOne(
                   id: AssociationController.instance.stream.value
-                      .getOne(clientId: widget.entityIndex)
+                      .getOne(projectId: widget.entityIndex)
                       ?.model
                       ?.financeId) !=
               null) ...[
             SizedBox(width: AppResponsive.instance.getWidth(20)),
-            Expanded(
-              flex: 3,
-              child: WidgetFloatingBox(
-                model: WidgetFloatingBoxModel(
-                  label: "Financeiro",
-                  actionWidget: GestureDetector(
-                    onTap: () {
-                      AppRoute(
-                        tag: EntityResumeView.tag,
-                        screen: EntityResumeView(
-                          type: EntityType.Finance,
-                          entityIndex: AssociationController
-                              .instance.stream.value
-                              .getOne(clientId: widget.entityIndex)!
-                              .model!
-                              .financeId!,
+            StreamBuilder(
+              stream: FinanceController.instance.stream,
+              builder: (context, snapshot) {
+                return Expanded(
+                  flex: 3,
+                  child: WidgetFloatingBox(
+                    model: WidgetFloatingBoxModel(
+                      label: "Financeiro",
+                      actionWidget: GestureDetector(
+                        onTap: () {
+                          AppRoute(
+                            tag: EntityResumeView.tag,
+                            screen: EntityResumeView(
+                              type: EntityType.Finance,
+                              entityIndex: AssociationController
+                                  .instance.stream.value
+                                  .getOne(projectId: widget.entityIndex)!
+                                  .model!
+                                  .financeId!,
+                            ),
+                          ).navigate(context);
+                        },
+                        child: Text(
+                          "Ver mais",
+                          style: AppTextStyle.size20(
+                              color: AppColor.colorSecondary),
                         ),
-                      ).navigate(context);
-                    },
-                    child: Text(
-                      "Ver mais",
-                      style:
-                          AppTextStyle.size20(color: AppColor.colorSecondary),
+                      ),
+                      widget: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            WidgetFinanceSituation(
+                              key: UniqueKey(),
+                              model: FinanceController.instance.stream.value
+                                  .getOne(
+                                      id: AssociationController
+                                          .instance.stream.value
+                                          .getOne(projectId: widget.entityIndex)
+                                          ?.model
+                                          ?.financeId)!,
+                            ),
+                            WidgetDivider(
+                                verticalSpace: 12, horizontalSpace: 8),
+                            WidgetFinancePayment(
+                              key: UniqueKey(),
+                              model: FinanceController.instance.stream.value
+                                  .getOne(
+                                      id: AssociationController
+                                          .instance.stream.value
+                                          .getOne(projectId: widget.entityIndex)
+                                          ?.model
+                                          ?.financeId)!,
+                            ),
+                            WidgetDivider(
+                                verticalSpace: 12, horizontalSpace: 8),
+                            WidgetFinanceBalance(
+                              key: UniqueKey(),
+                              model: FinanceController.instance.stream.value
+                                  .getOne(
+                                      id: AssociationController
+                                          .instance.stream.value
+                                          .getOne(projectId: widget.entityIndex)
+                                          ?.model
+                                          ?.financeId)!,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  widget: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        WidgetFinanceSituation(
-                          key: UniqueKey(),
-                          model: FinanceController.instance.stream.value.getOne(
-                              id: AssociationController.instance.stream.value
-                                  .getOne(clientId: widget.entityIndex)
-                                  ?.model
-                                  ?.clientId)!,
-                        ),
-                        WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
-                        WidgetFinancePayment(
-                          key: UniqueKey(),
-                          model: FinanceController.instance.stream.value.getOne(
-                              id: AssociationController.instance.stream.value
-                                  .getOne(clientId: widget.entityIndex)
-                                  ?.model
-                                  ?.clientId)!,
-                        ),
-                        WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
-                        WidgetFinanceBalance(
-                          key: UniqueKey(),
-                          model: FinanceController.instance.stream.value.getOne(
-                              id: AssociationController.instance.stream.value
-                                  .getOne(clientId: widget.entityIndex)
-                                  ?.model
-                                  ?.clientId)!,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ];

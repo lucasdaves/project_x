@@ -39,7 +39,7 @@ class AssociationStreamModel {
     for (AssociationLogicalModel? entity in aux.associations ?? []) {
       if (id != null && entity?.model?.id == id) {
         return entity;
-      } else if (projectId != null && entity?.model?.clientId == projectId) {
+      } else if (projectId != null && entity?.model?.projectId == projectId) {
         return entity;
       } else if (clientId != null && entity?.model?.clientId == clientId) {
         return entity;
