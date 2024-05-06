@@ -8,6 +8,7 @@ class SubstepDatabaseModel {
   String name;
   String? description;
   String? status;
+  String? evolution;
   DateTime? expiresAt;
   DateTime? concludedAt;
   int? stepId;
@@ -17,6 +18,7 @@ class SubstepDatabaseModel {
     required this.name,
     this.description,
     required this.status,
+    this.evolution,
     this.expiresAt,
     this.concludedAt,
     this.stepId,
@@ -34,6 +36,7 @@ class SubstepDatabaseModel {
       name: map['atr_name'],
       description: map['atr_description'],
       status: statusMap[map['atr_status']],
+      evolution: map['atr_evolution_porcentage'],
       expiresAt: map['atr_expires_at'] != null
           ? DateTime.parse(map['atr_expires_at'])
           : null,
@@ -50,6 +53,7 @@ class SubstepDatabaseModel {
       'atr_name': name,
       'atr_description': description,
       'atr_status': statusMap.values.toList().indexWhere((e) => e == status),
+      'atr_evolution_porcentage': evolution,
       'atr_expires_at': expiresAt?.toIso8601String(),
       'atr_concluded_at': concludedAt?.toIso8601String(),
       'tb_step_atr_id': stepId,
@@ -62,6 +66,7 @@ class SubstepDatabaseModel {
       name: this.name,
       description: this.description,
       status: this.status,
+      evolution: this.evolution,
       expiresAt: this.expiresAt,
       concludedAt: this.concludedAt,
       stepId: this.stepId,
@@ -98,7 +103,8 @@ class SubstepLogicalModel {
         expiration.difference(DateTime.now()).inDays <= reminderDate) {
       map["Em alerta ${expiration.formatString()}"] = AppColor.colorAlertStatus;
     } else if (SubstepDatabaseModel.statusMap[2] == model?.status) {
-      map[SubstepDatabaseModel.statusMap[2]!] = AppColor.colorPositiveStatus;
+      map["${SubstepDatabaseModel.statusMap[2]}${model?.evolution != null && model!.evolution!.isNotEmpty ? " - ${model?.evolution}%" : ""}"] =
+          AppColor.colorPositiveStatus;
     } else if (SubstepDatabaseModel.statusMap[1] == model?.status) {
       if (expiration != null) {
         map["${SubstepDatabaseModel.statusMap[1]!} ${expiration.formatString()}"] =

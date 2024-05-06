@@ -10,6 +10,7 @@ class FinanceOperationDatabaseModel {
   String? status;
   String? amount;
   DateTime? expiresAt;
+  DateTime? concludedAt;
   int? financeId;
 
   FinanceOperationDatabaseModel({
@@ -19,6 +20,7 @@ class FinanceOperationDatabaseModel {
     this.status,
     this.amount,
     this.expiresAt,
+    this.concludedAt,
     this.financeId,
   });
 
@@ -37,6 +39,9 @@ class FinanceOperationDatabaseModel {
       expiresAt: map['atr_expires_at'] != null
           ? DateTime.parse(map['atr_expires_at'])
           : null,
+      concludedAt: map['atr_concluded_at'] != null
+          ? DateTime.parse(map['atr_concluded_at'])
+          : null,
       financeId: map['tb_finance_atr_id'],
     );
   }
@@ -49,6 +54,7 @@ class FinanceOperationDatabaseModel {
       'atr_status': statusMap.values.toList().indexWhere((e) => e == status),
       'atr_amount': amount,
       'atr_expires_at': expiresAt?.toIso8601String(),
+      'atr_concluded_at': concludedAt?.toIso8601String(),
       'tb_finance_atr_id': financeId,
     };
   }
@@ -61,6 +67,7 @@ class FinanceOperationDatabaseModel {
       status: this.status,
       amount: this.amount,
       expiresAt: this.expiresAt,
+      concludedAt: this.concludedAt,
       financeId: this.financeId,
     );
   }
@@ -81,12 +88,14 @@ class FinanceOperationLogicalModel {
     Map<String, Color> map = {};
 
     DateTime? expiration = model?.expiresAt;
+    DateTime? conclusion = model?.concludedAt;
     int? reminderDate = int.tryParse(SystemController
             .instance.stream.value.system?.model?.financeReminderDate ??
         "");
 
     if (FinanceOperationDatabaseModel.statusMap[1] == model?.status) {
-      map["Pago"] = AppColor.colorPositiveStatus;
+      map["Pago (${conclusion?.formatString()})"] =
+          AppColor.colorPositiveStatus;
       return map;
     }
 

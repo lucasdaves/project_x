@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
@@ -13,7 +14,14 @@ class WidgetTextField extends StatefulWidget {
 }
 
 class _WidgetTextFieldState extends State<WidgetTextField> {
-  bool hasError = false;
+  late double height;
+
+  @override
+  void initState() {
+    super.initState();
+    getHeight();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,13 +38,17 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
             style: AppTextStyle.size14(),
           ),
           subtitle: Container(
-            height: AppResponsive.instance.getHeight(50),
+            height: AppResponsive.instance.getHeight(height),
             margin: EdgeInsets.only(top: AppResponsive.instance.getHeight(12)),
+            padding: EdgeInsets.symmetric(
+              vertical: AppResponsive.instance.getHeight(6),
+            ),
             decoration: BoxDecoration(
               border: Border.all(color: AppColor.colorDivider, width: 2),
               borderRadius: BorderRadius.circular(8),
               color: AppColor.colorFieldBackground,
             ),
+            clipBehavior: Clip.hardEdge,
             child: TextFormField(
               controller: widget.model.controller,
               validator: widget.model.validator,
@@ -49,10 +61,14 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
               cursorErrorColor: AppColor.colorNegativeStatus,
               textAlignVertical: TextAlignVertical.center,
               onChanged: (value) {
+                getHeight();
                 if (widget.model.changed != null) {
                   widget.model.changed!(value);
                 }
               },
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(150),
+              ],
               decoration: InputDecoration(
                 hintText: widget.model.hintText,
                 hintStyle: AppTextStyle.size12(
@@ -73,6 +89,14 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
         ),
       ],
     );
+  }
+
+  void getHeight() {
+    int treshold = 2;
+    setState(() {
+      int maxLines = (widget.model.controller.text.length / 20).ceil();
+      height = maxLines <= treshold ? 55 : 55 + (maxLines - treshold) * 15;
+    });
   }
 }
 

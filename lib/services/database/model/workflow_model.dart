@@ -72,6 +72,7 @@ class WorkflowLogicalModel {
     int delivered = 0;
     int started = 0;
     int idle = 0;
+    int evolution = 0;
 
     for (StepLogicalModel? step in steps ?? []) {
       for (SubstepLogicalModel? substep in step?.substeps ?? []) {
@@ -91,12 +92,13 @@ class WorkflowLogicalModel {
           case 2:
             delivered++;
             total++;
+            evolution += int.tryParse(substep?.model?.evolution ?? "0") ?? 0;
             break;
         }
       }
     }
 
-    list = [total, idle, started, delivered];
+    list = [total, idle, started, delivered, evolution];
 
     return list;
   }
@@ -132,6 +134,11 @@ class WorkflowLogicalModel {
   String getRelationConcluded() {
     List<int> list = getRelation();
     return "${list[3]}/${list[0]}";
+  }
+
+  String getRelationEvolution() {
+    List<int> list = getRelation();
+    return "${list[4]}%";
   }
 
   Map<String, Color> getStatus() {

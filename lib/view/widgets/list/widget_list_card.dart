@@ -37,7 +37,7 @@ class WidgetListEntityCard extends StatelessWidget {
       onTap: function,
       child: Container(
         width: double.maxFinite,
-        height: AppResponsive.instance.getHeight(50),
+        height: AppResponsive.instance.getHeight(55),
         decoration: BoxDecoration(
           border: Border(
             bottom: (isHeader)
@@ -53,17 +53,23 @@ class WidgetListEntityCard extends StatelessWidget {
               flex: 1,
               child: Text(
                 value1,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.size14(color: color1),
               ),
             ),
+            SizedBox(width: AppResponsive.instance.getWidth(6)),
             Expanded(
               flex: 1,
               child: Text(
                 value2,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.size14(color: color2),
               ),
             ),
             if (value3 != null) ...[
+              SizedBox(width: AppResponsive.instance.getWidth(6)),
               Expanded(
                 flex: 1,
                 child: Text(
@@ -73,6 +79,7 @@ class WidgetListEntityCard extends StatelessWidget {
               ),
             ],
             if (value4 != null) ...[
+              SizedBox(width: AppResponsive.instance.getWidth(6)),
               Expanded(
                 flex: 1,
                 child: Text(
@@ -82,6 +89,7 @@ class WidgetListEntityCard extends StatelessWidget {
               ),
             ],
             if (!isRead) ...[
+              SizedBox(width: AppResponsive.instance.getWidth(6)),
               Icon(
                 Icons.chevron_right_rounded,
                 color: (!isHeader || function != null)

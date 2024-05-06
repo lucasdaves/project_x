@@ -203,7 +203,7 @@ class ProjectSection {
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
-  final String workflowHint = "Selecione a workflow ...";
+  final String workflowHint = "Selecione a workflow...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
@@ -239,12 +239,14 @@ class WorkflowOperationSection {
   final String descriptionLabel = "Descrição";
   final String statusLabel = "Situação da entrega";
   final String dateLabel = "Data de entrega";
+  final String evolutionLabel = "Porcentagem de evolução";
 
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
-  final String statusHint = "Escolha uma situação";
-  final String dateHint = "Digite a data de entrega ...";
+  final String statusHint = "Escolha uma situação...";
+  final String dateHint = "Digite a data de entrega...";
+  final String evolutionHint = "Digite a porcentagem de evolução...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
@@ -253,6 +255,9 @@ class WorkflowOperationSection {
     mask: '00/00/0000',
   );
   TextEditingController statusController = TextEditingController();
+  MaskedTextController evolutionController = MaskedTextController(
+    mask: '000',
+  );
 
   // VALIDATION FUNCTIONS
   String? validateTitle(String? value) {
@@ -274,6 +279,10 @@ class WorkflowOperationSection {
   }
 
   String? validateStatus(String? value) {
+    return null;
+  }
+
+  String? validateEvolution(String? value) {
     return null;
   }
 }

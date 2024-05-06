@@ -249,17 +249,23 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
           description: operationSection.descriptionController.text,
           amount: operationSection.amountController.text,
           status: operationSection.statusController.text,
-          expiresAt: operationSection.dateController.text.formatDatetime(),
         ),
       );
+
+      if (FinanceOperationDatabaseModel.statusMap[1] ==
+          operation.model?.status!) {
+        operation.model?.expiresAt = null;
+        operation.model?.concludedAt =
+            operationSection.dateController.text.formatDatetime();
+      } else {
+        operation.model?.concludedAt = null;
+        operation.model?.expiresAt =
+            operationSection.dateController.text.formatDatetime();
+      }
 
       if (financeOperation != null) {
         operation.model?.financeId = financeOperation.model?.financeId;
         operation.model?.id = financeOperation.model?.id;
-        if (FinanceOperationDatabaseModel.statusMap[1] ==
-            operation.model?.status!) {
-          operation.model?.expiresAt = null;
-        }
         if (typeIndex == 0 && widget.operation == EntityOperation.Create) {
           widget.model.operations?.removeWhere(
             (operation) => operation?.model?.type != 0,
@@ -270,20 +276,20 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
         widget.model.operations!.add(operation);
       }
 
-      if (typeIndex != 0) {
-        if (widget.model.getType(type: 1).every((element) =>
-            FinanceOperationDatabaseModel.statusMap[1] ==
-            element?.model?.status)) {
-          widget.model.getType(type: 0).first?.model?.expiresAt = null;
-          widget.model.getType(type: 0).first?.model?.status =
-              FinanceOperationDatabaseModel.statusMap[1];
-        } else {
-          widget.model.getType(type: 0).first?.model?.expiresAt =
-              widget.model.getParcelDate();
-          widget.model.getType(type: 0).first?.model?.status =
-              FinanceOperationDatabaseModel.statusMap[0];
-        }
-      }
+      // if (typeIndex != 0) {
+      //   if (widget.model.getType(type: 1).every((element) =>
+      //       FinanceOperationDatabaseModel.statusMap[1] ==
+      //       element?.model?.status)) {
+      //     widget.model.getType(type: 0).first?.model?.expiresAt = null;
+      //     widget.model.getType(type: 0).first?.model?.status =
+      //         FinanceOperationDatabaseModel.statusMap[1];
+      //   } else {
+      //     widget.model.getType(type: 0).first?.model?.expiresAt =
+      //         widget.model.getParcelDate();
+      //     widget.model.getType(type: 0).first?.model?.status =
+      //         FinanceOperationDatabaseModel.statusMap[0];
+      //   }
+      // }
     });
   }
 
@@ -356,16 +362,13 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
                   function: () => state(() {}),
                 ),
                 SizedBox(height: AppResponsive.instance.getHeight(24)),
-                if (FinanceOperationDatabaseModel.statusMap[0] ==
-                    operationSection.statusController.text) ...[
-                  _buildTextField(
-                    controller: operationSection.dateController,
-                    headerText: operationSection.dateLabel,
-                    hintText: operationSection.dateHint,
-                    validator: operationSection.validateDate,
-                  ),
-                  SizedBox(height: AppResponsive.instance.getHeight(24)),
-                ],
+                _buildTextField(
+                  controller: operationSection.dateController,
+                  headerText: operationSection.dateLabel,
+                  hintText: operationSection.dateHint,
+                  validator: operationSection.validateDate,
+                ),
+                SizedBox(height: AppResponsive.instance.getHeight(24)),
               ],
               _buildTextField(
                 controller: operationSection.descriptionController,

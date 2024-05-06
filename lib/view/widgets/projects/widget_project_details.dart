@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
+import 'package:project_x/services/database/model/user_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
@@ -42,10 +44,13 @@ class _WidgetProjectDetailsState extends State<WidgetProjectDetails> {
           ?.model
           ?.financeId,
     );
+    UserLogicalModel? userModel = UserController.instance.stream.value
+        .getOne(id: widget.model.model?.userId);
 
     map.addAll({
       "Nome": widget.model.model?.name ?? "Não informado",
       "Descrição": widget.model.model?.description ?? "Não informado",
+      "Profissional": userModel?.personal?.model?.name ?? "Não informado",
       "Cliente": clientModel?.personal?.model?.name ?? "Não informado",
       "Financeiro": financeModel?.model?.name ?? "Não informado",
     });

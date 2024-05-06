@@ -51,7 +51,7 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
           style: AppTextStyle.size14(),
         ),
         subtitle: Container(
-          height: AppResponsive.instance.getHeight(50),
+          height: AppResponsive.instance.getHeight(55),
           margin: EdgeInsets.only(top: AppResponsive.instance.getHeight(12)),
           padding: EdgeInsets.symmetric(
             horizontal: AppResponsive.instance.getWidth(12),
@@ -76,6 +76,8 @@ class _WidgetSelectorFieldState extends State<WidgetSelectorField> {
                     value: option,
                     child: Text(
                       option,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyle.size14(
                         color: AppColor.colorFieldBackground,
                         fontWeight: FontWeight.w500,

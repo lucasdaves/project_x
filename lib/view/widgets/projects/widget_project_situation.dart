@@ -135,6 +135,28 @@ class _WidgetProjectSituationState extends State<WidgetProjectSituation> {
                       ),
                       style: AppTextStyle.size12(),
                     ),
+                    SizedBox(height: AppResponsive.instance.getHeight(8)),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Evolução do Projeto: ",
+                            style: AppTextStyle.size12(
+                              color: AppColor.text_1,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          TextSpan(
+                            text: " ${widget.model.getRelationEvolution()}",
+                            style: AppTextStyle.size12(
+                              color: color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      style: AppTextStyle.size12(),
+                    ),
                   ],
                 ),
               );

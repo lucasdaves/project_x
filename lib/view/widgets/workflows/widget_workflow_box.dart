@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:project_x/services/database/model/step_model.dart';
 import 'package:project_x/services/database/model/substep_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
@@ -149,8 +151,11 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
           ],
           Container(
             width: AppResponsive.instance.getWidth(150),
-            height: AppResponsive.instance.getHeight(60),
+            constraints: BoxConstraints(
+                minHeight: AppResponsive.instance.getHeight(60),
+                maxHeight: AppResponsive.instance.getHeight(120)),
             padding: EdgeInsets.symmetric(
+              vertical: AppResponsive.instance.getHeight(6),
               horizontal: AppResponsive.instance.getWidth(12),
             ),
             decoration: BoxDecoration(
@@ -160,7 +165,6 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                 topRight: isFirst ? Radius.circular(8) : Radius.zero,
               ),
             ),
-            alignment: Alignment.center,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -183,6 +187,8 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   ),
                 ] else ...[
                   Text.rich(
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
                     TextSpan(
                       children: [
                         if ((widget.operation == EntityOperation.Read ||
@@ -236,6 +242,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
       section.dateController.text =
           substep.model!.expiresAt?.formatString() ?? "";
       section.statusController.text = substep.model!.status ?? "";
+      section.evolutionController.text = substep.model!.evolution ?? "";
     }
 
     Future<void> buildFunction() async {
@@ -249,12 +256,17 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
             } else if (substep != null) {
               substep.model!.name = section.titleController.text;
               substep.model!.description = section.descriptionController.text;
-              substep.model!.expiresAt =
-                  section.dateController.text.formatDatetime();
               substep.model!.status = section.statusController.text;
+              substep.model!.evolution = section.evolutionController.text;
 
               if (SubstepDatabaseModel.statusMap[2] == substep.model!.status!) {
                 substep.model!.expiresAt = null;
+                substep.model!.concludedAt =
+                    section.dateController.text.formatDatetime();
+              } else {
+                substep.model!.expiresAt =
+                    section.dateController.text.formatDatetime();
+                substep.model!.concludedAt = null;
               }
             } else {
               if (type == WorkflowType.Step) {
@@ -274,6 +286,7 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                       name: section.titleController.text,
                       description: section.descriptionController.text,
                       status: SubstepDatabaseModel.statusMap[0],
+                      evolution: section.evolutionController.text,
                     ),
                   ),
                 );
@@ -317,6 +330,18 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
         headerText: section.dateLabel,
         hintText: section.dateHint,
         validator: (value) => section.validateDate(value),
+      );
+      return WidgetTextField(
+        model: model,
+      );
+    }
+
+    Widget buildEvolutionField() {
+      WidgetTextFieldModel model = WidgetTextFieldModel(
+        controller: section.evolutionController,
+        headerText: section.evolutionLabel,
+        hintText: section.evolutionHint,
+        validator: (value) => section.validateEvolution(value),
       );
       return WidgetTextField(
         model: model,
@@ -367,63 +392,80 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                   color: AppColor.colorFloating,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Wrap(
-                  children: [
-                    Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.pop(context),
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  color: AppColor.colorSecondary,
-                                ),
-                              ),
-                              SizedBox(
-                                  width: AppResponsive.instance.getWidth(24)),
-                              Text(
-                                "${(step != null || substep != null) ? "Editar" : "Adicionar"} ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColor.text_1,
-                                  fontSize: AppResponsive.instance.getWidth(16),
-                                  fontWeight: FontWeight.w500,
-                                  height: 1,
-                                ),
-                              ),
-                            ],
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: AppColor.colorSecondary,
+                            ),
                           ),
-                          if (widget.operation == EntityOperation.Update &&
-                              substep != null &&
-                              widget.model.model!.isCopy) ...[
-                            SizedBox(
-                                height: AppResponsive.instance.getHeight(24)),
-                            buildStatusField(() => state(() {})),
-                            if (SubstepDatabaseModel.statusMap[2] !=
-                                section.statusController.text) ...[
-                              SizedBox(
-                                  height: AppResponsive.instance.getHeight(24)),
-                              buildDateField(),
-                            ],
-                          ],
                           SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildTitleField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildDescriptionField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(36)),
-                          buildWorkflowButton(false),
+                            width: AppResponsive.instance.getWidth(24),
+                          ),
+                          Text(
+                            "${(step != null || substep != null) ? "Editar" : "Adicionar"} ${(type == WorkflowType.Step) ? "Etapa" : "Subetapa"}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColor.text_1,
+                              fontSize: AppResponsive.instance.getWidth(16),
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        height: AppResponsive.instance.getHeight(24),
+                      ),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (widget.operation == EntityOperation.Update &&
+                                  substep != null &&
+                                  widget.model.model!.isCopy) ...[
+                                buildStatusField(() => state(() {})),
+                                SizedBox(
+                                  height: AppResponsive.instance.getHeight(24),
+                                ),
+                                buildDateField(),
+                                SizedBox(
+                                  height: AppResponsive.instance.getHeight(24),
+                                ),
+                              ],
+                              buildTitleField(),
+                              SizedBox(
+                                height: AppResponsive.instance.getHeight(24),
+                              ),
+                              buildDescriptionField(),
+                              if (type == WorkflowType.Substep) ...[
+                                SizedBox(
+                                  height: AppResponsive.instance.getHeight(24),
+                                ),
+                                buildEvolutionField(),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: AppResponsive.instance.getHeight(36),
+                      ),
+                      buildWorkflowButton(false),
+                    ],
+                  ),
                 ),
               ),
             );
