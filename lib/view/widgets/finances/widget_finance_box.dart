@@ -353,51 +353,61 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
             children: [
               _buildDialogHeader(context, financeOperation),
               SizedBox(height: AppResponsive.instance.getHeight(24)),
-              if (typeIndex == 1) ...[
-                _buildSelectorField(
-                  controller: operationSection.statusController,
-                  headerText: operationSection.statusLabel,
-                  hintText: operationSection.statusHint,
-                  validator: operationSection.validateStatus,
-                  options:
-                      FinanceOperationDatabaseModel.statusMap.values.toList(),
-                  function: () => state(() {}),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (typeIndex == 1) ...[
+                        _buildSelectorField(
+                          controller: operationSection.statusController,
+                          headerText: operationSection.statusLabel,
+                          hintText: operationSection.statusHint,
+                          validator: operationSection.validateStatus,
+                          options: FinanceOperationDatabaseModel
+                              .statusMap.values
+                              .toList(),
+                          function: () => state(() {}),
+                        ),
+                        SizedBox(height: AppResponsive.instance.getHeight(24)),
+                        _buildTextField(
+                          controller: operationSection.dateController,
+                          headerText: operationSection.dateLabel,
+                          hintText: operationSection.dateHint,
+                          validator: operationSection.validateDate,
+                        ),
+                        SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      ],
+                      _buildTextField(
+                        controller: operationSection.descriptionController,
+                        headerText: operationSection.descriptionLabel,
+                        hintText: operationSection.descriptionLabel,
+                        validator: operationSection.validateDescription,
+                      ),
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      if ((typeIndex == 0 &&
+                              widget.operation != EntityOperation.Update) ||
+                          typeIndex != 0) ...[
+                        _buildTextField(
+                          controller: operationSection.amountController,
+                          headerText: operationSection.amountLabel,
+                          hintText: operationSection.amountHint,
+                          validator: operationSection.validateAmount,
+                        ),
+                      ],
+                      if (typeIndex == 0 &&
+                          widget.operation != EntityOperation.Update &&
+                          financeOperation != null) ...[
+                        SizedBox(height: AppResponsive.instance.getHeight(24)),
+                        _buildWarningText(),
+                      ],
+                    ],
+                  ),
                 ),
-                SizedBox(height: AppResponsive.instance.getHeight(24)),
-                _buildTextField(
-                  controller: operationSection.dateController,
-                  headerText: operationSection.dateLabel,
-                  hintText: operationSection.dateHint,
-                  validator: operationSection.validateDate,
-                ),
-                SizedBox(height: AppResponsive.instance.getHeight(24)),
-              ],
-              _buildTextField(
-                controller: operationSection.descriptionController,
-                headerText: operationSection.descriptionLabel,
-                hintText: operationSection.descriptionLabel,
-                validator: operationSection.validateDescription,
               ),
-              SizedBox(height: AppResponsive.instance.getHeight(24)),
-              if ((typeIndex == 0 &&
-                      widget.operation != EntityOperation.Update) ||
-                  typeIndex != 0) ...[
-                _buildTextField(
-                  controller: operationSection.amountController,
-                  headerText: operationSection.amountLabel,
-                  hintText: operationSection.amountHint,
-                  validator: operationSection.validateAmount,
-                ),
-                SizedBox(height: AppResponsive.instance.getHeight(24)),
-              ],
-              if (typeIndex == 0 &&
-                  widget.operation != EntityOperation.Update &&
-                  financeOperation != null) ...[
-                _buildWarningText(),
-                SizedBox(
-                  height: AppResponsive.instance.getHeight(24),
-                ),
-              ],
+              SizedBox(height: AppResponsive.instance.getHeight(36)),
               _buildSaveButton(saveOperation, financeOperation),
             ],
           ),
@@ -461,14 +471,11 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
   }
 
   Widget _buildWarningText() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppResponsive.instance.getHeight(16)),
-      child: Text(
-        "Editar o valor inicial irá redefinir todas as operações existentes neste financeiro.",
-        style: AppTextStyle.size12(
-          color: AppColor.colorAlertStatus,
-          fontWeight: FontWeight.w300,
-        ),
+    return Text(
+      "Editar o valor inicial irá redefinir todas as operações existentes neste financeiro.",
+      style: AppTextStyle.size12(
+        color: AppColor.colorAlertStatus,
+        fontWeight: FontWeight.w300,
       ),
     );
   }
