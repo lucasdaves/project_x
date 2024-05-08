@@ -95,13 +95,12 @@ class _WidgetFinanceBalanceState extends State<WidgetFinanceBalance> {
           quarterTurns: 1,
           child: BarChart(
             BarChartData(
+              maxY: map.entries.first.key.entries.first.value,
               alignment: BarChartAlignment.spaceAround,
               gridData: FlGridData(show: false),
               borderData: FlBorderData(show: false),
               titlesData: FlTitlesData(show: false),
-              barTouchData: BarTouchData(
-                enabled: false,
-              ),
+              barTouchData: BarTouchData(enabled: false),
               extraLinesData: ExtraLinesData(
                 horizontalLines: [
                   HorizontalLine(
@@ -140,7 +139,7 @@ class _WidgetFinanceBalanceState extends State<WidgetFinanceBalance> {
 
   Widget _buildData() {
     return Expanded(
-      flex: 6,
+      flex: 7,
       child: Container(
         margin: EdgeInsets.symmetric(
           vertical: AppResponsive.instance.getHeight(16),
@@ -152,7 +151,7 @@ class _WidgetFinanceBalanceState extends State<WidgetFinanceBalance> {
           children: [
             ...map.entries.map((entry) {
               String status = entry.key.entries.first.key;
-              double amount = entry.key.entries.first.value;
+              String amount = entry.key.entries.first.value.toStringAsFixed(2);
               Color color = entry.value;
 
               return Row(

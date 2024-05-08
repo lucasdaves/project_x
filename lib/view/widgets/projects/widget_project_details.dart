@@ -113,7 +113,7 @@ class _WidgetProjectDetailsState extends State<WidgetProjectDetails> {
 
               return Container(
                 margin: EdgeInsets.symmetric(
-                  vertical: AppResponsive.instance.getHeight(6),
+                  vertical: 2,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

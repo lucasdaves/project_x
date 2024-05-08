@@ -94,7 +94,7 @@ class FinanceOperationLogicalModel {
         "");
 
     if (FinanceOperationDatabaseModel.statusMap[1] == model?.status) {
-      map["Pago (${conclusion?.formatString()})"] =
+      map["Pago${conclusion != null ? " (${conclusion.formatString()})" : ""}"] =
           AppColor.colorPositiveStatus;
       return map;
     }

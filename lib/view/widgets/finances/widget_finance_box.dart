@@ -283,11 +283,13 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
             FinanceOperationDatabaseModel.statusMap[1] ==
             element?.model?.status)) {
           widget.model.getType(type: 0).first?.model?.expiresAt = null;
-          widget.model.getType(type: 0).first?.model?.status =
-              FinanceOperationDatabaseModel.statusMap[1];
+          widget.model.getType(type: 0).first?.model?.concludedAt =
+              widget.model.getParcelDate();
+          FinanceOperationDatabaseModel.statusMap[1];
         } else {
           widget.model.getType(type: 0).first?.model?.expiresAt =
               widget.model.getParcelDate();
+          widget.model.getType(type: 0).first?.model?.concludedAt = null;
           widget.model.getType(type: 0).first?.model?.status =
               FinanceOperationDatabaseModel.statusMap[0];
         }

@@ -76,25 +76,38 @@ class _WidgetFinancePaymentState extends State<WidgetFinancePayment> {
   }
 
   Widget _buildChart() {
+    int percentage = ((widget.model.getPaidAmount().entries.first.value * 100) /
+            widget.model.getInitialAmount().entries.first.value)
+        .floor();
+
     return Expanded(
       flex: 4,
       child: Container(
         margin: EdgeInsets.symmetric(
           vertical: AppResponsive.instance.getHeight(16),
         ),
-        child: PieChart(
-          PieChartData(
-            sections: map.entries.map((entry) {
-              return PieChartSectionData(
-                color: entry.value,
-                value: entry.key.values.first,
-                radius: AppResponsive.instance.getWidth(10),
-                showTitle: false,
-              );
-            }).toList(),
-          ),
-          swapAnimationDuration: Duration(milliseconds: 150),
-          swapAnimationCurve: Curves.linear,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            PieChart(
+              PieChartData(
+                sections: map.entries.map((entry) {
+                  return PieChartSectionData(
+                    color: entry.value,
+                    value: entry.key.values.first,
+                    radius: AppResponsive.instance.getWidth(10),
+                    showTitle: false,
+                  );
+                }).toList(),
+              ),
+              swapAnimationDuration: Duration(milliseconds: 150),
+              swapAnimationCurve: Curves.linear,
+            ),
+            Text(
+              "${percentage}%",
+              style: AppTextStyle.size12(),
+            ),
+          ],
         ),
       ),
     );
@@ -102,7 +115,7 @@ class _WidgetFinancePaymentState extends State<WidgetFinancePayment> {
 
   Widget _buildData() {
     return Expanded(
-      flex: 6,
+      flex: 7,
       child: Container(
         margin: EdgeInsets.symmetric(
           vertical: AppResponsive.instance.getHeight(16),
@@ -114,7 +127,7 @@ class _WidgetFinancePaymentState extends State<WidgetFinancePayment> {
           children: [
             ...map.entries.map((entry) {
               String status = entry.key.entries.first.key;
-              double amount = entry.key.entries.first.value;
+              String amount = entry.key.entries.first.value.toStringAsFixed(2);
               Color color = entry.value;
 
               return Row(

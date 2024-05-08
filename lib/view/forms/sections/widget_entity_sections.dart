@@ -275,14 +275,23 @@ class WorkflowOperationSection {
   }
 
   String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a data';
+    }
     return null;
   }
 
   String? validateStatus(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a situação';
+    }
     return null;
   }
 
   String? validateEvolution(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a evolução';
+    }
     return null;
   }
 }
@@ -358,6 +367,9 @@ class OperationSection {
   }
 
   String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a data';
+    }
     return null;
   }
 

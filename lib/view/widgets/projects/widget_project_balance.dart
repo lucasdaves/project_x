@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_color.dart';
@@ -75,44 +76,39 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
   }
 
   Widget _buildChart() {
-    Map<String, double> total = widget.model.getTotalAmount();
+    int percentage =
+        ((widget.model.getConcludedAmount().entries.first.value * 100) /
+                widget.model.getTotalAmount().entries.first.value)
+            .floor();
 
     return Expanded(
       flex: 4,
       child: Container(
-        width: double.maxFinite,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: map.entries.map((entry) {
-            int flex = (entry.key.entries.first.value * 100) ~/
-                total.entries.first.value;
-
-            return Expanded(
-              flex: flex,
-              child: Container(
-                height: AppResponsive.instance.getHeight(12),
-                decoration: BoxDecoration(
-                  color: entry.value,
-                  borderRadius: BorderRadius.only(
-                    topLeft: map.entries.first.value == entry.value
-                        ? Radius.circular(4)
-                        : Radius.zero,
-                    bottomLeft: map.entries.first.value == entry.value
-                        ? Radius.circular(4)
-                        : Radius.zero,
-                    topRight: map.entries.last.value == entry.value
-                        ? Radius.circular(4)
-                        : Radius.zero,
-                    bottomRight: map.entries.last.value == entry.value
-                        ? Radius.circular(4)
-                        : Radius.zero,
-                  ),
-                ),
+        margin: EdgeInsets.symmetric(
+          vertical: AppResponsive.instance.getHeight(16),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            PieChart(
+              PieChartData(
+                sections: map.entries.map((entry) {
+                  return PieChartSectionData(
+                    color: entry.value,
+                    value: entry.key.values.first,
+                    radius: AppResponsive.instance.getWidth(10),
+                    showTitle: false,
+                  );
+                }).toList(),
               ),
-            );
-          }).toList(),
+              swapAnimationDuration: Duration(milliseconds: 150),
+              swapAnimationCurve: Curves.linear,
+            ),
+            Text(
+              "${percentage}%",
+              style: AppTextStyle.size12(),
+            ),
+          ],
         ),
       ),
     );
@@ -120,7 +116,7 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
 
   Widget _buildData() {
     return Expanded(
-      flex: 6,
+      flex: 7,
       child: Container(
         margin: EdgeInsets.symmetric(
           vertical: AppResponsive.instance.getHeight(16),

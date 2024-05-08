@@ -3,6 +3,7 @@ import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/services/database/model/finance_operation_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_extension.dart';
+import 'package:screenshot/screenshot.dart';
 
 class FinanceDatabaseModel {
   int? id;
@@ -79,7 +80,9 @@ class FinanceLogicalModel {
   Map<String, double> getInitialAmount() {
     Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 0);
-    map["Inicial"] = double.tryParse(list.first?.model?.amount ?? "0.0") ?? 0.0;
+    double sum = double.tryParse(list.first?.model?.amount ?? "0.0") ?? 0.0;
+    if (sum < 0) sum = 0;
+    map["Inicial"] = sum.toPrecision(2);
     return map;
   }
 
@@ -90,7 +93,8 @@ class FinanceLogicalModel {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    map["Parcelas"] = sum;
+    if (sum < 0) sum = 0;
+    map["Parcelas"] = sum.toPrecision(2);
     return map;
   }
 
@@ -101,7 +105,8 @@ class FinanceLogicalModel {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    map["Adicionais"] = sum;
+    if (sum < 0) sum = 0;
+    map["Adicionais"] = sum.toPrecision(2);
     return map;
   }
 
@@ -112,15 +117,18 @@ class FinanceLogicalModel {
       double amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       return previousValue + amount;
     });
-    map["Custos"] = sum;
+    if (sum < 0) sum = 0;
+    map["Custos"] = sum.toPrecision(2);
     return map;
   }
 
   Map<String, double> getTotalAmount() {
     Map<String, double> map = {};
-    map["Total"] = (getInitialAmount().entries.first.value +
+    double sum = (getInitialAmount().entries.first.value +
         getAditiveAmount().entries.first.value -
         getCostAmount().entries.first.value);
+    if (sum < 0) sum = 0;
+    map["Total"] = sum.toPrecision(2);
     return map;
   }
 
@@ -129,7 +137,8 @@ class FinanceLogicalModel {
     double sum = getInitialAmount().entries.first.value -
         getPaidAmount().entries.first.value -
         getLateAmount().entries.first.value;
-    map[FinanceDatabaseModel.statusMap[0]!] = sum;
+    if (sum < 0) sum = 0;
+    map[FinanceDatabaseModel.statusMap[0]!] = sum.toPrecision(2);
     return map;
   }
 
@@ -139,16 +148,15 @@ class FinanceLogicalModel {
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = 0;
       DateTime? expiration = element?.model?.expiresAt;
-
       if (expiration != null) {
         if (DateTime.now().isAfter(expiration)) {
           amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
         }
       }
-
       return previousValue + amount;
     });
-    map["Atrasado"] = sum;
+    if (sum < 0) sum = 0;
+    map["Atrasado"] = sum.toPrecision(2);
     return map;
   }
 
@@ -162,7 +170,8 @@ class FinanceLogicalModel {
       }
       return previousValue + amount;
     });
-    map[FinanceDatabaseModel.statusMap[1]!] = sum;
+    if (sum < 0) sum = 0;
+    map[FinanceDatabaseModel.statusMap[1]!] = sum.toPrecision(2);
     return map;
   }
 
@@ -259,6 +268,6 @@ class FinanceLogicalModel {
   bool canIncreaseParcel({required double plus, double minus = 0.0}) {
     double initialValue = getInitialAmount().entries.first.value;
     double parcelsValue = getParcelsAmount().entries.first.value + plus - minus;
-    return parcelsValue <= initialValue;
+    return parcelsValue.toPrecision(2) <= initialValue.toPrecision(2);
   }
 }

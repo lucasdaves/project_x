@@ -85,7 +85,7 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
 
               return Container(
                 margin: EdgeInsets.symmetric(
-                  vertical: AppResponsive.instance.getHeight(4),
+                  vertical: 2,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

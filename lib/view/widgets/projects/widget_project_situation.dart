@@ -85,7 +85,7 @@ class _WidgetProjectSituationState extends State<WidgetProjectSituation> {
 
               return Container(
                 margin: EdgeInsets.symmetric(
-                  vertical: AppResponsive.instance.getHeight(4),
+                  vertical: 2,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -149,7 +149,7 @@ class _WidgetProjectSituationState extends State<WidgetProjectSituation> {
                           TextSpan(
                             text: " ${widget.model.getRelationEvolution()}",
                             style: AppTextStyle.size12(
-                              color: color,
+                              color: AppColor.colorOpcionalStatus,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
