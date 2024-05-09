@@ -141,6 +141,35 @@ class WorkflowLogicalModel {
     return "${list[4]}%";
   }
 
+  String getLastActionDate() {
+    String date = "";
+
+    for (StepLogicalModel? step in steps ?? []) {
+      for (SubstepLogicalModel? substep in step?.substeps ?? []) {
+        DateTime? expiration = substep?.model?.expiresAt;
+        int? reminderDate = int.tryParse(SystemController
+                .instance.stream.value.system?.model?.workflowReminderDate ??
+            "");
+
+        if (expiration != null) {
+          if (DateTime.now().isAfter(expiration)) {
+            date = expiration.formatString()!;
+            break;
+          } else if (reminderDate != null) {
+            Duration difference = expiration.difference(DateTime.now());
+            int daysDifference = difference.inDays;
+            if (daysDifference <= reminderDate) {
+              date = expiration.formatString()!;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return date;
+  }
+
   Map<String, Color> getStatus() {
     Map<String, Color> map = {};
     bool isConcluded = true;

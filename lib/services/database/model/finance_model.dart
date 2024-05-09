@@ -178,6 +178,35 @@ class FinanceLogicalModel {
     return map;
   }
 
+  String getLastActionDate() {
+    String date = "";
+
+    final financeOperations = getType(type: 1);
+
+    for (FinanceOperationLogicalModel? operation in financeOperations) {
+      DateTime? expiration = operation?.model?.expiresAt;
+      int? reminderDate = int.tryParse(SystemController
+              .instance.stream.value.system?.model?.workflowReminderDate ??
+          "");
+
+      if (expiration != null) {
+        if (DateTime.now().isAfter(expiration)) {
+          date = expiration.formatString()!;
+          break;
+        } else if (reminderDate != null) {
+          Duration difference = expiration.difference(DateTime.now());
+          int daysDifference = difference.inDays;
+          if (daysDifference <= reminderDate) {
+            date = expiration.formatString()!;
+            break;
+          }
+        }
+      }
+    }
+
+    return date;
+  }
+
   Map<Map<String, bool>, Color> getStatus() {
     Map<Map<String, bool>, Color> map = {};
     if (FinanceDatabaseModel.statusMap[0] == model?.status) {

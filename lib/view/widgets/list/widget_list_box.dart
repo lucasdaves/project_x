@@ -135,6 +135,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               .map((e) => e?.model?.projectId)
               .contains(element?.model?.id));
         }
+        copy.filter();
         return (copy.projects ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
@@ -203,6 +204,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
               .map((e) => e?.model?.financeId)
               .contains(element?.model?.id));
         }
+        copy.filter();
         return (copy.finances ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(

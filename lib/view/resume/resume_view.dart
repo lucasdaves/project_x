@@ -1,5 +1,6 @@
 import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
@@ -306,7 +307,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                 showDialog(
                   context: context,
                   builder: (context) => StatefulBuilder(
-                    builder: (context, setState) {
+                    builder: (context, setStateDialog) {
                       return Dialog(
                         backgroundColor: Colors.transparent,
                         child: Container(
@@ -387,11 +388,15 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                                   initialPickerType: PickerType.days,
                                   centerLeadingDate: true,
                                   padding: EdgeInsets.zero,
-                                  onRangeSelected: (value) {
+                                  onRangeSelected: (value) async {
                                     setState(() {
                                       FinanceController.instance
                                           .setDate(value.start, value.end);
                                     });
+
+                                    await Future.delayed(
+                                        Duration(milliseconds: 200));
+                                    if (mounted) Navigator.pop(context);
                                   },
                                 ),
                               ],

@@ -1,7 +1,10 @@
 import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
+import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_extension.dart';
 
 class ProjectStreamModel {
   EntityStatus status;
@@ -62,5 +65,29 @@ class ProjectStreamModel {
       map.addAll({entity!.model!.id!: entity.model!.name!});
     }
     return map;
+  }
+
+  void filter() {
+    if (this.projects != null) {
+      this.projects!.sort((a, b) {
+        WorkflowLogicalModel? wkModelA = WorkflowController
+            .instance.stream.value
+            .getOne(id: a?.model?.workflowId);
+        WorkflowLogicalModel? wkModelB = WorkflowController
+            .instance.stream.value
+            .getOne(id: b?.model?.workflowId);
+
+        if (wkModelA != null && wkModelB != null) {
+          DateTime? actionA = wkModelA.getLastActionDate().formatDatetime();
+          DateTime? actionB = wkModelB.getLastActionDate().formatDatetime();
+
+          if (actionA == null) return 1;
+          if (actionB == null) return -1;
+
+          return actionA.compareTo(actionB);
+        }
+        return 0;
+      });
+    }
   }
 }

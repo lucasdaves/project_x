@@ -3,6 +3,7 @@ import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_extension.dart';
 
 class FinanceStreamModel {
   EntityStatus status;
@@ -61,6 +62,23 @@ class FinanceStreamModel {
       map.addAll({entity!.model!.id!: entity.model!.name!});
     }
     return map;
+  }
+
+  void filter() {
+    if (this.finances != null) {
+      this.finances!.sort((a, b) {
+        if (a?.operations != null && b?.operations != null) {
+          DateTime? actionA = a?.getLastActionDate().formatDatetime();
+          DateTime? actionB = b?.getLastActionDate().formatDatetime();
+
+          if (actionA == null) return 1;
+          if (actionB == null) return -1;
+
+          return actionA.compareTo(actionB);
+        }
+        return 0;
+      });
+    }
   }
 
   Map<List<String>, List<double>> getReport() {
