@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/view/forms/form_view.dart';
+import 'package:project_x/view/resume/resume_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
@@ -171,6 +173,22 @@ class _EntityListViewState extends State<EntityListView> {
         break;
       case EntityType.Finance:
         actions = [
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.assessment_outlined,
+              label: "Relatório",
+              function: () async {
+                FinanceController.instance.initDate();
+                AppRoute(
+                  tag: EntityResumeView.tag,
+                  screen: EntityResumeView(
+                    type: EntityType.FinanceReport,
+                    entityIndex: 0,
+                  ),
+                ).navigate(context);
+              },
+            ),
+          ),
           WidgetActionIcon(
             model: WidgetActionIconModel(
               icon: Icons.add,

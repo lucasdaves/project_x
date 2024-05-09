@@ -1,3 +1,4 @@
+import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/client_controller.dart';
@@ -7,6 +8,7 @@ import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/services/export/export_service.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
+import 'package:project_x/utils/app_extension.dart';
 import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
@@ -27,6 +29,7 @@ import 'package:project_x/view/widgets/finances/widget_finance_balance.dart';
 import 'package:project_x/view/widgets/finances/widget_finance_box.dart';
 import 'package:project_x/view/widgets/finances/widget_finance_details.dart';
 import 'package:project_x/view/widgets/finances/widget_finance_payment.dart';
+import 'package:project_x/view/widgets/finances/widget_finance_report.dart';
 import 'package:project_x/view/widgets/finances/widget_finance_situation.dart';
 import 'package:project_x/view/widgets/header/widget_action_header.dart';
 import 'package:project_x/view/widgets/header/widget_title_header.dart';
@@ -56,7 +59,8 @@ class EntityResumeView extends StatefulWidget {
 class _EntityResumeViewState extends State<EntityResumeView> {
   String entity = "";
 
-  ScreenshotController controller = ExportService.instance.getController();
+  ScreenshotController viewController = ExportService.instance.getController();
+  ScreenshotController listController = ExportService.instance.getController();
 
   @override
   void initState() {
@@ -67,7 +71,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
   @override
   Widget build(BuildContext context) {
     return Screenshot(
-      controller: controller,
+      controller: viewController,
       child: Scaffold(
         appBar: _buildBar(),
         body: _buildBody(),
@@ -148,6 +152,8 @@ class _EntityResumeViewState extends State<EntityResumeView> {
         return ProjectController.instance.stream;
       case EntityType.Finance:
         return FinanceController.instance.stream;
+      case EntityType.FinanceReport:
+        return FinanceController.instance.stream;
       default:
         throw Exception("Tipo não suportado");
     }
@@ -173,7 +179,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               icon: Icons.picture_in_picture_rounded,
               label: "Exportar",
               function: () async {
-                ExportService.instance.print(controller).then((value) {
+                ExportService.instance.print(viewController).then((value) {
                   AppFeedback(
                     text: "${value.values.first}",
                     color: value.keys.first
@@ -209,7 +215,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               icon: Icons.picture_in_picture_rounded,
               label: "Exportar",
               function: () async {
-                ExportService.instance.print(controller).then((value) {
+                ExportService.instance.print(viewController).then((value) {
                   AppFeedback(
                     text: "${value.values.first}",
                     color: value.keys.first
@@ -245,7 +251,7 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               icon: Icons.picture_in_picture_rounded,
               label: "Exportar",
               function: () async {
-                ExportService.instance.print(controller).then((value) {
+                ExportService.instance.print(viewController).then((value) {
                   AppFeedback(
                     text: "${value.values.first}",
                     color: value.keys.first
@@ -274,6 +280,133 @@ class _EntityResumeViewState extends State<EntityResumeView> {
           ),
         ];
         break;
+      case EntityType.FinanceReport:
+        actions = [
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.picture_in_picture_rounded,
+              label: "Exportar",
+              function: () async {
+                ExportService.instance.print(listController).then((value) {
+                  AppFeedback(
+                    text: "${value.values.first}",
+                    color: value.keys.first
+                        ? AppColor.colorPositiveStatus
+                        : AppColor.colorNegativeStatus,
+                  ).showSnackbar(context);
+                });
+              },
+            ),
+          ),
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.date_range,
+              label: "Selecionar Data",
+              function: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => StatefulBuilder(
+                    builder: (context, setState) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Container(
+                          width: AppResponsive.instance.getWidth(800),
+                          constraints: BoxConstraints(
+                            minHeight: AppResponsive.instance.getHeight(100),
+                            maxHeight: AppResponsive.instance.getHeight(500),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppResponsive.instance.getHeight(24),
+                            horizontal: AppResponsive.instance.getWidth(24),
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor.colorFloating,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                RangeDatePicker(
+                                  key: UniqueKey(),
+                                  minDate: DateTime(2000),
+                                  maxDate: DateTime(2050),
+                                  selectedRange: DateTimeRange(
+                                    start:
+                                        FinanceController.instance.getDate()[0],
+                                    end:
+                                        FinanceController.instance.getDate()[1],
+                                  ),
+                                  selectedCellsDecoration: BoxDecoration(
+                                    color: AppColor.colorSecondary,
+                                  ),
+                                  selectedCellsTextStyle: AppTextStyle.size12(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  singelSelectedCellDecoration: BoxDecoration(
+                                    color: AppColor.colorPrimary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  singelSelectedCellTextStyle:
+                                      AppTextStyle.size12(
+                                    color: AppColor.colorSecondary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  currentDateDecoration:
+                                      BoxDecoration(color: Colors.transparent),
+                                  currentDateTextStyle: AppTextStyle.size12(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  daysOfTheWeekTextStyle: AppTextStyle.size12(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledCellsDecoration:
+                                      BoxDecoration(color: Colors.transparent),
+                                  disabledCellsTextStyle: AppTextStyle.size12(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  enabledCellsDecoration:
+                                      BoxDecoration(color: Colors.transparent),
+                                  enabledCellsTextStyle: AppTextStyle.size12(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  leadingDateTextStyle: AppTextStyle.size16(
+                                    color: AppColor.text_1,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  slidersColor: AppColor.colorSecondary,
+                                  highlightColor: Colors.transparent,
+                                  slidersSize:
+                                      AppResponsive.instance.getWidth(24),
+                                  splashColor: AppColor.colorSecondary,
+                                  initialPickerType: PickerType.days,
+                                  centerLeadingDate: true,
+                                  padding: EdgeInsets.zero,
+                                  onRangeSelected: (value) {
+                                    setState(() {
+                                      FinanceController.instance
+                                          .setDate(value.start, value.end);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ];
+        break;
       default:
         throw Exception("Unsuported Type");
     }
@@ -287,6 +420,8 @@ class _EntityResumeViewState extends State<EntityResumeView> {
       case EntityType.Project:
         entity = "Projeto";
       case EntityType.Finance:
+        entity = "Financeiro";
+      case EntityType.FinanceReport:
         entity = "Financeiro";
       default:
         throw Exception("Unsuported Type");
@@ -380,11 +515,14 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                       WidgetDivider(verticalSpace: 12, horizontalSpace: 8),
                       WidgetProjectBalance(
                         key: UniqueKey(),
-                        model: WorkflowController.instance.stream.value.getOne(
-                            id: ProjectController.instance.stream.value
-                                .getOne(id: widget.entityIndex)!
-                                .model!
-                                .workflowId!)!,
+                        model: ProjectController.instance.stream.value
+                            .getOne(id: widget.entityIndex)!,
+                        wkModel: WorkflowController.instance.stream.value
+                            .getOne(
+                                id: ProjectController.instance.stream.value
+                                    .getOne(id: widget.entityIndex)!
+                                    .model!
+                                    .workflowId!)!,
                       ),
                     ],
                   ),
@@ -598,6 +736,36 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               ),
             ),
           ),
+        ];
+        break;
+      case EntityType.FinanceReport:
+        widgets = [
+          Spacer(flex: 3),
+          Expanded(
+            flex: 7,
+            child: Screenshot(
+              controller: listController,
+              child: WidgetFloatingBox(
+                model: WidgetFloatingBoxModel(
+                  label:
+                      "Relatório de pagamentos - ${FinanceController.instance.getDate()[0].formatString()} até ${FinanceController.instance.getDate()[1].formatString()}",
+                  widget: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        WidgetFinanceReport(
+                          key: UniqueKey(),
+                          model: FinanceController.instance.stream.value,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Spacer(flex: 3),
         ];
         break;
       default:

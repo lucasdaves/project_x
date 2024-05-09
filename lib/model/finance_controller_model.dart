@@ -1,4 +1,5 @@
 import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/services/database/model/finance_model.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/utils/app_enum.dart';
@@ -59,6 +60,59 @@ class FinanceStreamModel {
     for (FinanceLogicalModel? entity in aux.finances ?? []) {
       map.addAll({entity!.model!.id!: entity.model!.name!});
     }
+    return map;
+  }
+
+  Map<List<String>, List<double>> getReport() {
+    FinanceStreamModel aux = copy();
+    Map<List<String>, List<double>> map = {};
+    try {
+      double totalPaid = 0;
+      double totalToPay = 0;
+      double totalLate = 0;
+
+      for (FinanceLogicalModel? entity in aux.finances ?? []) {
+        entity?.operations?.removeWhere((element) {
+          bool inInterval;
+          if (element?.model?.concludedAt != null ||
+              element?.model?.expiresAt != null) {
+            if (element?.model?.concludedAt != null) {
+              inInterval = FinanceController.instance.reportMinDate!
+                      .isBefore(element!.model!.concludedAt!) &&
+                  FinanceController.instance.reportMaxDate!
+                      .isAfter(element.model!.concludedAt!);
+            } else if (element?.model?.expiresAt != null) {
+              inInterval = FinanceController.instance.reportMinDate!
+                      .isBefore(element!.model!.expiresAt!) &&
+                  FinanceController.instance.reportMaxDate!
+                      .isAfter(element.model!.expiresAt!);
+            } else {
+              inInterval = false;
+            }
+          } else {
+            inInterval = false;
+          }
+
+          return !inInterval;
+        });
+
+        double paid = entity?.getPaidAmount().entries.first.value ?? 0;
+        double toPay = entity?.getToPayAmount().entries.first.value ?? 0;
+        double late = entity?.getLateAmount().entries.first.value ?? 0;
+
+        if (paid > 0 || toPay > 0 || late > 0) {
+          map[["${entity?.model?.name}"]] = [paid, toPay, late];
+          totalPaid = totalPaid + paid;
+          totalToPay = totalToPay + toPay;
+          totalLate = totalLate + late;
+        }
+      }
+
+      if (totalPaid > 0 || totalToPay > 0 || totalLate > 0) {
+        map[["Total"]] = [totalPaid, totalToPay, totalLate];
+      }
+    } catch (_) {}
+
     return map;
   }
 }

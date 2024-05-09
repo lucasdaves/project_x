@@ -25,6 +25,7 @@ dependencies:
   fl_chart: ^0.67.0
   dotted_line: ^3.2.2
   screenshot: ^2.3.0
+  date_picker_plus: ^3.0.2
 
 dev_dependencies:
   #flutter_lints: ^3.0.0

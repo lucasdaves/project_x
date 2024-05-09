@@ -72,6 +72,7 @@ class _EntityFormViewState extends State<EntityFormView> {
   final addressSection = AddressSection();
   final contactSection = ContactSection();
   final projectSection = ProjectSection();
+  final financeSection = FinanceSection();
   final workflowOperationSection = WorkflowOperationSection();
   final descriptionSection = DescriptionSection();
   final operationSection = OperationSection();
@@ -384,6 +385,8 @@ class _EntityFormViewState extends State<EntityFormView> {
           existingProjectModel.model?.name ?? '';
       projectSection.descriptionController.text =
           existingProjectModel.model?.description ?? '';
+      projectSection.statusController.text =
+          existingProjectModel.model?.status ?? '';
 
       controller.setModel([existingProjectModel, existingWorkflowModel]);
     } else {
@@ -391,6 +394,7 @@ class _EntityFormViewState extends State<EntityFormView> {
         model: ProjectDatabaseModel(
           name: projectSection.titleController.text,
           description: projectSection.descriptionController.text,
+          status: projectSection.statusController.text,
         ),
       );
 
@@ -435,14 +439,16 @@ class _EntityFormViewState extends State<EntityFormView> {
           .instance.stream.value
           .getOne(id: widget.entityIndex)!;
       controller.setModel([existingModel]);
-      descriptionSection.titleController.text = existingModel.model?.name ?? '';
-      descriptionSection.descriptionController.text =
+      financeSection.titleController.text = existingModel.model?.name ?? '';
+      financeSection.descriptionController.text =
           existingModel.model?.description ?? '';
+      financeSection.statusController.text = existingModel.model?.status ?? '';
     } else {
       FinanceLogicalModel newModel = FinanceLogicalModel(
         model: FinanceDatabaseModel(
-          name: descriptionSection.titleController.text,
-          description: descriptionSection.descriptionController.text,
+          name: financeSection.titleController.text,
+          description: financeSection.descriptionController.text,
+          status: financeSection.statusController.text,
         ),
         operations: [],
       );
@@ -1132,6 +1138,30 @@ class _EntityFormViewState extends State<EntityFormView> {
                                 : false,
                       ),
                     ),
+                    if (widget.operation == EntityOperation.Update) ...[
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      WidgetSelectorField(
+                        model: WidgetSelectorFieldModel(
+                          controller: projectSection.statusController,
+                          headerText: projectSection.statusLabel,
+                          hintText: projectSection.statusHint,
+                          validator: (value) =>
+                              projectSection.validateStatus(value),
+                          options:
+                              ProjectDatabaseModel.statusMap.values.toList(),
+                          function: () {
+                            setState(() {
+                              var model = controller.getModel();
+
+                              (model[0] as ProjectLogicalModel).model?.status =
+                                  projectSection.statusController.text;
+
+                              controller.setModel(model);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1277,11 +1307,11 @@ class _EntityFormViewState extends State<EntityFormView> {
                   children: [
                     WidgetTextField(
                       model: WidgetTextFieldModel(
-                        controller: descriptionSection.titleController,
-                        headerText: descriptionSection.titleLabel,
-                        hintText: descriptionSection.titleHint,
+                        controller: financeSection.titleController,
+                        headerText: financeSection.titleLabel,
+                        hintText: financeSection.titleHint,
                         validator: (value) =>
-                            descriptionSection.validateTitle(value),
+                            financeSection.validateTitle(value),
                         changed: (value) =>
                             (controller.getModel()[0] as FinanceLogicalModel)
                                 .model
@@ -1291,17 +1321,42 @@ class _EntityFormViewState extends State<EntityFormView> {
                     SizedBox(height: AppResponsive.instance.getHeight(24)),
                     WidgetTextField(
                       model: WidgetTextFieldModel(
-                        controller: descriptionSection.descriptionController,
-                        headerText: descriptionSection.descriptionLabel,
-                        hintText: descriptionSection.descriptionHint,
+                        controller: financeSection.descriptionController,
+                        headerText: financeSection.descriptionLabel,
+                        hintText: financeSection.descriptionHint,
                         validator: (value) =>
-                            descriptionSection.validateDescription(value),
+                            financeSection.validateDescription(value),
                         changed: (value) =>
                             (controller.getModel()[0] as FinanceLogicalModel)
                                 .model
                                 ?.description = value,
                       ),
                     ),
+                    if (widget.operation == EntityOperation.Update) ...[
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      WidgetSelectorField(
+                        model: WidgetSelectorFieldModel(
+                          controller: financeSection.statusController,
+                          headerText: financeSection.statusLabel,
+                          hintText: financeSection.statusHint,
+                          validator: (value) =>
+                              financeSection.validateStatus(value),
+                          options:
+                              FinanceDatabaseModel.statusMap.values.toList(),
+                          function: () {
+                            setState(() {
+                              FinanceLogicalModel financeModel = (controller
+                                  .getModel()[0] as FinanceLogicalModel);
+
+                              financeModel.model?.status =
+                                  financeSection.statusController.text;
+
+                              controller.setModel([financeModel]);
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/finance_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
@@ -23,6 +24,11 @@ class FinanceController {
 
   final stream = BehaviorSubject<FinanceStreamModel>();
 
+  //* VARIABLES *//
+
+  DateTime? reportMinDate;
+  DateTime? reportMaxDate;
+
   //* DISPOSE *//
 
   void dispose() {
@@ -30,6 +36,21 @@ class FinanceController {
   }
 
   //* METHODS *//
+
+  void initDate() {
+    DateTime now = DateTime.now();
+    reportMinDate = reportMinDate ?? DateTime(now.year, now.month, 1);
+    reportMaxDate = reportMaxDate ?? DateTime(now.year, now.month + 1, 0);
+  }
+
+  void setDate(DateTime? start, DateTime? end) {
+    if (start != null) reportMinDate = start;
+    if (end != null) reportMaxDate = end;
+  }
+
+  List<DateTime> getDate() {
+    return [reportMinDate!, reportMaxDate!];
+  }
 
   Future<bool> createFinance({required FinanceLogicalModel model}) async {
     try {
@@ -41,6 +62,7 @@ class FinanceController {
       //* FINANCE *//
       int? financeId;
       if (model.model != null) {
+        model.model?.status = FinanceDatabaseModel.statusMap[0];
         financeId = await methods.create(
           consts.finance,
           map: model.model!.toMap(),
@@ -186,6 +208,7 @@ class FinanceController {
       return false;
     } finally {
       await readFinance();
+      await AssociationController.instance.readAssociation();
     }
   }
 }

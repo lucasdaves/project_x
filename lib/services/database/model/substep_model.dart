@@ -103,7 +103,7 @@ class SubstepLogicalModel {
         expiration.difference(DateTime.now()).inDays <= reminderDate) {
       map["Em alerta ${expiration.formatString()}"] = AppColor.colorAlertStatus;
     } else if (SubstepDatabaseModel.statusMap[2] == model?.status) {
-      map["${SubstepDatabaseModel.statusMap[2]}${model?.evolution != null && model!.evolution!.isNotEmpty ? " - ${model?.evolution}%" : ""}"] =
+      map["${SubstepDatabaseModel.statusMap[2]}"] =
           AppColor.colorPositiveStatus;
     } else if (SubstepDatabaseModel.statusMap[1] == model?.status) {
       if (expiration != null) {

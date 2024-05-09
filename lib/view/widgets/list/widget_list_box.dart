@@ -157,14 +157,19 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                           );
                   }
                   ProjectLogicalModel model = copy.projects![index - 1]!;
+                  var status = model.getStatus();
                   WorkflowLogicalModel wkModel = WorkflowController
                       .instance.stream.value
                       .getOne(id: model.model?.workflowId)!;
                   return widget.isResume
                       ? WidgetListEntityCard(
                           value1: model.model?.name ?? "",
-                          value2: wkModel.getStatus().entries.first.key,
-                          color2: wkModel.getStatus().entries.first.value,
+                          value2: status.keys.first.values.first
+                              ? wkModel.getStatus().entries.first.key
+                              : status.keys.first.keys.first,
+                          color2: status.keys.first.values.first
+                              ? wkModel.getStatus().entries.first.value
+                              : status.values.first,
                           function: () {
                             function(model.model!.id!);
                           },
@@ -173,9 +178,13 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                           value1: model.model?.name ?? "",
                           value2:
                               "${wkModel.getRelationConcluded()} tarefas concluídas",
-                          value3: wkModel.getStatus().entries.first.key,
+                          value3: status.keys.first.values.first
+                              ? wkModel.getStatus().entries.first.key
+                              : status.keys.first.keys.first,
                           color2: AppColor.colorNeutralStatus,
-                          color3: wkModel.getStatus().entries.first.value,
+                          color3: status.keys.first.values.first
+                              ? wkModel.getStatus().entries.first.value
+                              : status.values.first,
                           function: () {
                             function(model.model!.id!);
                           },
@@ -216,11 +225,16 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                           );
                   }
                   FinanceLogicalModel model = copy.finances![index - 1]!;
+                  var status = model.getStatus();
                   return widget.isResume
                       ? WidgetListEntityCard(
                           value1: model.model?.name ?? "",
-                          value2: model.getStatus().entries.first.key,
-                          color2: model.getStatus().entries.first.value,
+                          value2: status.keys.first.values.first
+                              ? model.getOperationStatus().entries.first.key
+                              : status.keys.first.keys.first,
+                          color2: status.keys.first.values.first
+                              ? model.getOperationStatus().entries.first.value
+                              : status.values.first,
                           function: () {
                             function(model.model!.id!);
                           },
@@ -228,9 +242,13 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       : WidgetListEntityCard(
                           value1: model.model?.name ?? "",
                           value2: "${model.getRelationPaid()} parcelas pagas",
-                          value3: model.getStatus().entries.first.key,
+                          value3: status.keys.first.values.first
+                              ? model.getOperationStatus().entries.first.key
+                              : status.keys.first.keys.first,
                           color2: AppColor.colorNeutralStatus,
-                          color3: model.getStatus().entries.first.value,
+                          color3: status.keys.first.values.first
+                              ? model.getOperationStatus().entries.first.value
+                              : status.values.first,
                           function: () {
                             function(model.model!.id!);
                           },

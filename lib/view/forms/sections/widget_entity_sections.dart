@@ -199,16 +199,19 @@ class ProjectSection {
   final String titleLabel = "Titulo";
   final String descriptionLabel = "Descrição";
   final String workflowLabel = "Workflow";
+  final String statusLabel = "Situação do projeto";
 
   // HINT TEXTS
   final String titleHint = "Digite o titulo...";
   final String descriptionHint = "Digite a descrição...";
   final String workflowHint = "Selecione a workflow...";
+  final String statusHint = "Escolha uma situação...";
 
   // TEXT CONTROLLERS
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController workflowController = TextEditingController();
+  TextEditingController statusController = TextEditingController();
 
   // VALIDATION FUNCTIONS
   String? validateTitle(String? value) {
@@ -226,6 +229,52 @@ class ProjectSection {
   }
 
   String? validateWorkflow(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, selecione uma opção';
+    }
+    return null;
+  }
+
+  String? validateStatus(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, selecione uma opção';
+    }
+    return null;
+  }
+}
+
+class FinanceSection {
+  // LABELS
+  final String titleLabel = "Titulo";
+  final String descriptionLabel = "Descrição";
+  final String statusLabel = "Situação do financeiro";
+
+  // HINT TEXTS
+  final String titleHint = "Digite o titulo...";
+  final String descriptionHint = "Digite a descrição...";
+  final String statusHint = "Escolha uma situação...";
+
+  // TEXT CONTROLLERS
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController statusController = TextEditingController();
+
+  // VALIDATION FUNCTIONS
+  String? validateTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira o titulo';
+    }
+    return null;
+  }
+
+  String? validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor, insira a descrição';
+    }
+    return null;
+  }
+
+  String? validateStatus(String? value) {
     if (value == null || value.isEmpty) {
       return 'Por favor, selecione uma opção';
     }

@@ -26,9 +26,14 @@ class _WidgetFinancePaymentState extends State<WidgetFinancePayment> {
   void _buildValues() {
     map.addAll({
       widget.model.getPaidAmount(): AppColor.colorPositiveStatus,
-      widget.model.getToPayAmount(): AppColor.colorNeutralStatus,
-      widget.model.getLateAmount(): AppColor.colorNegativeStatus,
     });
+
+    if (widget.model.getStatus().keys.first.values.first) {
+      map.addAll({
+        widget.model.getToPayAmount(): AppColor.colorNeutralStatus,
+        widget.model.getLateAmount(): AppColor.colorNegativeStatus,
+      });
+    }
   }
 
   @override

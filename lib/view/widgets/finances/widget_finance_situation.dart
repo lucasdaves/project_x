@@ -24,7 +24,7 @@ class _WidgetFinanceSituationState extends State<WidgetFinanceSituation> {
 
   void _buildValues() {
     map.addAll({
-      widget.model.getStatus(): widget.model.getRelationPaid(),
+      widget.model.getOperationStatus(): widget.model.getRelationPaid(),
     });
   }
 

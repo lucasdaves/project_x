@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:project_x/controller/app_controller.dart';
+import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/view/splash/splash_view.dart';
-import 'package:project_x/view/widgets/transitions/widget_no_transition.dart';
+// import 'package:project_x/view/widgets/transitions/widget_no_transition.dart';
 
 void main() async {
   await AppController.instance.initAppConfigs();
@@ -33,10 +34,15 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         pageTransitionsTheme: PageTransitionsTheme(
           builders: {
-            TargetPlatform.android: NoTransitionBuilder(),
-            TargetPlatform.iOS: NoTransitionBuilder(),
-            TargetPlatform.windows: NoTransitionBuilder(),
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
           },
+        ),
+        dialogBackgroundColor: AppColor.colorFieldBackground,
+        dialogTheme: const DialogTheme(
+          backgroundColor: AppColor.colorFieldBackground,
+          surfaceTintColor: Colors.transparent,
         ),
       ),
       scrollBehavior: AppResponsive.instance.setGestures(),

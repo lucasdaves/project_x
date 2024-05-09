@@ -21,8 +21,9 @@ class FinanceDatabaseModel {
   });
 
   static Map<int, String> statusMap = {
-    0: "A pagar",
-    1: "Pago",
+    0: "Em Aberto",
+    1: "Concluído",
+    2: "Recisão de Contrato"
   };
 
   factory FinanceDatabaseModel.fromMap(Map<String, dynamic> map) {
@@ -80,7 +81,8 @@ class FinanceLogicalModel {
   Map<String, double> getInitialAmount() {
     Map<String, double> map = {};
     List<FinanceOperationLogicalModel?> list = getType(type: 0);
-    double sum = double.tryParse(list.first?.model?.amount ?? "0.0") ?? 0.0;
+    double sum =
+        double.tryParse(list.firstOrNull?.model?.amount ?? "0.0") ?? 0.0;
     if (sum < 0) sum = 0;
     map["Inicial"] = sum.toPrecision(2);
     return map;
@@ -138,7 +140,7 @@ class FinanceLogicalModel {
         getPaidAmount().entries.first.value -
         getLateAmount().entries.first.value;
     if (sum < 0) sum = 0;
-    map[FinanceDatabaseModel.statusMap[0]!] = sum.toPrecision(2);
+    map[FinanceOperationDatabaseModel.statusMap[0]!] = sum.toPrecision(2);
     return map;
   }
 
@@ -165,17 +167,30 @@ class FinanceLogicalModel {
     List<FinanceOperationLogicalModel?> list = getType(type: 1);
     double sum = list.fold(0.0, (previousValue, element) {
       double amount = 0;
-      if (FinanceDatabaseModel.statusMap[1] == element?.model?.status) {
+      if (FinanceOperationDatabaseModel.statusMap[1] ==
+          element?.model?.status) {
         amount = double.tryParse(element?.model?.amount ?? "0.0") ?? 0.0;
       }
       return previousValue + amount;
     });
     if (sum < 0) sum = 0;
-    map[FinanceDatabaseModel.statusMap[1]!] = sum.toPrecision(2);
+    map[FinanceOperationDatabaseModel.statusMap[1]!] = sum.toPrecision(2);
     return map;
   }
 
-  Map<String, Color> getStatus() {
+  Map<Map<String, bool>, Color> getStatus() {
+    Map<Map<String, bool>, Color> map = {};
+    if (FinanceDatabaseModel.statusMap[0] == model?.status) {
+      map[{model!.status!: true}] = AppColor.colorNeutralStatus;
+    } else if (FinanceDatabaseModel.statusMap[1] == model?.status) {
+      map[{model!.status!: false}] = AppColor.colorPositiveStatus;
+    } else {
+      map[{model!.status!: false}] = AppColor.colorOpcionalStatus;
+    }
+    return map;
+  }
+
+  Map<String, Color> getOperationStatus() {
     final map = <String, Color>{};
 
     final financeOperations = getType(type: 1);

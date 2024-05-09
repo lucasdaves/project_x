@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/client_controller_model.dart';
 import 'package:project_x/services/database/database_files.dart';
@@ -194,6 +195,7 @@ class ClientController {
       return false;
     } finally {
       await readClient();
+      await AssociationController.instance.readAssociation();
     }
   }
 

@@ -200,6 +200,14 @@ class _WidgetWorkflowBoxState extends State<WidgetWorkflowBox> {
                               fontWeight: FontWeight.w300,
                             ),
                           ),
+                          TextSpan(
+                            text:
+                                "${substep.model?.evolution != "0" ? "${substep.model?.evolution}%" : ""} ",
+                            style: AppTextStyle.size12(
+                              color: AppColor.colorSecondary,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
                         ],
                         TextSpan(
                           text: step?.model?.name ?? substep?.model?.name ?? "",

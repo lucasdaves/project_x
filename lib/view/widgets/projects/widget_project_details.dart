@@ -106,6 +106,28 @@ class _WidgetProjectDetailsState extends State<WidgetProjectDetails> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "Situação: ",
+                    style: AppTextStyle.size12(
+                      color: AppColor.text_1,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  TextSpan(
+                    text: widget.model.getStatus().keys.first.keys.first,
+                    style: AppTextStyle.size12(
+                      color: widget.model.getStatus().values.first,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              style: AppTextStyle.size12(),
+            ),
+            SizedBox(height: 2),
             ...map.entries.map((entry) {
               String title = entry.key;
               String value = entry.value;

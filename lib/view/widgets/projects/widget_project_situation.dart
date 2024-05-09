@@ -147,9 +147,9 @@ class _WidgetProjectSituationState extends State<WidgetProjectSituation> {
                             ),
                           ),
                           TextSpan(
-                            text: " ${widget.model.getRelationEvolution()}",
+                            text: "${widget.model.getRelationEvolution()}",
                             style: AppTextStyle.size12(
-                              color: AppColor.colorOpcionalStatus,
+                              color: AppColor.colorSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

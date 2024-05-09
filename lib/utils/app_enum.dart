@@ -15,6 +15,7 @@ enum EntityType {
   Workflow,
   System,
   Association,
+  FinanceReport,
   Default,
 }
 

@@ -1,14 +1,20 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:project_x/services/database/model/project_model.dart';
 import 'package:project_x/services/database/model/workflow_model.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 
 class WidgetProjectBalance extends StatefulWidget {
-  final WorkflowLogicalModel model;
+  final ProjectLogicalModel model;
+  final WorkflowLogicalModel wkModel;
 
-  const WidgetProjectBalance({super.key, required this.model});
+  const WidgetProjectBalance({
+    super.key,
+    required this.model,
+    required this.wkModel,
+  });
 
   @override
   State<WidgetProjectBalance> createState() => _WidgetProjectBalanceState();
@@ -25,10 +31,15 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
 
   void _buildValues() {
     map.addAll({
-      widget.model.getConcludedAmount(): AppColor.colorPositiveStatus,
-      widget.model.getDoingAmount(): AppColor.colorNeutralStatus,
-      widget.model.getToDoAmount(): AppColor.colorOpcionalStatus,
+      widget.wkModel.getConcludedAmount(): AppColor.colorPositiveStatus,
     });
+
+    if (widget.model.getStatus().keys.first.values.first) {
+      map.addAll({
+        widget.wkModel.getDoingAmount(): AppColor.colorNeutralStatus,
+        widget.wkModel.getToDoAmount(): AppColor.colorOpcionalStatus,
+      });
+    }
   }
 
   @override
@@ -77,8 +88,8 @@ class _WidgetProjectBalanceState extends State<WidgetProjectBalance> {
 
   Widget _buildChart() {
     int percentage =
-        ((widget.model.getConcludedAmount().entries.first.value * 100) /
-                widget.model.getTotalAmount().entries.first.value)
+        ((widget.wkModel.getConcludedAmount().entries.first.value * 100) /
+                widget.wkModel.getTotalAmount().entries.first.value)
             .floor();
 
     return Expanded(

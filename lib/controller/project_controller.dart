@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/model/project_controller_model.dart';
@@ -55,6 +56,7 @@ class ProjectController {
       //* PROJECT *//
       int? projectId;
       if (projectModel.model != null) {
+        projectModel.model?.status = ProjectDatabaseModel.statusMap[0];
         projectModel.model?.workflowId = workflowModel.model?.id;
         projectId = await methods.create(
           consts.project,
@@ -174,6 +176,7 @@ class ProjectController {
       return false;
     } finally {
       await readProject();
+      await AssociationController.instance.readAssociation();
     }
   }
 }
