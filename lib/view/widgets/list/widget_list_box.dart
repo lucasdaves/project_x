@@ -78,12 +78,18 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Client:
         snapshot as ClientStreamModel;
         ClientStreamModel copy = snapshot.copy();
-        return (copy.clients ?? []).isEmpty
+        List<ClientLogicalModel?>? clients;
+        if (!widget.isResume) {
+          clients = copy.getFiltered();
+        } else {
+          clients = copy.getAll();
+        }
+        return (clients ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (copy.clients ?? []).length + 1,
+                itemCount: (clients ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return widget.isResume
@@ -99,7 +105,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                             isHeader: true,
                           );
                   }
-                  ClientLogicalModel model = copy.clients![index - 1]!;
+                  ClientLogicalModel model = clients![index - 1]!;
                   return widget.isResume
                       ? WidgetListEntityCard(
                           value1:
@@ -126,22 +132,27 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Project:
         snapshot as ProjectStreamModel;
         ProjectStreamModel copy = snapshot.copy();
+        List<ProjectLogicalModel?>? projects;
         if (widget.clientAssociation != null) {
           List<AssociationLogicalModel?> associations = AssociationController
               .instance.stream.value
               .getAllClient(widget.clientAssociation);
-
-          copy.projects?.removeWhere((element) => !associations
+          copy.getFiltered()?.removeWhere((element) => !associations
               .map((e) => e?.model?.projectId)
               .contains(element?.model?.id));
+          projects = copy.getAll();
+        } else if (!widget.isResume) {
+          projects = copy.getFiltered();
+        } else {
+          projects = copy.getAll();
         }
         copy.filter();
-        return (copy.projects ?? []).isEmpty
+        return (projects ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (copy.projects ?? []).length + 1,
+                itemCount: (projects ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return widget.isResume
@@ -157,7 +168,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                             isHeader: true,
                           );
                   }
-                  ProjectLogicalModel model = copy.projects![index - 1]!;
+                  ProjectLogicalModel model = projects![index - 1]!;
                   var status = model.getStatus();
                   WorkflowLogicalModel wkModel = WorkflowController
                       .instance.stream.value
@@ -195,22 +206,26 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Finance:
         snapshot as FinanceStreamModel;
         FinanceStreamModel copy = snapshot.copy();
+        List<FinanceLogicalModel?>? finances;
         if (widget.clientAssociation != null) {
           List<AssociationLogicalModel?> associations = AssociationController
               .instance.stream.value
               .getAllClient(widget.clientAssociation);
-
           copy.finances?.removeWhere((element) => !associations
               .map((e) => e?.model?.financeId)
               .contains(element?.model?.id));
+        } else if (!widget.isResume) {
+          finances = copy.getFiltered();
+        } else {
+          finances = copy.getAll();
         }
         copy.filter();
-        return (copy.finances ?? []).isEmpty
+        return (finances ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (copy.finances ?? []).length + 1,
+                itemCount: (finances ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return widget.isResume
@@ -226,7 +241,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                             isHeader: true,
                           );
                   }
-                  FinanceLogicalModel model = copy.finances![index - 1]!;
+                  FinanceLogicalModel model = finances![index - 1]!;
                   var status = model.getStatus();
                   return widget.isResume
                       ? WidgetListEntityCard(
@@ -288,12 +303,18 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
       case EntityType.Association:
         snapshot as AssociationStreamModel;
         AssociationStreamModel copy = snapshot.copy();
-        return (copy.getAll()).isEmpty
+        List<AssociationLogicalModel?>? associations;
+        if (!widget.isResume) {
+          associations = copy.getFiltered();
+        } else {
+          associations = copy.getAll();
+        }
+        return (associations ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: (copy.getAll()).length + 1,
+                itemCount: (associations ?? []).length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return WidgetListEntityCard(
@@ -303,7 +324,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
                       isHeader: true,
                     );
                   }
-                  AssociationLogicalModel model = copy.getAll()[index - 1]!;
+                  AssociationLogicalModel model = associations![index - 1]!;
                   return WidgetListEntityCard(
                     value1: ClientController.instance.stream.value
                             .getOne(id: model.model?.clientId)

@@ -1,3 +1,7 @@
+import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/controller/client_controller.dart';
+import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/utils/app_enum.dart';
 
@@ -57,5 +61,48 @@ class AssociationStreamModel {
       map.addAll({entity!.model!.id!: ""});
     }
     return map;
+  }
+
+  List<AssociationLogicalModel?>? getFiltered() {
+    String searchValue =
+        AssociationController.instance.search.text.toLowerCase();
+
+    List<AssociationLogicalModel?>? filtered = (this.associations ?? []).where(
+      (element) {
+        List<String> clientNames = [
+          (ClientController.instance.stream.value
+                      .getOne(id: element?.model?.clientId)
+                      ?.personal
+                      ?.model
+                      ?.name ??
+                  "")
+              .toLowerCase()
+        ];
+
+        List<String> projectNames = [
+          (ProjectController.instance.stream.value
+                      .getOne(id: element?.model?.projectId)
+                      ?.model
+                      ?.name ??
+                  "")
+              .toLowerCase()
+        ];
+
+        List<String> financeNames = [
+          (FinanceController.instance.stream.value
+                      .getOne(id: element?.model?.financeId)
+                      ?.model
+                      ?.name ??
+                  "")
+              .toLowerCase()
+        ];
+
+        return clientNames.any((name) => name.contains(searchValue)) ||
+            projectNames.any((name) => name.contains(searchValue)) ||
+            financeNames.any((name) => name.contains(searchValue));
+      },
+    ).toList();
+
+    return filtered;
   }
 }

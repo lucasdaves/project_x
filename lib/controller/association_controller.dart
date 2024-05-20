@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/association_controller_model.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
@@ -18,6 +19,10 @@ class AssociationController {
   //* STREAMS *//
 
   final stream = BehaviorSubject<AssociationStreamModel>();
+
+  //* VARIABLES *//
+
+  TextEditingController search = TextEditingController();
 
   //* DISPOSE *//
 
@@ -142,5 +147,9 @@ class AssociationController {
     } finally {
       await readAssociation();
     }
+  }
+
+  void reloadStream() {
+    stream.sink.add(stream.value);
   }
 }

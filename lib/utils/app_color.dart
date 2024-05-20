@@ -15,4 +15,5 @@ class AppColor {
   static const Color colorWorkflowBackground = Color(0xFF1E2631);
 
   static const Color text_1 = Color(0xFFFFFFFF);
+  static const Color text_2 = Color(0xFF8A8D9C);
 }

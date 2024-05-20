@@ -33,13 +33,17 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
           dense: true,
           contentPadding: EdgeInsets.zero,
           minVerticalPadding: 0,
-          title: Text(
-            widget.model.headerText!,
-            style: AppTextStyle.size14(),
-          ),
+          title: widget.model.headerText != null
+              ? Text(
+                  widget.model.headerText!,
+                  style: AppTextStyle.size14(),
+                )
+              : null,
           subtitle: Container(
             height: AppResponsive.instance.getHeight(height),
-            margin: EdgeInsets.only(top: AppResponsive.instance.getHeight(12)),
+            margin: widget.model.headerText != null
+                ? EdgeInsets.only(top: AppResponsive.instance.getHeight(12))
+                : EdgeInsetsDirectional.zero,
             padding: EdgeInsets.symmetric(
               vertical: AppResponsive.instance.getHeight(6),
             ),

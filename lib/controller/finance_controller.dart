@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/finance_controller_model.dart';
@@ -25,6 +26,8 @@ class FinanceController {
   final stream = BehaviorSubject<FinanceStreamModel>();
 
   //* VARIABLES *//
+
+  TextEditingController search = TextEditingController();
 
   DateTime? reportMinDate;
   DateTime? reportMaxDate;
@@ -210,5 +213,9 @@ class FinanceController {
       await readFinance();
       await AssociationController.instance.readAssociation();
     }
+  }
+
+  void reloadStream() {
+    stream.sink.add(stream.value);
   }
 }

@@ -21,6 +21,7 @@ class WidgetActionHeader extends StatelessWidget {
         children: [
           if (model.backAction != null) ...[
             Flexible(
+              flex: 2,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -35,13 +36,21 @@ class WidgetActionHeader extends StatelessWidget {
           ],
           if (model.searchAction != null || model.cardAction != null) ...[
             Flexible(
+              flex: 3,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (model.searchAction != null) ...[
-                    Flexible(child: model.searchAction!),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppResponsive.instance.getWidth(24),
+                        ),
+                        child: model.searchAction!,
+                      ),
+                    ),
                   ],
                   if (model.cardAction != null) ...[
                     Flexible(child: model.cardAction!),

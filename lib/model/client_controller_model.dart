@@ -1,3 +1,4 @@
+import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/services/database/model/address_model.dart';
 import 'package:project_x/services/database/model/client_model.dart';
 import 'package:project_x/services/database/model/personal_model.dart';
@@ -54,5 +55,17 @@ class ClientStreamModel {
       map.addAll({entity!.model!.id!: entity.personal!.model!.name});
     }
     return map;
+  }
+
+  List<ClientLogicalModel?>? getFiltered() {
+    List<ClientLogicalModel?>? filtered = (this.clients ?? []).where(
+      (element) {
+        String modelValue = element!.personal!.model!.name.toLowerCase();
+        String searchValue =
+            ClientController.instance.search.text.toLowerCase();
+        return modelValue.contains(searchValue);
+      },
+    ).toList();
+    return filtered;
   }
 }

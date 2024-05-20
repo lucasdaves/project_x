@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
+import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_layout.dart';
@@ -10,6 +13,7 @@ import 'package:project_x/view/resume/resume_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
+import 'package:project_x/view/widgets/actions/widget_action_search.dart';
 import 'package:project_x/view/widgets/appbar/widget_app_bar.dart';
 import 'package:project_x/view/widgets/box/widget_contain_box.dart';
 import 'package:project_x/view/widgets/box/widget_floating_box.dart';
@@ -36,6 +40,7 @@ class _EntityListViewState extends State<EntityListView> {
   @override
   void initState() {
     getEntityName();
+    getEntitySearch();
     super.initState();
   }
 
@@ -83,6 +88,9 @@ class _EntityListViewState extends State<EntityListView> {
                     },
                   ),
                 ),
+                searchAction: WidgetActionSearch(
+                  model: getSearch(),
+                ),
                 cardAction: WidgetActionCard(
                   model: WidgetActionCardModel(
                     label: "Ações",
@@ -112,6 +120,43 @@ class _EntityListViewState extends State<EntityListView> {
   String getActionHeaderText() {
     String value = "Listagem de ${entity}s";
     return value;
+  }
+
+  getSearch() {
+    WidgetActionSearchModel model;
+    switch (widget.type) {
+      case EntityType.Client:
+        model = WidgetActionSearchModel(
+          controller: ClientController.instance.search,
+          hintText: "Procure um cliente ...",
+          changed: (value) => ClientController.instance.reloadStream(),
+        );
+        break;
+      case EntityType.Project:
+        model = WidgetActionSearchModel(
+          controller: ProjectController.instance.search,
+          hintText: "Procure um projeto ...",
+          changed: (value) => ProjectController.instance.reloadStream(),
+        );
+        break;
+      case EntityType.Finance:
+        model = WidgetActionSearchModel(
+          controller: FinanceController.instance.search,
+          hintText: "Procure uma finança ...",
+          changed: (value) => FinanceController.instance.reloadStream(),
+        );
+        break;
+      case EntityType.Association:
+        model = WidgetActionSearchModel(
+          controller: AssociationController.instance.search,
+          hintText: "Procure uma associação ...",
+          changed: (value) => AssociationController.instance.reloadStream(),
+        );
+        break;
+      default:
+        throw Exception("Unsuported Type");
+    }
+    return model;
   }
 
   List<WidgetActionIcon> getActions() {
@@ -169,7 +214,6 @@ class _EntityListViewState extends State<EntityListView> {
             ),
           ),
         ];
-
         break;
       case EntityType.Finance:
         actions = [
@@ -241,6 +285,21 @@ class _EntityListViewState extends State<EntityListView> {
         entity = "Financeiro";
       case EntityType.Association:
         entity = "Associação";
+      default:
+        throw Exception("Unsuported Type");
+    }
+  }
+
+  void getEntitySearch() {
+    switch (widget.type) {
+      case EntityType.Client:
+        ClientController.instance.search.text = "";
+      case EntityType.Project:
+        ProjectController.instance.search.text = "";
+      case EntityType.Finance:
+        FinanceController.instance.search.text = "";
+      case EntityType.Association:
+        AssociationController.instance.search.text = "";
       default:
         throw Exception("Unsuported Type");
     }

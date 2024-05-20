@@ -81,6 +81,18 @@ class FinanceStreamModel {
     }
   }
 
+  List<FinanceLogicalModel?>? getFiltered() {
+    List<FinanceLogicalModel?>? filtered = (this.finances ?? []).where(
+      (element) {
+        String modelValue = element!.model!.name!.toLowerCase();
+        String searchValue =
+            FinanceController.instance.search.text.toLowerCase();
+        return modelValue.contains(searchValue);
+      },
+    ).toList();
+    return filtered;
+  }
+
   Map<List<String>, List<double>> getReport() {
     FinanceStreamModel aux = copy();
     Map<List<String>, List<double>> map = {};

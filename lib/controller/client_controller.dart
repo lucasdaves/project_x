@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/model/client_controller_model.dart';
@@ -21,6 +22,10 @@ class ClientController {
   //* STREAMS *//
 
   final stream = BehaviorSubject<ClientStreamModel>();
+
+  //* VARIABLES *//
+
+  TextEditingController search = TextEditingController();
 
   //* DISPOSE *//
 
@@ -220,5 +225,9 @@ class ClientController {
     } finally {
       await readClient();
     }
+  }
+
+  void reloadStream() {
+    stream.sink.add(stream.value);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 import 'package:project_x/controller/association_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
@@ -21,6 +22,10 @@ class ProjectController {
   //* STREAMS *//
 
   final stream = BehaviorSubject<ProjectStreamModel>();
+
+  //* VARIABLES *//
+
+  TextEditingController search = TextEditingController();
 
   //* DISPOSE *//
 
@@ -178,5 +183,9 @@ class ProjectController {
       await readProject();
       await AssociationController.instance.readAssociation();
     }
+  }
+
+  void reloadStream() {
+    stream.sink.add(stream.value);
   }
 }

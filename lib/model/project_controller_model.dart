@@ -1,4 +1,5 @@
 import 'package:project_x/controller/association_controller.dart';
+import 'package:project_x/controller/project_controller.dart';
 import 'package:project_x/controller/workflow_controller.dart';
 import 'package:project_x/services/database/model/project_finance_client_model.dart';
 import 'package:project_x/services/database/model/project_model.dart';
@@ -89,5 +90,17 @@ class ProjectStreamModel {
         return 0;
       });
     }
+  }
+
+  List<ProjectLogicalModel?>? getFiltered() {
+    List<ProjectLogicalModel?>? filtered = (this.projects ?? []).where(
+      (element) {
+        String modelValue = element!.model!.name!.toLowerCase();
+        String searchValue =
+            ProjectController.instance.search.text.toLowerCase();
+        return modelValue.contains(searchValue);
+      },
+    ).toList();
+    return filtered;
   }
 }
