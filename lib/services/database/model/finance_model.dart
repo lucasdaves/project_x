@@ -108,7 +108,7 @@ class FinanceLogicalModel {
       return previousValue + amount;
     });
     if (sum < 0) sum = 0;
-    map["Adicionais"] = sum.toPrecision(2);
+    map["Aditivos"] = sum.toPrecision(2);
     return map;
   }
 

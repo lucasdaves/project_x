@@ -686,7 +686,10 @@ class _EntityResumeViewState extends State<EntityResumeView> {
             child: WidgetFloatingBox(
               model: WidgetFloatingBoxModel(
                 label: "Histórico de Pagamentos",
-                padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+                padding: EdgeInsets.symmetric(
+                  vertical: AppResponsive.instance.getHeight(12),
+                  horizontal: AppResponsive.instance.getWidth(24),
+                ),
                 widget: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,

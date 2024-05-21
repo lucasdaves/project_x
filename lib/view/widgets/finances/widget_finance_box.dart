@@ -8,6 +8,7 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/widgets/buttons/widget_solid_button.dart';
+import 'package:project_x/view/widgets/divider/widget_divider.dart';
 import 'package:project_x/view/widgets/fields/widget_selectorfield.dart';
 import 'package:project_x/view/widgets/list/widget_list_card.dart';
 import 'package:project_x/view/widgets/fields/widget_textfield.dart';
@@ -27,10 +28,10 @@ class WidgetFinanceBox extends StatefulWidget {
 }
 
 class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
-  static String initialOperationText = "(Inicial)";
-  static String parcelOperationText = "(Parcela)";
-  static String aditiveOperationText = "(Aditivo)";
-  static String costOperationText = "(Custo)";
+  static String initialOperationText = "Valor Inicial";
+  static String parcelOperationText = "Parcelas";
+  static String aditiveOperationText = "Aditivos";
+  static String costOperationText = "Custos";
   static String addOperationText = "Adicionar";
 
   @override
@@ -38,12 +39,12 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildHeader(),
         Expanded(
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: 4,
-            separatorBuilder: (context, index) => _buildSeparator(),
+            separatorBuilder: (context, typeIndex) =>
+                _buildSeparator(typeIndex),
             itemBuilder: (context, typeIndex) => _buildOperationList(typeIndex),
           ),
         ),
@@ -56,16 +57,15 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       value1: "Descrição",
       value2: "Valor",
       value3: "Data de Pagamento",
-      value4: "Tipo",
       isHeader: widget.operation != EntityOperation.Read,
       isRead: widget.operation == EntityOperation.Read,
     );
   }
 
-  Widget _buildSeparator() {
-    return SizedBox(
-      height: AppResponsive.instance.getHeight(0),
-    );
+  Widget _buildSeparator(int typeIndex) {
+    return _shouldDisplayButton(typeIndex)
+        ? WidgetDivider(verticalSpace: 12, horizontalSpace: 0)
+        : SizedBox.shrink();
   }
 
   Widget _buildOperationList(int typeIndex) {
@@ -73,33 +73,91 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       type: typeIndex,
     );
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: operations.length + 1,
-      itemBuilder: (context, operationIndex) {
-        if (_shouldDisplayButton(typeIndex, operationIndex)) {
-          return _buildOperationButton(
-            context: context,
-            typeIndex: typeIndex,
-            finance: operationIndex == operations.length
-                ? null
-                : operations[operationIndex],
-          );
-        }
-        return SizedBox.shrink();
-      },
-    );
+    return _shouldDisplayButton(typeIndex)
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                  bottom: AppResponsive.instance.getHeight(12),
+                ),
+                child: Text(
+                  _getTypeText(typeIndex),
+                  style: AppTextStyle.size14(
+                    color: AppColor.text_1,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppResponsive.instance.getWidth(16),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColor.colorPrimary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: operations.length + 1,
+                  itemBuilder: (context, operationIndex) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.operation == EntityOperation.Read &&
+                            operations.isEmpty) ...[
+                          Container(
+                            width: double.maxFinite,
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppResponsive.instance.getHeight(12),
+                            ),
+                            child: Text(
+                              "Não há nada para exibir até o momento",
+                              style: AppTextStyle.size14(
+                                color: AppColor.text_1,
+                              ),
+                            ),
+                          ),
+                        ] else ...[
+                          if (operationIndex == 0) _buildHeader(),
+                          _buildOperationButton(
+                            context: context,
+                            typeIndex: typeIndex,
+                            finance: operationIndex == operations.length
+                                ? null
+                                : operations[operationIndex],
+                          ),
+                          if (operationIndex == operations.length)
+                            SizedBox(
+                                height: AppResponsive.instance.getHeight(12))
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
+        : SizedBox.shrink();
   }
 
-  bool _shouldDisplayButton(int typeIndex, int operationIndex) {
-    bool hasInitialOperation = widget.model.getType(type: 0).isNotEmpty;
-    if (typeIndex == 0 && operationIndex == 0) {
-      return true;
-    } else if (typeIndex != 0 && hasInitialOperation) {
+  bool _shouldDisplayButton(int typeIndex) {
+    bool isCreation = widget.operation == EntityOperation.Create;
+    bool hasInitial = widget.model.getType(type: 0).isNotEmpty;
+    if (isCreation) {
+      if (hasInitial || typeIndex == 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
       return true;
     }
-    return (typeIndex != 0 && hasInitialOperation);
   }
 
   Widget _buildOperationButton({
@@ -111,29 +169,17 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
       return SizedBox.shrink();
     }
 
-    String description = finance?.model?.description ?? addOperationText;
-    String amount = finance?.model?.amount ?? "";
-
-    String date = finance?.getStatus().entries.first.key ?? "";
-    Color dateColor =
-        finance?.getStatus().entries.first.value ?? AppColor.text_1;
-
-    String typeText = _getTypeText(typeIndex);
-    Color typeColor = _getTypeColor(typeIndex);
-
     return GestureDetector(
       onTap: () => widget.operation == EntityOperation.Read
           ? null
           : _showDialog(context,
               typeIndex: typeIndex, financeOperation: finance),
       child: WidgetListEntityCard(
-        value1: description,
-        value2: "$amount R\$",
-        value3: date,
-        value4: typeText,
-        color1: finance != null ? AppColor.text_1 : typeColor,
-        color3: dateColor,
-        color4: typeColor,
+        value1: finance?.model?.description ?? addOperationText,
+        value2: finance?.model?.amount?.formatCurrency() ?? "",
+        value3: finance?.getStatus().entries.first.key ?? "",
+        color1: finance != null ? AppColor.text_1 : AppColor.colorSecondary,
+        color3: finance?.getStatus().entries.first.value ?? AppColor.text_1,
         isRead: widget.operation == EntityOperation.Read,
       ),
     );

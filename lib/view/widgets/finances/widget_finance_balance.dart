@@ -79,60 +79,64 @@ class _WidgetFinanceBalanceState extends State<WidgetFinanceBalance> {
   Widget _buildChart() {
     return Expanded(
       flex: 4,
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          vertical: AppResponsive.instance.getHeight(16),
-        ),
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: AppColor.colorDivider,
-              width: AppResponsive.instance.getWidth(4),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            margin: EdgeInsets.symmetric(
+              vertical: AppResponsive.instance.getHeight(16),
             ),
-          ),
-        ),
-        child: RotatedBox(
-          quarterTurns: 1,
-          child: BarChart(
-            BarChartData(
-              maxY: map.entries.first.key.entries.first.value,
-              alignment: BarChartAlignment.spaceAround,
-              gridData: FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(show: false),
-              barTouchData: BarTouchData(enabled: false),
-              extraLinesData: ExtraLinesData(
-                horizontalLines: [
-                  HorizontalLine(
-                    y: map.entries.first.key.entries.first.value,
-                    color: map.entries.first.value,
-                    strokeWidth: AppResponsive.instance.getWidth(4),
-                  ),
-                ],
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: AppColor.colorDivider,
+                  width: AppResponsive.instance.getWidth(4),
+                ),
               ),
-              barGroups: map.entries.skip(1).map((entry) {
-                return BarChartGroupData(
-                  x: AppResponsive.instance
-                      .getWidth(entry.key.values.first)
-                      .round(),
-                  barRods: [
-                    BarChartRodData(
-                      toY: entry.key.values.first,
-                      color: entry.value,
-                      width: AppResponsive.instance.getWidth(10),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(4),
-                        topRight: Radius.circular(4),
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
             ),
-            swapAnimationDuration: Duration(milliseconds: 150),
-            swapAnimationCurve: Curves.linear,
-          ),
-        ),
+            child: RotatedBox(
+              quarterTurns: 1,
+              child: BarChart(
+                BarChartData(
+                  // maxY: map.entries.first.key.entries.first.value,
+                  alignment: BarChartAlignment.spaceAround,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(show: false),
+                  titlesData: FlTitlesData(show: false),
+                  barTouchData: BarTouchData(enabled: false),
+                  extraLinesData: ExtraLinesData(
+                    horizontalLines: [
+                      HorizontalLine(
+                        y: map.entries.first.key.entries.first.value,
+                        color: map.entries.first.value,
+                        strokeWidth: AppResponsive.instance.getWidth(4),
+                      ),
+                    ],
+                  ),
+                  barGroups: map.entries.skip(1).map((entry) {
+                    return BarChartGroupData(
+                      x: AppResponsive.instance
+                          .getWidth(entry.key.values.first)
+                          .round(),
+                      barRods: [
+                        BarChartRodData(
+                          toY: entry.key.values.first,
+                          color: entry.value,
+                          width: AppResponsive.instance.getWidth(10),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(4),
+                            topRight: Radius.circular(4),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                swapAnimationDuration: Duration(milliseconds: 150),
+                swapAnimationCurve: Curves.linear,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

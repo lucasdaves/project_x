@@ -10,6 +10,15 @@ extension StringExtension on String {
       return null;
     }
   }
+
+  String? formatCurrency() {
+    try {
+      String currency = "${this} R\$";
+      return currency;
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 extension DateTimeExtension on DateTime {
