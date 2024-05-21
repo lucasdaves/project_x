@@ -134,15 +134,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         ProjectStreamModel copy = snapshot.copy();
         List<ProjectLogicalModel?>? projects;
         if (widget.clientAssociation != null) {
-          List<AssociationLogicalModel?> associations = AssociationController
-              .instance.stream.value
-              .getAllClient(widget.clientAssociation);
-          copy.getFiltered()?.removeWhere((element) => !associations
-              .map((e) => e?.model?.projectId)
-              .contains(element?.model?.id));
-          projects = copy.getAll();
+          projects = copy.getAssociated(widget.clientAssociation!);
         } else if (!widget.isResume) {
-          projects = copy.getFiltered();
+          projects = copy.getSearched();
         } else {
           projects = copy.getAll();
         }
@@ -208,14 +202,9 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         FinanceStreamModel copy = snapshot.copy();
         List<FinanceLogicalModel?>? finances;
         if (widget.clientAssociation != null) {
-          List<AssociationLogicalModel?> associations = AssociationController
-              .instance.stream.value
-              .getAllClient(widget.clientAssociation);
-          copy.finances?.removeWhere((element) => !associations
-              .map((e) => e?.model?.financeId)
-              .contains(element?.model?.id));
+          finances = copy.getAssociated(widget.clientAssociation!);
         } else if (!widget.isResume) {
-          finances = copy.getFiltered();
+          finances = copy.getSearched();
         } else {
           finances = copy.getAll();
         }

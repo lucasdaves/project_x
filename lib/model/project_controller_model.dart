@@ -92,7 +92,7 @@ class ProjectStreamModel {
     }
   }
 
-  List<ProjectLogicalModel?>? getFiltered() {
+  List<ProjectLogicalModel?>? getSearched() {
     List<ProjectLogicalModel?>? filtered = (this.projects ?? []).where(
       (element) {
         String modelValue = element!.model!.name!.toLowerCase();
@@ -102,5 +102,15 @@ class ProjectStreamModel {
       },
     ).toList();
     return filtered;
+  }
+
+  List<ProjectLogicalModel?>? getAssociated(int index) {
+    ProjectStreamModel aux = copy();
+    List<AssociationLogicalModel?> associations =
+        AssociationController.instance.stream.value.getAllClient(index);
+    aux.projects?.removeWhere((element) => !associations
+        .map((e) => e?.model?.projectId)
+        .contains(element?.model?.id));
+    return aux.projects;
   }
 }

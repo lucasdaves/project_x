@@ -81,7 +81,7 @@ class FinanceStreamModel {
     }
   }
 
-  List<FinanceLogicalModel?>? getFiltered() {
+  List<FinanceLogicalModel?>? getSearched() {
     List<FinanceLogicalModel?>? filtered = (this.finances ?? []).where(
       (element) {
         String modelValue = element!.model!.name!.toLowerCase();
@@ -91,6 +91,16 @@ class FinanceStreamModel {
       },
     ).toList();
     return filtered;
+  }
+
+  List<FinanceLogicalModel?>? getAssociated(int index) {
+    FinanceStreamModel aux = copy();
+    List<AssociationLogicalModel?> associations =
+        AssociationController.instance.stream.value.getAllClient(index);
+    aux.finances?.removeWhere((element) => !associations
+        .map((e) => e?.model?.projectId)
+        .contains(element?.model?.id));
+    return aux.finances;
   }
 
   Map<List<String>, List<double>> getReport() {
