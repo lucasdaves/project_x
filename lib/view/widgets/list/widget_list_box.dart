@@ -80,7 +80,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         ClientStreamModel copy = snapshot.copy();
         List<ClientLogicalModel?>? clients;
         if (!widget.isResume) {
-          clients = copy.getFiltered();
+          clients = copy.getSearched();
         } else {
           clients = copy.getAll();
         }
@@ -133,6 +133,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         snapshot as ProjectStreamModel;
         ProjectStreamModel copy = snapshot.copy();
         List<ProjectLogicalModel?>? projects;
+        copy.filter();
         if (widget.clientAssociation != null) {
           projects = copy.getAssociated(widget.clientAssociation!);
         } else if (!widget.isResume) {
@@ -140,7 +141,6 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         } else {
           projects = copy.getAll();
         }
-        copy.filter();
         return (projects ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(
@@ -201,6 +201,7 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         snapshot as FinanceStreamModel;
         FinanceStreamModel copy = snapshot.copy();
         List<FinanceLogicalModel?>? finances;
+        copy.filter();
         if (widget.clientAssociation != null) {
           finances = copy.getAssociated(widget.clientAssociation!);
         } else if (!widget.isResume) {
@@ -208,7 +209,6 @@ class _WidgetListEntityState extends State<WidgetListEntity> {
         } else {
           finances = copy.getAll();
         }
-        copy.filter();
         return (finances ?? []).isEmpty
             ? emptyWidget()
             : ListView.builder(

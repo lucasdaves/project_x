@@ -57,7 +57,7 @@ class ClientStreamModel {
     return map;
   }
 
-  List<ClientLogicalModel?>? getFiltered() {
+  List<ClientLogicalModel?>? getSearched() {
     List<ClientLogicalModel?>? filtered = (this.clients ?? []).where(
       (element) {
         String modelValue = element!.personal!.model!.name.toLowerCase();

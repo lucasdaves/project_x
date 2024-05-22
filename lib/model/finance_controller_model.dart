@@ -98,7 +98,7 @@ class FinanceStreamModel {
     List<AssociationLogicalModel?> associations =
         AssociationController.instance.stream.value.getAllClient(index);
     aux.finances?.removeWhere((element) => !associations
-        .map((e) => e?.model?.projectId)
+        .map((e) => e?.model?.financeId)
         .contains(element?.model?.id));
     return aux.finances;
   }
