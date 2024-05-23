@@ -143,6 +143,11 @@ class UserController {
           consts.user,
           map: userModel.toMap(),
         );
+
+        await setLogin(
+          login: model.model!.login,
+          password: model.model!.password,
+        );
       }
 
       if (userId == null) throw "Erro ao criar usuário";

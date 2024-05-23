@@ -105,67 +105,81 @@ class _RecoverViewState extends State<RecoverView> {
         height: double.maxFinite,
         width: 300,
         widget: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            WidgetFloatingBox(
-              model: WidgetFloatingBoxModel(
-                label: "Project X",
-                padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
-                widget: StreamBuilder<Object>(
-                  stream: UserController.instance.stream,
-                  builder: (context, snapshot) {
-                    return Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Icon(
-                                  Icons.chevron_left_rounded,
-                                  color: AppColor.colorSecondary,
-                                  size: AppResponsive.instance.getWidth(32),
+            Expanded(
+              child: Center(
+                child: WidgetFloatingBox(
+                  model: WidgetFloatingBoxModel(
+                    label: "Project X",
+                    padding:
+                        EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+                    widget: SingleChildScrollView(
+                      child: StreamBuilder<Object>(
+                        stream: UserController.instance.stream,
+                        builder: (context, snapshot) {
+                          return Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Icon(
+                                        Icons.chevron_left_rounded,
+                                        color: AppColor.colorSecondary,
+                                        size:
+                                            AppResponsive.instance.getWidth(32),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width: AppResponsive.instance
+                                            .getWidth(12)),
+                                    Text(
+                                      "Recuperar conta",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: AppColor.text_1,
+                                        fontSize:
+                                            AppResponsive.instance.getWidth(16),
+                                        fontWeight: FontWeight.w500,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                  width: AppResponsive.instance.getWidth(12)),
-                              Text(
-                                "Recuperar conta",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColor.text_1,
-                                  fontSize: AppResponsive.instance.getWidth(16),
-                                  fontWeight: FontWeight.w500,
-                                  height: 1,
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildLoginTextField(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildRecoverField(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildRecoverRespField(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(36)),
+                                buildRecoverButton(
+                                  UserController.instance.stream.value.status ==
+                                      EntityStatus.Loading,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildLoginTextField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRecoverField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRecoverRespField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(36)),
-                          buildRecoverButton(
-                            UserController.instance.stream.value.status ==
-                                EntityStatus.Loading,
-                          ),
-                        ],
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:project_x/controller/client_controller.dart';
 import 'package:project_x/controller/finance_controller.dart';
 import 'package:project_x/controller/project_controller.dart';
@@ -19,6 +20,10 @@ class AppController {
 
   final responsive = AppResponsive.instance;
   final service = DatabaseService.instance;
+
+  //* VARIABLES *//
+
+  late PackageInfo packageInfo;
 
   //* METHODS *//
 
@@ -54,6 +59,7 @@ class AppController {
     AppResponsive.instance.addRealSpec(screenSize.height, screenSize.width);
     await AppResponsive.instance.setOrientations();
     await DatabaseService.instance.initDatabase();
+    packageInfo = await PackageInfo.fromPlatform();
     //await clearAppConfigs();
   }
 
@@ -68,5 +74,9 @@ class AppController {
         WidgetsBinding.instance.platformDispatcher.views.single);
     Size screenSize = data.size;
     AppResponsive.instance.updateRealSpec(screenSize.height, screenSize.width);
+  }
+
+  String getSystemVersion() {
+    return "Versão:${packageInfo.version}-Build:${packageInfo.buildNumber}";
   }
 }

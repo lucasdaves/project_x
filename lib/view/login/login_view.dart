@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/app_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
@@ -6,6 +7,7 @@ import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
+import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/form_view.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
 import 'package:project_x/view/load/load_view.dart';
@@ -123,54 +125,71 @@ class _LoginViewState extends State<LoginView> {
         height: double.maxFinite,
         width: 300,
         widget: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            WidgetFloatingBox(
-              model: WidgetFloatingBoxModel(
-                label: "Project X",
-                padding: EdgeInsets.all(AppResponsive.instance.getWidth(24)),
-                widget: StreamBuilder<Object>(
-                  stream: UserController.instance.stream,
-                  builder: (context, snapshot) {
-                    return Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Login",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.text_1,
-                              fontSize: AppResponsive.instance.getWidth(16),
-                              fontWeight: FontWeight.w500,
-                              height: 1,
+            Expanded(
+              child: Center(
+                child: WidgetFloatingBox(
+                  model: WidgetFloatingBoxModel(
+                    label: "Project X",
+                    padding:
+                        EdgeInsets.all(AppResponsive.instance.getWidth(24)),
+                    widget: SingleChildScrollView(
+                      child: StreamBuilder<Object>(
+                        stream: UserController.instance.stream,
+                        builder: (context, snapshot) {
+                          return Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Login",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColor.text_1,
+                                    fontSize:
+                                        AppResponsive.instance.getWidth(16),
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                  ),
+                                ),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildLoginTextField(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildPasswordTextField(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(36)),
+                                buildLoginButton(
+                                  UserController.instance.stream.value.status ==
+                                      EntityStatus.Loading,
+                                ),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildRecoverButton(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(24)),
+                                buildRegisterButton(),
+                                SizedBox(
+                                    height:
+                                        AppResponsive.instance.getHeight(12)),
+                                buildVersion(context),
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildLoginTextField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildPasswordTextField(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(36)),
-                          buildLoginButton(
-                            UserController.instance.stream.value.status ==
-                                EntityStatus.Loading,
-                          ),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRecoverButton(),
-                          SizedBox(
-                              height: AppResponsive.instance.getHeight(24)),
-                          buildRegisterButton(),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -182,6 +201,29 @@ class _LoginViewState extends State<LoginView> {
 
   Widget _buildPortrait(BuildContext context) {
     return Container();
+  }
+
+  Widget buildVersion(
+    BuildContext context,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: AppResponsive.instance.getHeight(12),
+        horizontal: AppResponsive.instance.getWidth(24),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              AppController.instance.getSystemVersion(),
+              style: AppTextStyle.size12(color: AppColor.colorSecondary),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   //* FUNCTIONS *//

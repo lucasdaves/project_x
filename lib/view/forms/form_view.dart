@@ -24,9 +24,11 @@ import 'package:project_x/utils/app_extension.dart';
 import 'package:project_x/utils/app_feedback.dart';
 import 'package:project_x/utils/app_layout.dart';
 import 'package:project_x/utils/app_responsive.dart';
+import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/controller/forms_controller.dart';
 import 'package:project_x/view/forms/sections/widget_entity_sections.dart';
+import 'package:project_x/view/load/load_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
@@ -290,6 +292,9 @@ class _EntityFormViewState extends State<EntityFormView> {
       );
       controller.setModel([newModel]);
     }
+    setState(() {
+      personalDataSection.updateDocumentMask();
+    });
   }
 
   void _setSectionValuesForClient() {
@@ -354,6 +359,9 @@ class _EntityFormViewState extends State<EntityFormView> {
       );
       controller.setModel([newModel]);
     }
+    setState(() {
+      personalDataSection.updateDocumentMask();
+    });
   }
 
   void _setSectionValuesForProject() {
@@ -685,11 +693,13 @@ class _EntityFormViewState extends State<EntityFormView> {
                         hintText: personalDataSection.documentHint,
                         validator: (value) =>
                             personalDataSection.validateDocument(value),
-                        changed: (value) =>
-                            (controller.getModel()[0] as UserLogicalModel)
-                                .personal
-                                ?.model
-                                ?.document = value!,
+                        changed: (value) {
+                          personalDataSection.updateDocumentMask();
+                          (controller.getModel()[0] as UserLogicalModel)
+                              .personal
+                              ?.model
+                              ?.document = value!;
+                        },
                       ),
                     ),
                     SizedBox(height: AppResponsive.instance.getHeight(24)),
@@ -816,11 +826,13 @@ class _EntityFormViewState extends State<EntityFormView> {
                         hintText: personalDataSection.documentHint,
                         validator: (value) =>
                             personalDataSection.validateDocument(value),
-                        changed: (value) =>
-                            (controller.getModel()[0] as ClientLogicalModel)
-                                .personal
-                                ?.model
-                                ?.document = value!,
+                        changed: (value) {
+                          personalDataSection.updateDocumentMask();
+                          (controller.getModel()[0] as ClientLogicalModel)
+                              .personal
+                              ?.model
+                              ?.document = value!;
+                        },
                       ),
                     ),
                     SizedBox(height: AppResponsive.instance.getHeight(24)),
@@ -1683,6 +1695,19 @@ class _EntityFormViewState extends State<EntityFormView> {
           Navigator.of(context).popUntil(
             ModalRoute.withName("/home_view"),
           );
+        } else if (operation == EntityOperation.Create) {
+          if (widget.type == EntityType.User) {
+            AppFeedback(
+              text: 'Conta criada',
+              color: AppColor.colorPositiveStatus,
+            ).showSnackbar(context);
+            AppRoute(
+              tag: LoadView.tag,
+              screen: LoadView(),
+            ).navigate(context);
+          } else {
+            Navigator.pop(context);
+          }
         } else {
           Navigator.pop(context);
         }

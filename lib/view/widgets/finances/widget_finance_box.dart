@@ -200,21 +200,6 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     }
   }
 
-  Color _getTypeColor(int typeIndex) {
-    switch (typeIndex) {
-      case 0:
-        return AppColor.colorOpcionalStatus;
-      case 1:
-        return AppColor.colorNeutralStatus;
-      case 2:
-        return AppColor.colorPositiveStatus;
-      case 3:
-        return AppColor.colorNegativeStatus;
-      default:
-        return Colors.transparent;
-    }
-  }
-
   void _showDialog(
     BuildContext context, {
     required int typeIndex,

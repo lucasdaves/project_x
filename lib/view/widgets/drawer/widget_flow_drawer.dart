@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/app_controller.dart';
 import 'package:project_x/utils/app_color.dart';
 import 'package:project_x/utils/app_enum.dart';
 import 'package:project_x/utils/app_responsive.dart';
@@ -41,6 +42,7 @@ class WidgetStartDrawer extends StatelessWidget {
           buildCard(context, type: EntityType.Project),
           buildCard(context, type: EntityType.Finance),
           buildCard(context, type: EntityType.Association),
+          buildVersion(context),
         ],
       ),
     );
@@ -142,6 +144,29 @@ class WidgetStartDrawer extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildVersion(
+    BuildContext context,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: AppResponsive.instance.getHeight(12),
+        horizontal: AppResponsive.instance.getWidth(24),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              AppController.instance.getSystemVersion(),
+              style: AppTextStyle.size12(color: AppColor.colorSecondary),
+            ),
+          ),
+        ],
       ),
     );
   }

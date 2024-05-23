@@ -12,9 +12,9 @@ class UserSection {
   String recoverRespLabel = "Resposta de Recuperação";
 
   // HINT TEXTS
-  String loginHint = "Digite seu login ...";
-  String passwordHint = "Digite sua senha ...";
-  String recoverHint = "Digite sua pergunta ...";
+  String loginHint = "Digite uma login ...";
+  String passwordHint = "Digite uma senha ...";
+  String recoverHint = "Escolha uma pergunta ...";
   String recoverRespHint = "Digite a resposta ...";
 
   // TEXT CONTROLLERS
@@ -63,15 +63,15 @@ class PersonalDataSection {
   String genderLabel = "Gênero";
 
   // HINT TEXTS
-  String nameHint = "Digite seu nome completo ...";
-  String documentHint = "Digite seu cpf ...";
-  String dobHint = "Digite sua data de nascimento ...";
-  String genderHint = "Digite seu gênero ...";
+  String nameHint = "Digite o nome completo ...";
+  String documentHint = "Digite o cpf ou cnpj ...";
+  String dobHint = "Digite a data de nascimento ...";
+  String genderHint = "Digite o gênero ...";
 
   // TEXT CONTROLLERS
   TextEditingController nameController = TextEditingController();
   MaskedTextController documentController = MaskedTextController(
-    mask: '000.000.000-00',
+    mask: '000000000000000000',
   );
   MaskedTextController dobController = MaskedTextController(
     mask: '00/00/0000',
@@ -99,6 +99,15 @@ class PersonalDataSection {
 
   String? validateGender(String? value) {
     return null;
+  }
+
+  void updateDocumentMask() {
+    String aux = documentController.text.replaceAll(RegExp(r'\D'), '');
+    if (aux.length > 11) {
+      documentController.updateMask('00.000.000/0000-00');
+    } else {
+      documentController.updateMask('000.000.000-000');
+    }
   }
 }
 
@@ -169,8 +178,8 @@ class ContactSection {
   final String noteLabel = "Anotação";
 
   // HINT TEXTS
-  final String phoneHint = "Digite seu telefone...";
-  final String emailHint = "Digite seu e-mail...";
+  final String phoneHint = "Digite o telefone...";
+  final String emailHint = "Digite o e-mail...";
   final String noteHint = "Digite uma anotação...";
 
   // TEXT CONTROLLERS

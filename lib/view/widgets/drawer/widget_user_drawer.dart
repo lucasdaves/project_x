@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_x/controller/app_controller.dart';
 import 'package:project_x/controller/system_controller.dart';
 import 'package:project_x/controller/user_controller.dart';
 import 'package:project_x/utils/app_color.dart';
@@ -50,6 +51,7 @@ class WidgetEndDrawer extends StatelessWidget {
           buildCard(context, type: EntityType.User),
           buildCard(context, type: EntityType.System),
           buildCard(context, type: EntityType.Default),
+          buildVersion(context),
         ],
       ),
     );
@@ -132,6 +134,29 @@ class WidgetEndDrawer extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildVersion(
+    BuildContext context,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: AppResponsive.instance.getHeight(12),
+        horizontal: AppResponsive.instance.getWidth(24),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              AppController.instance.getSystemVersion(),
+              style: AppTextStyle.size12(color: AppColor.colorSecondary),
+            ),
+          ),
+        ],
       ),
     );
   }
