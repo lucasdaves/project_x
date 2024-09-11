@@ -165,7 +165,15 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
     required int typeIndex,
     FinanceOperationLogicalModel? finance,
   }) {
-    if (finance == null && widget.operation == EntityOperation.Read) {
+    bool hasInitial = (typeIndex == 0 &&
+        finance == null &&
+        (widget.operation == EntityOperation.Create ||
+            widget.operation == EntityOperation.Update) &&
+        (widget.model.getType(type: typeIndex)).isNotEmpty);
+
+    bool isRead = (finance == null && widget.operation == EntityOperation.Read);
+
+    if (hasInitial || isRead) {
       return SizedBox.shrink();
     }
 
@@ -393,26 +401,25 @@ class _WidgetFinanceBoxState extends State<WidgetFinanceBox> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (typeIndex == 1) ...[
-                        _buildSelectorField(
-                          controller: operationSection.statusController,
-                          headerText: operationSection.statusLabel,
-                          hintText: operationSection.statusHint,
-                          validator: operationSection.validateStatus,
-                          options: FinanceOperationDatabaseModel
-                              .statusMap.values
-                              .toList(),
-                          function: () => state(() {}),
-                        ),
-                        SizedBox(height: AppResponsive.instance.getHeight(24)),
-                        _buildTextField(
-                          controller: operationSection.dateController,
-                          headerText: operationSection.dateLabel,
-                          hintText: operationSection.dateHint,
-                          validator: operationSection.validateDate,
-                        ),
-                        SizedBox(height: AppResponsive.instance.getHeight(24)),
-                      ],
+                      //if (typeIndex == 1) ...[
+                      _buildSelectorField(
+                        controller: operationSection.statusController,
+                        headerText: operationSection.statusLabel,
+                        hintText: operationSection.statusHint,
+                        validator: operationSection.validateStatus,
+                        options: FinanceOperationDatabaseModel.statusMap.values
+                            .toList(),
+                        function: () => state(() {}),
+                      ),
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      _buildTextField(
+                        controller: operationSection.dateController,
+                        headerText: operationSection.dateLabel,
+                        hintText: operationSection.dateHint,
+                        validator: operationSection.validateDate,
+                      ),
+                      SizedBox(height: AppResponsive.instance.getHeight(24)),
+                      //],
                       _buildTextField(
                         controller: operationSection.descriptionController,
                         headerText: operationSection.descriptionLabel,

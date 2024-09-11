@@ -1,6 +1,6 @@
 name: project_x
 description: "Software to optimize project, finance, and client management."
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: '>=3.3.3 <4.0.0'

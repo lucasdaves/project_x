@@ -15,6 +15,7 @@ import 'package:project_x/utils/app_responsive.dart';
 import 'package:project_x/utils/app_route.dart';
 import 'package:project_x/utils/app_text_style.dart';
 import 'package:project_x/view/forms/form_view.dart';
+import 'package:project_x/view/list/list_view.dart';
 import 'package:project_x/view/widgets/actions/widget_action_back.dart';
 import 'package:project_x/view/widgets/actions/widget_action_card.dart';
 import 'package:project_x/view/widgets/actions/widget_action_icon.dart';
@@ -206,6 +207,20 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               },
             ),
           ),
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.file_present,
+              label: "Associar",
+              function: () async {
+                AppRoute(
+                  tag: EntityListView.tag,
+                  screen: EntityListView(
+                    type: EntityType.Association,
+                  ),
+                ).navigate(context);
+              },
+            ),
+          ),
         ];
         break;
       case EntityType.Project:
@@ -242,6 +257,20 @@ class _EntityResumeViewState extends State<EntityResumeView> {
               },
             ),
           ),
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.file_present,
+              label: "Associar",
+              function: () async {
+                AppRoute(
+                  tag: EntityListView.tag,
+                  screen: EntityListView(
+                    type: EntityType.Association,
+                  ),
+                ).navigate(context);
+              },
+            ),
+          ),
         ];
         break;
       case EntityType.Finance:
@@ -273,6 +302,20 @@ class _EntityResumeViewState extends State<EntityResumeView> {
                     type: EntityType.Finance,
                     operation: EntityOperation.Update,
                     entityIndex: widget.entityIndex,
+                  ),
+                ).navigate(context);
+              },
+            ),
+          ),
+          WidgetActionIcon(
+            model: WidgetActionIconModel(
+              icon: Icons.file_present,
+              label: "Associar",
+              function: () async {
+                AppRoute(
+                  tag: EntityListView.tag,
+                  screen: EntityListView(
+                    type: EntityType.Association,
                   ),
                 ).navigate(context);
               },
