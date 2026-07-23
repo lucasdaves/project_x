@@ -22,7 +22,7 @@ class AppResponsive {
     ScreenOrientation type;
     if (Platform.isAndroid || Platform.isIOS) {
       type = ScreenOrientation.Portrait;
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isMacOS) {
       type = ScreenOrientation.Landscape;
     } else {
       throw "Unsuported Platform";
@@ -49,7 +49,7 @@ class AppResponsive {
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]);
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isMacOS) {
       orientations.addAll([
         DeviceOrientation.landscapeRight,
         DeviceOrientation.landscapeLeft,
@@ -61,7 +61,7 @@ class AppResponsive {
   setGestures() {
     if (Platform.isAndroid || Platform.isIOS) {
       return null;
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isMacOS) {
       return const MaterialScrollBehavior().copyWith(
         dragDevices: {
           PointerDeviceKind.mouse,

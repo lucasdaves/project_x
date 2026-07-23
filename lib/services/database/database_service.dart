@@ -87,7 +87,10 @@ class DatabaseService {
   }
 
   void _checkPlatformSupport() {
-    if (!(Platform.isWindows || Platform.isAndroid || Platform.isIOS)) {
+    if (!(Platform.isWindows ||
+        Platform.isMacOS ||
+        Platform.isAndroid ||
+        Platform.isIOS)) {
       throw Exception("Unsupported platform");
     }
   }

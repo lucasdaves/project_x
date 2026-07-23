@@ -39,8 +39,7 @@ class _MyAppState extends State<MyApp> {
             TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
           },
         ),
-        dialogBackgroundColor: AppColor.colorFieldBackground,
-        dialogTheme: const DialogTheme(
+        dialogTheme: const DialogThemeData(
           backgroundColor: AppColor.colorFieldBackground,
           surfaceTintColor: Colors.transparent,
         ),

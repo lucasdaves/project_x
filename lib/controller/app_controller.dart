@@ -39,7 +39,7 @@ class AppController {
 
   Future<void> initAppConfigs() async {
     WidgetsFlutterBinding.ensureInitialized();
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isMacOS) {
       await windowManager.ensureInitialized();
       WindowOptions windowOptions = const WindowOptions(
         size: Size(960, 540),
